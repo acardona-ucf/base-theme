@@ -51,6 +51,8 @@ Control - representation of an html form element(s)
 function register_theme_customizer( $wp_customizer ) {
 	//add_section_DisplayOptions($wp_customizer);
 	add_panel_DisplayOptions($wp_customizer);
+
+	add_section_ContactOptions($wp_customizer);
 }
 add_action( 'customize_register', 'register_theme_customizer' );
 
@@ -117,3 +119,45 @@ function add_panel_DisplayOptions( $wp_customizer, $args = null ) {
 	add_section_DisplayOptions($wp_customizer, $args);
 }
 
+
+require_once('Classes_WP_Customize_Control.php');
+function add_section_ContactOptions( $wp_customizer, $args = null) {
+	$args['panelId'] = (isset($args['panelId'])) ? $args['panelId'] : '';
+	$args['hours-transport'] = (isset($args['hours-transport'])) ? $args['hours-transport'] : 'refresh';
+
+
+	$section = 'sdes_rev_2015-contact_options';
+	$wp_customizer->add_section(
+		$section,
+		array(
+			'title'    => 'Contact Box',
+			'priority' => 250,
+			'panel' => $args['panelId'],
+		)
+	);
+
+
+	// Hours
+	$wp_customizer->add_setting(
+		'sdes_rev_2015-hours',
+		array(
+			'default'    =>  'Mon-Fri: 8:00am - 5:00pm',
+			'transport'  =>  $args['hours-transport'],  // refresh (default) or postMessage
+			// 'sanitize_callback' => '',
+			// 'sanitize_js_callback' => '',
+			// 'capability' => '',
+		)
+	);
+	$wp_customizer->add_control(
+		new Textarea_CustomControl(
+			$wp_customizer,
+			'sdes_rev_2015-hours',
+			array(
+				'label'    => ('Hours'),
+				'section'  => $section,
+				'settings' => 'sdes_rev_2015-hours',
+				'type' => 'text',
+			)
+		)
+	);
+}

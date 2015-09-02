@@ -1,4 +1,6 @@
 <?php
+// require_once('functions/Class_SDES_Static.php');
+
 /*-------------------------------------------------------------------------------------------*/
 //Home title fix
 /*-------------------------------------------------------------------------------------------
@@ -333,6 +335,9 @@ function new_excerpt_more($more) {
 }
 add_filter('excerpt_more', 'new_excerpt_more');
 
+
+
+require_once('functions/Class_SDES_Static.php');
 /*-------------------------------------------------------------------------------------------*/
 /* Reads in and displays department information
 /*-------------------------------------------------------------------------------------------*/
@@ -359,9 +364,14 @@ function get_department_info($action = NULL) {
             $yield .= '<table class="table table-condensed table-striped table-bordered">';
             $yield .= '<tbody>';
             foreach ($decodejson->departments as $department) {
+                // TODO: helper function or best practices for get_theme_mod
+                $hours = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-hours', $department->hours );
+
+                $site_hours = ($hours == $department->hours) ? html_site_hours($department->hours) : $hours;
+
                 if( $department->acronym == $action){
                     $yield .= '<tr><th scope="row">Hours</th>';
-                    $yield .= '<td>' . html_site_hours($department->hours) . '</td>';
+                    $yield .= '<td>' . $site_hours . '</td>';
                     $yield .= '</tr><tr>';
                     $yield .= '<th scope="row">Phone</th>';
                     $yield .= "<td>{$department->phone}</td>";
