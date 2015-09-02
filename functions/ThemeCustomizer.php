@@ -49,7 +49,8 @@ Control - representation of an html form element(s)
  * @since   1.0.0
  */
 function register_theme_customizer( $wp_customizer ) {
-	add_section_DisplayOptions($wp_customizer);
+	//add_section_DisplayOptions($wp_customizer);
+	add_panel_DisplayOptions($wp_customizer);
 }
 add_action( 'customize_register', 'register_theme_customizer' );
 
@@ -97,4 +98,22 @@ function add_section_DisplayOptions( $wp_customizer, $args = null) {
 	);
 }
 require_once("ThemeCustomizer_DisplayOptions.php");
+
+
+function add_panel_DisplayOptions( $wp_customizer, $args = null ) {
+	$panelId = 'pnl_displayOptions';
+
+	$wp_customizer->add_panel(
+		$panelId,
+		array(
+		    'title' => 'Front Page Stuff',
+		    'description' => 'Stuff that you can change about the Front Page',
+		    'priority' => 10,
+		    //'active_callback' => 'is_front_page',
+		)
+	);
+
+	$args['panelId'] = $panelId;
+	add_section_DisplayOptions($wp_customizer, $args);
+}
 
