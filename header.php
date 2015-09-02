@@ -44,7 +44,7 @@
 		<div class="site-title">
 			<a href="#"><?php bloginfo('name'); ?></a>
 			<div class="site-subtitle">
-				<a href="#">Student Development<br> and Enrollment Services</a>
+				<a href="#"><?= html_entity_decode(get_bloginfo('description')); ?></a>
 			</div>
 		</div>
 	</div>

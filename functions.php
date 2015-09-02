@@ -696,4 +696,23 @@ function sdes_settings_render() {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-?>
+
+
+
+
+
+
+require_once('functions/ThemeCustomizer.php'); // Admin > Appearance > Customize
+
+
+
+
+
+
+
+
+
+
+
+
+//TODO: add screenshot.png for Theme.
