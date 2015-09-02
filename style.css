@@ -1,14 +1,14 @@
 /*
-	Theme Name: Rev2015 WordPress
-	Theme URI: http://soemthing.com
-	Description: Rev2015 Bootstrap to WP
-	Version: 1
+	Theme Name: Rev2015 WordPress Prototype
+	Theme URI: https://sdescmsdev.smca.ucf.edu/
+	Description: Rev2015 Bootstrap to WordPress theme conversion prototype.
+	Version: 0.0.1
 	Author: SDES IT
-	Author URI: http://something.com
+	Author URI: https://sdescmsdev.smca.ucf.edu/
 */
 
 @import url('//assets.sdes.ucf.edu/plugins/bootstrap3/css/bootstrap.min.css');
 @import url('//assets.sdes.ucf.edu/plugins/nivoslider3.2/nivo-slider.css');
 @import url('//assets.sdes.ucf.edu/plugins/nivoslider3.2/themes/default/default.css');
 @import url('//assets.sdes.ucf.edu/css/sdes_main_rev2015.css');
-@import url('css/style.css');
+@import url('./css/style.css');

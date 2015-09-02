@@ -444,11 +444,11 @@ function get_department_info($action = NULL) {
 /*-------------------------------------------------------------------------------------------*/
 function html_site_hours($hours){
     $output = null;
-    $collections = [];
-    $final = [];
+    $collections = array();
+    $final = array();
 
     //value-to-day conversion array
-    $names = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+    $names = array('Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun');
 
     if(empty($hours)){
         $output = "Mon-Sun: Closed";
