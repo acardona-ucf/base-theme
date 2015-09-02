@@ -187,8 +187,11 @@ function add_custom_meta_box() {
 }
 
 // Enqueue Datepicker + jQuery UI CSS
+function enqueue_scripts_and_styles(){
 wp_enqueue_script( 'jquery-ui-datepicker' );
 wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
+}
+add_action( 'wp_enqueue_scripts', 'enqueue_scripts_and_styles');
 
 add_action( 'add_meta_boxes', 'add_custom_meta_box' );                                     
 
@@ -642,6 +645,7 @@ function section_one_callback() {
     echo 'Some help text goes here.';
 }
 
+//TODO: handle edge case where the setting has never been set in database., e.g., $settings['directory_cms_acronym'] throws "Undefined index".
 function subtitle_callback() {
     $settings = (array) get_option( 'sdes_theme_settings' );
     $subtitle = esc_attr( $settings['subtitle'] );

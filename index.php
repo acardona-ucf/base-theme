@@ -7,7 +7,14 @@ if(is_front_page()){
 ?>
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 	<?php if(is_front_page()){ ?>
-	<?php $settings = (array) get_option( 'sdes_theme_settings' ); ?>    
+	<?php
+		$settings = (array) get_option( 'sdes_theme_settings' ); 
+
+		$departmentInfo = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
+		if( null != $settings['directory_cms_acronym'] && !ctype_space($settings['directory_cms_acronym']) ) {
+			$departmentInfo = get_department_info(esc_attr( $settings['directory_cms_acronym'] ));
+		}
+	?>    
 
 	<?php the_content(); ?>
 	
@@ -17,7 +24,7 @@ if(is_front_page()){
 			<?php get_template_part('news-list'); ?>
 		</div>
 		<div class="col-sm-4">
-			<?= get_department_info(esc_attr( $settings['directory_cms_acronym'] )) ?>
+			<?= $departmentInfo ?>
 
 			<div class="panel panel-warning">
 				<div class="panel-heading">Other Resources</div>
