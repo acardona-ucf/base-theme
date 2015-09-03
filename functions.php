@@ -645,13 +645,15 @@ function links(){
 // Section - group of related fields/settings
 // Field - the label and input area
 // Setting - the actual value saved in the database.  Also called an option.
+// Page - container for a collection of sections
+// Tabs - sugar for showing multiple sections
 
 // WP Validation hook - pre-save
 // WP Sanitize hook - post-save, pre-render
 
 /*
 Settings Functions - organizing/ordering
-MENUS
+PAGES: menu, submenu, and options pages
     Functions: add_menu_page, add_submenu_page, add_options_page
     Hooks: admin_menu
 
@@ -663,6 +665,9 @@ CALLBACKS
     Functions: settings_errors, settings_fields, do_settings_sections, submit_button
         POST to options.php, get_options, echo
     Hooks: n/a (?)
+
+Field-Callback-Option is added to a Page-Section.
+
 */
 
 require_once('functions/SettingsCallbacks.php');
@@ -677,14 +682,33 @@ add_action( 'admin_menu', 'options_page' );
 
 // Show SDES Theme Settings for admins
 function option_page_settings() {
+    // register_setting( $option_group, $option_name, $sanitize_callback );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings' );
+
+
+    // add_settings_section( $id, $title, $callback, $page );
     add_settings_section( 'sdes_section_one', 'SDES Theme Settings', 'section_one_callback', 'sdes_settings' );
-    add_settings_field( 'sdes_theme_settings_subtile', 'Subtile', 'subtitle_callback', 'sdes_settings', 'sdes_section_one' );
-    add_settings_field( 'sdes_theme_settings_ga_id', 'google_analytics_id', 'google_analytics_id_callback', 'sdes_settings', 'sdes_section_one' );
-    add_settings_field( 'sdes_theme_settings_js', 'javascript', 'javascript_callback', 'sdes_settings', 'sdes_section_one' );
-    add_settings_field( 'sdes_theme_settings_js_lib', 'javascript_libraries', 'javascript_libraries_callback', 'sdes_settings', 'sdes_section_one' );
-    add_settings_field( 'sdes_theme_settings_css', 'css', 'css_callback', 'sdes_settings', 'sdes_section_one' );
-    add_settings_field( 'sdes_theme_settings_dir_acronym', 'directory_cms_acronym', 'directory_cms_acronym_callback', 'sdes_settings', 'sdes_section_one' );
+
+
+    // add_settings_field( $id, $title, $callback,
+    //                     $page, $section, $args );
+    add_settings_field( 'sdes_theme_settings_subtile', 'Subtitle', 'subtitle_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_ga_id', 'google_analytics_id', 'google_analytics_id_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_js', 'javascript', 'javascript_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_js_lib', 'javascript_libraries', 'javascript_libraries_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_css', 'css', 'css_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_dir_acronym', 'directory_cms_acronym', 'directory_cms_acronym_callback',
+                        'sdes_settings', 'sdes_section_one' );
 }
 add_action( 'admin_init', 'option_page_settings' );
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -704,6 +728,7 @@ function menu_with_submenus() {
     // add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
     add_submenu_page( 'sdes_options', 'Developer Settings', "Developer Settings", "manage_options", "sdes_developer_settings", "render_developer_settings");
     add_submenu_page( 'sdes_options', 'Customize', 'Customize', 'edit_theme_options', 'sdes_customize', 'redirect_to_customize' );
+    add_submenu_page( 'sdes_options', 'Tabbed Settings', "Tabbed Settings", "manage_options", "tabbed_settings", "render_tabbed_settings");
 }
 add_action( 'admin_menu', 'menu_with_submenus' );
 
@@ -731,6 +756,106 @@ function redirect_to_customize() {
 }
 
 
+/*
+WordPress CSS:
+.nav-tab-wrapper
+.nav-tab
+.nav-tab-active
+*/
+function render_tabbed_settings_nav_tabs($active_tab)
+{
+    //TODO: move $tabs to render_tabbed_settings to reduce duplication, pluck where $tabs['slug'] == $active_tab
+    $tabs = array(
+        array('text' => 'SDES Options', 'slug' => 'sdes_options'),
+        array('text' => 'SDES Developer Settings', 'slug' => 'sdes_settings'),
+        array('text' => 'Contact Information', 'slug' => 'contact'),
+        array('text' => 'Hours of Operation', 'slug' => 'hours' ),
+        array('text' => 'Social Networks', 'slug' => 'social' ),
+        array('text' => 'Footer (Feeds and Links)', 'slug' => 'footer' ),
+    );
+    ?>
+    <h3 class="nav-tab-wrapper"> 
+        <?php foreach ($tabs as $tab) { 
+            $classes = "";
+            if($tab['slug'] == $active_tab ) {
+                $classes = "nav-tab-active"; 
+            }
+        ?>
+            <a href="?page=tabbed_settings&slug=<?=$tab['slug']?>" class="nav-tab <?=$classes?>"><?=$tab['text']?></a>
+        <?php } ?>
+    </h3><!-- /.nav-tab-wrapper -->
+    <?php
+}
+
+
+
+function render_tabbed_settings() {
+
+    if( isset( $_GET[ 'slug' ] ) ) {
+        $active_tab = $_GET[ 'slug' ];
+    }
+    else if( isset( $_GET[ 'page' ] ) ) {
+        $active_tab = $_GET[ 'page' ];
+    }
+
+    switch ($active_tab) {
+        case 'sdes_settings':
+            $option_group = 'sdes_setting_group';
+            $page = 'sdes_settings';
+
+        case 'sdes_developer_subpage':
+            $option_group = 'sdes_setting_group';
+            break;
+
+        case 'tabbed_settings':
+            $option_group = 'sdes_setting_group';
+            $page = 'contact';
+            break;
+
+        case 'contact':
+            $option_group = 'sdes_setting_group';
+            $page = 'contact';
+            break;
+
+        case 'sdes_options':
+        default:
+            $option_group = '';
+            $page = 'sdes_options';
+            break;
+    }
+
+    ?>
+    Hello from render_tabbed_settings().
+    <div class="wrap">
+        <h2>Tabbed Settings/Options</h2>
+
+        <?php
+            // settings_errors( $setting, $sanitize, $hide_on_update );
+            settings_errors(); ?>
+
+        <!-- nav-tab-wrapper provided by WordPress -->
+        <!-- <h3 class="nav-tab-wrapper"> 
+            <a href="?page=tabbed_settings&slug=contact" class="nav-tab nav-tab-active">Contact Information</a>
+            <a href="?page=tabbed_settings&slug=hours" class="nav-tab">Hours of Operation</a>
+            <a href="?page=tabbed_settings&slug=social" class="nav-tab">Social Networks</a>
+            <a href="?page=tabbed_settings&slug=footer" class="nav-tab">Footer (Feeds and Links)</a>
+        </h3> --><!-- /.nav-tab-wrapper -->
+        <?php render_tabbed_settings_nav_tabs( $page ); ?>
+
+        <form action="options.php" method="POST">
+            <?php if($active_tab == 'sdes_options') { ?>
+                Note that render_sdes_menu() is not called here, but it is on <a href="/wp-admin/admin.php?page=sdes_options">/wp-admin/admin.php?page=sdes_options</a>
+            <?php } ?>
+            <?php
+                settings_fields( $option_group );
+                do_settings_sections( $page );
+                submit_button();
+            ?>
+        </form>
+    </div>
+    Bye from render_tabbed_settings().
+    <?php   
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

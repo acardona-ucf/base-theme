@@ -43,6 +43,7 @@ function directory_cms_acronym_callback() {
 
 function sdes_settings_render() {
     ?>
+    Hello from sdes_settings_render().
     <div class="wrap">
         <h2>SDES Theme Settings</h2>
         <?php
@@ -54,5 +55,6 @@ function sdes_settings_render() {
             <?php submit_button(); ?>
         </form>
     </div>
+    Bye from sdes_settings_render().
     <?php
 }
