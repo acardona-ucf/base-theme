@@ -8,6 +8,33 @@ class SDES_Static
 
 
 
+	// TODO: Needs tests
+	// Always include an area code, show only numbers and the dash symbol, always show 2 dashes.
+	public static function sanitize_telephone_407($value)
+	{
+		$areaCode = '407';
+		$value = preg_replace("/[^0-9-]/", "", $value); //Remove non-numeric, unless a dash
+
+		// Prepend area code if necessary
+		if( strlen($value) <= 8 ){
+			$value = $areaCode . '-' . $value;
+		}
+
+		// Add first dash if missing
+		$firstDash = 3;
+		if($value[$firstDash] != '-') {
+			$value = substr_replace($value, '-', $firstDash, 0);
+		}
+
+		// Add last dash if missing
+		$lastDash = 7; //strlen($value)-5;
+		if($value[$lastDash] != '-') {
+			$value = substr_replace($value, '-', $lastDash, 0);
+		}
+
+		return $value;
+	}
+
 
 
 	/************************
@@ -20,5 +47,5 @@ class SDES_Static
 		return $output;
 	}
 
-	
+
 }

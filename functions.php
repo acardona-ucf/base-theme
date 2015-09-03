@@ -365,6 +365,8 @@ function get_department_info($action = NULL) {
             $yield .= '<tbody>';
             foreach ($decodejson->departments as $department) {
                 // TODO: helper function or best practices for get_theme_mod
+                $phone = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', $department->phone );
+                $fax = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', $department->fax );
                 $hours = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-hours', $department->hours );
 
                 $site_hours = ($hours == $department->hours) ? html_site_hours($department->hours) : $hours;
@@ -374,10 +376,10 @@ function get_department_info($action = NULL) {
                     $yield .= '<td>' . $site_hours . '</td>';
                     $yield .= '</tr><tr>';
                     $yield .= '<th scope="row">Phone</th>';
-                    $yield .= "<td>{$department->phone}</td>";
+                    $yield .= "<td>{$phone}</td>";
                     $yield .= '</tr><tr>';
                     $yield .= '<th scope="row">Fax</th>';
-                    $yield .= "<td>{$department->fax}</td>";
+                    $yield .= "<td>{$fax}</td>";
                     $yield .= '</tr><tr>';
                     $yield .= '<th scope="row">Email</th>';
                     $yield .= "<td><a href='mailto:{$department->email}'>{$department->email}</a></td>";
@@ -392,6 +394,9 @@ function get_department_info($action = NULL) {
         }
     } else {
         foreach ($decodejson->departments as $department) {
+            // TODO: helper function or best practices for get_theme_mod
+            $phone = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', $department->phone );
+            $fax = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', $department->fax );
 
             $yield .= "<div class='news' id='{$department->acronym}'>";
             $yield .= "<img src='http://directory.sdes.ucf.edu/{$department->image}' alt='thumbnail' class='img-responsive'>";
@@ -409,10 +414,10 @@ function get_department_info($action = NULL) {
             $yield .= '<tbody>';
             $yield .= '<tr>';
             $yield .= '<th scope="row">Phone</th>';
-            $yield .= "<td>{$department->phone}</td>";
+            $yield .= "<td>{$phone}</td>";
             $yield .= '</tr><tr>';
             $yield .= '<th scope="row">Fax</th>';
-            $yield .= "<td>{$department->fax}</td>";
+            $yield .= "<td>{$fax}</td>";
             $yield .= '</tr><tr>';
             $yield .= '<th scope="row">Email</th>';
             $yield .= "<td><a href='mailto:{$department->email}'>{$department->email}</a></td>";

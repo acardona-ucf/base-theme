@@ -124,7 +124,8 @@ require_once('Classes_WP_Customize_Control.php');
 function add_section_ContactOptions( $wp_customizer, $args = null) {
 	$args['panelId'] = (isset($args['panelId'])) ? $args['panelId'] : '';
 	$args['hours-transport'] = (isset($args['hours-transport'])) ? $args['hours-transport'] : 'refresh';
-
+	$args['phone-transport'] = (isset($args['phone-transport'])) ? $args['phone-transport'] : 'refresh';
+	$args['fax-transport'] = (isset($args['fax-transport'])) ? $args['fax-transport'] : 'refresh';
 
 	$section = 'sdes_rev_2015-contact_options';
 	$wp_customizer->add_section(
@@ -156,6 +157,57 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 				'label'    => ('Hours'),
 				'section'  => $section,
 				'settings' => 'sdes_rev_2015-hours',
+				'type' => 'text',
+			)
+		)
+	);
+	
+
+	// Phone
+	$wp_customizer->add_setting(
+		'sdes_rev_2015-phone',
+		array(
+			'default'    =>  '407-823-4625',
+			'transport'  =>  $args['phone-transport'],  // refresh (default) or postMessage
+			'sanitize_callback' => 'SDES_Static::sanitize_telephone_407',
+			'sanitize_js_callback' => 'SDES_Static::sanitize_telephone_407',
+			// 'capability' => '',
+		)
+	);
+	$wp_customizer->add_control(
+		new WP_Customize_Control(
+			$wp_customizer,
+			'sdes_rev_2015-phone',
+			array(
+				'label'    => ('Phone {{' . $args["phone-transport"] . '}}'),
+				'section'  => $section,
+				'settings' => 'sdes_rev_2015-phone',
+				'type' => 'text',
+			)
+		)
+	);
+
+
+	// Fax
+	$wp_customizer->add_setting(
+		'sdes_rev_2015-fax',
+		array(
+			'default'    =>  '407-823-2969',
+	        'transport'  =>  $args['fax-transport'],  // refresh (default) or postMessage
+	        'sanitize_callback' => 'SDES_Static::sanitize_telephone_407',
+	        'sanitize_js_callback' => 'SDES_Static::sanitize_telephone_407',
+	        // 'capability' => '',
+		)
+	);
+	$wp_customizer->add_control(
+		// new WP_Customize_Control(
+		new Phone_CustomControl(
+			$wp_customizer,
+			'sdes_rev_2015-fax',
+			array(
+				'label'    => ('Fax {{' . $args["fax-transport"] . '}}'),
+				'section'  => $section,
+				'settings' => 'sdes_rev_2015-fax',
 				'type' => 'text',
 			)
 		)

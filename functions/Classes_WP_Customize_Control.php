@@ -20,6 +20,17 @@ class Textarea_CustomControl extends WP_Customize_Control {
 
 
 
-
+class Phone_CustomControl extends WP_Customize_Control {
+	public $type = 'text';
+ 
+	public function render_content() {
+		?>
+		<label>
+			<span class="customize-control-title customize-phoneLabel"><?php echo esc_html( $this->label ); ?></span>
+			<input type="text" class="customize-phoneInput" value="<?php echo esc_attr( $this->value() ); ?>" <?php $this->link(); ?> />
+		</label>
+		<?php
+	}
+}
 
 
