@@ -124,7 +124,7 @@ require_once('Classes_WP_Customize_Control.php');
 function add_section_ContactOptions( $wp_customizer, $args = null) {
 	$args['panelId'] = (isset($args['panelId'])) ? $args['panelId'] : '';
 	$args['hours-transport'] = (isset($args['hours-transport'])) ? $args['hours-transport'] : 'refresh';
-	$args['phone-transport'] = (isset($args['phone-transport'])) ? $args['phone-transport'] : 'refresh';
+	$args['phone-transport'] = (isset($args['phone-transport'])) ? $args['phone-transport'] : 'postMessage';
 	$args['fax-transport'] = (isset($args['fax-transport'])) ? $args['fax-transport'] : 'refresh';
 
 	$section = 'sdes_rev_2015-contact_options';
@@ -213,3 +213,31 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 		)
 	);
 }
+
+
+
+
+
+
+// Allow AJAX updates to theme from Theme Customizer interface by
+// using the Theme Customizer API in javascript.
+// Enables $wp_customizer->add_setting() with 'transport'=>'postMessage'
+/**
+ * Registers and enqueues the `theme-customizer.js` file responsible
+ * for handling the transport messages for the Theme Customizer.
+ *
+ * @package tctheme
+ * @since   1.0.0
+ */
+function tctheme_customizer_live_preview() {
+	
+	wp_enqueue_script(
+	    'theme-customizer-postMessage',
+	    get_template_directory_uri() . '/js/theme-customizer.js',
+	    array( 'jquery', 'customize-preview' ),
+	    '1.0.0',
+	    true
+	);
+	
+}
+add_action( 'customize_preview_init', 'tctheme_customizer_live_preview' );

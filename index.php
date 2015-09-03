@@ -24,7 +24,7 @@ if(is_front_page()){
 			<?php get_template_part('news-list'); ?>
 		</div>
 		<div class="col-sm-4">
-			<?= $departmentInfo ?>
+			<span id="departmentInfo"><?= $departmentInfo ?></span>
 
 			<div class="panel panel-warning">
 				<div class="panel-heading">Other Resources</div>
