@@ -641,6 +641,30 @@ function links(){
 }
 
 //new options for admins/////////////////////////////////////////////////////////////////////////////////////
+
+// Section - group of related fields/settings
+// Field - the label and input area
+// Setting - the actual value saved in the database.  Also called an option.
+
+// WP Validation hook - pre-save
+// WP Sanitize hook - post-save, pre-render
+
+/*
+Settings Functions - organizing/ordering
+MENUS
+    Functions: add_menu_page, add_submenu_page, add_options_page
+    Hooks: admin_menu
+
+SECTIONS, SETTINGS, AND FIELDS
+    Functions: add_settings_sections, add_settings_field, register_setting
+    Hooks: admin_init
+
+CALLBACKS
+    Functions: settings_errors, settings_fields, do_settings_sections, submit_button
+        POST to options.php, get_options, echo
+    Hooks: n/a (?)
+*/
+
 require_once('functions/SettingsCallbacks.php');
 
 // Add SDES Theme Options Page
@@ -665,10 +689,46 @@ function option_page_settings() {
 add_action( 'admin_init', 'option_page_settings' );
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function menu_with_submenus() {
+    // add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
+    add_menu_page( 
+        'SDES Options',         // The text to be displayed in the browser title bar
+        "SDES Options",         // The text to be used for the menu
+        'manage_options',       // The required capability of users to access this menu
+        'sdes_options',         // The slug by which this menu item is accessible
+        'render_sdes_menu',    // The name of the function used to display the page content
+        '//assets.sdes.ucf.edu/images/favicon_black.png' //  An icon to display besied the menu text
+        // 78       // The position to innsert this menu item. Be careful not to hide another item!
+    );
 
+    // add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
+    add_submenu_page( 'sdes_options', 'Developer Settings', "Developer Settings", "manage_options", "sdes_developer_settings", "render_developer_settings");
+    add_submenu_page( 'sdes_options', 'Customize', 'Customize', 'edit_theme_options', 'sdes_customize', 'redirect_to_customize' );
+}
+add_action( 'admin_menu', 'menu_with_submenus' );
 
+function render_sdes_menu(){
+    ?>
+        <br><br>
+        This text should be displayed on /wp-admin/admin.php?page=sdes_options
+        <br><br>
+        Probably for non-developers who manage the site.  The other alternative is putting settings in the Theme Customizer.
+        <br><br>
+        Could add a "Super Editor" capability/role to access these "Super Editor Options".  That role would be more limited than "Administrator"", but more powerful than "Editor".
+    <?php
+}
 
+function render_developer_settings(){
+    sdes_settings_render();
+}
 
+function redirect_to_customize() {
+    $url = '/wp-admin/customize.php'
+    ?>
+    <script type="text/javascript">window.location = "<?=$url?>"</script>
+    <a href="<?=$url?>"><?=$url?></a>
+    <?php
+}
 
 
 

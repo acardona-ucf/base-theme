@@ -45,6 +45,9 @@ function sdes_settings_render() {
     ?>
     <div class="wrap">
         <h2>SDES Theme Settings</h2>
+        <?php
+            // settings_errors( $setting, $sanitize, $hide_on_update );
+            settings_errors(); ?>
         <form action="options.php" method="POST">
             <?php settings_fields( 'sdes_setting_group' ); ?>
             <?php do_settings_sections( 'sdes_settings' ); ?>
