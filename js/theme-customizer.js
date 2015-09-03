@@ -33,5 +33,11 @@
 				$( '#departmentInfo td:eq(2)').html( to );
 			});
 		});
+
+		wp.customize( 'sdes_rev_2015-email', function( value ) {
+			value.bind( function( to ) {
+				$( '#departmentInfo td:eq(3)').html( to );
+			});
+		});
 	});
 }( jQuery ));

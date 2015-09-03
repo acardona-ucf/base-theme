@@ -368,6 +368,7 @@ function get_department_info($action = NULL) {
                 $phone = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', $department->phone );
                 $fax = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', $department->fax );
                 $hours = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-hours', $department->hours );
+                $email = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', $department->email );
 
                 $site_hours = ($hours == $department->hours) ? html_site_hours($department->hours) : $hours;
 
@@ -382,7 +383,7 @@ function get_department_info($action = NULL) {
                     $yield .= "<td>{$fax}</td>";
                     $yield .= '</tr><tr>';
                     $yield .= '<th scope="row">Email</th>';
-                    $yield .= "<td><a href='mailto:{$department->email}'>{$department->email}</a></td>";
+                    $yield .= "<td><a href='mailto:{$email}'>{$email}</a></td>";
                     $yield .= '</tr><tr>';
                     $yield .= '<th scope="row">Location</th>';
                     $yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->building}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
@@ -397,6 +398,7 @@ function get_department_info($action = NULL) {
             // TODO: helper function or best practices for get_theme_mod
             $phone = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', $department->phone );
             $fax = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', $department->fax );
+            $email = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', $department->email );
 
             $yield .= "<div class='news' id='{$department->acronym}'>";
             $yield .= "<img src='http://directory.sdes.ucf.edu/{$department->image}' alt='thumbnail' class='img-responsive'>";
@@ -420,7 +422,7 @@ function get_department_info($action = NULL) {
             $yield .= "<td>{$fax}</td>";
             $yield .= '</tr><tr>';
             $yield .= '<th scope="row">Email</th>';
-            $yield .= "<td><a href='mailto:{$department->email}'>{$department->email}</a></td>";
+            $yield .= "<td><a href='mailto:{$email}'>{$email}</a></td>";
             $yield .= '</tr><tr>';
             $yield .= '<th scope="row">Location</th>';
             $yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->building}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";

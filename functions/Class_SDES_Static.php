@@ -6,6 +6,10 @@
 class SDES_Static
 {
 
+	// Set default value for a give key in $args, which is passed by reference.
+	public static function set_default_keyValue(&$args, $key, $default_value){
+		$args[$key] = (isset($args[$key])) ? $args[$key] : $default_value;
+	}
 
 
 	// TODO: Needs tests

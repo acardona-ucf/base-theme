@@ -121,11 +121,16 @@ function add_panel_DisplayOptions( $wp_customizer, $args = null ) {
 
 
 require_once('Classes_WP_Customize_Control.php');
+require_once('Class_SDES_Customizer_Helper.php');
 function add_section_ContactOptions( $wp_customizer, $args = null) {
 	$args['panelId'] = (isset($args['panelId'])) ? $args['panelId'] : '';
 	$args['hours-transport'] = (isset($args['hours-transport'])) ? $args['hours-transport'] : 'refresh';
 	$args['phone-transport'] = (isset($args['phone-transport'])) ? $args['phone-transport'] : 'postMessage';
 	$args['fax-transport'] = (isset($args['fax-transport'])) ? $args['fax-transport'] : 'refresh';
+
+	$args['sdes_rev_2015-email']['transport'] = 'refresh';
+	$args['sdes_rev_2015-email']['default'] = 'StudentDevelopmentEnrollmentServices@ucf.edu';
+
 
 	$section = 'sdes_rev_2015-contact_options';
 	$wp_customizer->add_section(
@@ -211,6 +216,16 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 				'type' => 'text',
 			)
 		)
+	);
+
+
+	// Email
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-email',	// id
+		'Email',				// label
+		$section,				// section
+		$args['sdes_rev_2015-email']			// arguments array
 	);
 }
 
