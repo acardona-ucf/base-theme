@@ -762,17 +762,8 @@ WordPress CSS:
 .nav-tab
 .nav-tab-active
 */
-function render_tabbed_settings_nav_tabs($active_tab)
+function render_tabbed_settings_nav_tabs(&$tabs, $active_tab)
 {
-    //TODO: move $tabs to render_tabbed_settings to reduce duplication, pluck where $tabs['slug'] == $active_tab
-    $tabs = array(
-        array('text' => 'SDES Options', 'slug' => 'sdes_options'),
-        array('text' => 'SDES Developer Settings', 'slug' => 'sdes_settings'),
-        array('text' => 'Contact Information', 'slug' => 'contact'),
-        array('text' => 'Hours of Operation', 'slug' => 'hours' ),
-        array('text' => 'Social Networks', 'slug' => 'social' ),
-        array('text' => 'Footer (Feeds and Links)', 'slug' => 'footer' ),
-    );
     ?>
     <h3 class="nav-tab-wrapper"> 
         <?php foreach ($tabs as $tab) { 
@@ -788,6 +779,8 @@ function render_tabbed_settings_nav_tabs($active_tab)
 }
 
 
+require_once 'vendor/autoload.php';
+use Underscore\Types\Arrays;
 
 function render_tabbed_settings() {
 
@@ -798,32 +791,19 @@ function render_tabbed_settings() {
         $active_tab = $_GET[ 'page' ];
     }
 
-    switch ($active_tab) {
-        case 'sdes_settings':
-            $option_group = 'sdes_setting_group';
-            $page = 'sdes_settings';
+    $tabs = array(
+        array('text' => 'SDES Options', 'slug' => 'sdes_options', 'option_group' => 'sdes_setting_group'),
+        array('text' => 'SDES Developer Settings', 'slug' => 'sdes_settings', 'option_group' => 'sdes_setting_group'),
+        array('text' => 'Contact Information', 'slug' => 'contact', 'option_group' => ''),
+        array('text' => 'Hours of Operation', 'slug' => 'hours', 'option_group' => '' ),
+        array('text' => 'Social Networks', 'slug' => 'social', 'option_group' => '' ),
+        array('text' => 'Footer (Feeds and Links)', 'slug' => 'footer', 'option_group' => '' ),
+    );
 
-        case 'sdes_developer_subpage':
-            $option_group = 'sdes_setting_group';
-            break;
-
-        case 'tabbed_settings':
-            $option_group = 'sdes_setting_group';
-            $page = 'contact';
-            break;
-
-        case 'contact':
-            $option_group = 'sdes_setting_group';
-            $page = 'contact';
-            break;
-
-        case 'sdes_options':
-        default:
-            $option_group = '';
-            $page = 'sdes_options';
-            break;
-    }
-
+    $active_tab_info = Arrays::find($tabs, function($tab, $active_tab) { 
+        return $tab['slug'] == $active_tab; 
+    });
+    $option_group = $active_tab_info['option_group'];
     ?>
     Hello from render_tabbed_settings().
     <div class="wrap">
@@ -840,7 +820,7 @@ function render_tabbed_settings() {
             <a href="?page=tabbed_settings&slug=social" class="nav-tab">Social Networks</a>
             <a href="?page=tabbed_settings&slug=footer" class="nav-tab">Footer (Feeds and Links)</a>
         </h3> --><!-- /.nav-tab-wrapper -->
-        <?php render_tabbed_settings_nav_tabs( $page ); ?>
+        <?php render_tabbed_settings_nav_tabs( $tabs, $active_tab ); ?>
 
         <form action="options.php" method="POST">
             <?php if($active_tab == 'sdes_options') { ?>
@@ -848,7 +828,7 @@ function render_tabbed_settings() {
             <?php } ?>
             <?php
                 settings_fields( $option_group );
-                do_settings_sections( $page );
+                do_settings_sections( $active_tab );
                 submit_button();
             ?>
         </form>
