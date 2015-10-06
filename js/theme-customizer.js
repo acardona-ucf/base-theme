@@ -39,5 +39,11 @@
 				$( '#departmentInfo td:eq(3)').html( to );
 			});
 		});
+
+		wp.customize( 'sdes_rev_2015-taglineURL', function( value ) {
+			value.bind( function( to ) {
+				$( 'div.site-subtitle a').attr('href', to );
+			});
+		});
 	});
 }( jQuery ));

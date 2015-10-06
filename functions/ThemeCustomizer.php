@@ -53,10 +53,10 @@ function register_theme_customizer( $wp_customizer ) {
 	add_panel_DisplayOptions($wp_customizer);
 
 	add_section_ContactOptions($wp_customizer);
+
+	add_to_section_TitleAndTagline($wp_customizer);
 }
 add_action( 'customize_register', 'register_theme_customizer' );
-
-
 
 function add_section_DisplayOptions( $wp_customizer, $args = null) {
 	// TODO: define $args defaults here
@@ -231,6 +231,22 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 
 
 
+function add_to_section_TitleAndTagline( $wp_customizer, $args = null) {
+	$section = 'title_tagline';
+
+	$taglineURL_args = $args['sdes_rev_2015-taglineURL'];
+	SDES_Static::set_default_keyValue($taglineURL_args, 'transport', 'postMessage');
+	SDES_Static::set_default_keyValue($taglineURL_args, 'default', 'http://www.sdes.ucf.edu/');
+	SDES_Static::set_default_keyValue($taglineURL_args, 'sanitize_callback', 'esc_url');
+
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-taglineURL',	// id
+		'Tagline URL',				// label
+		$section,					// section
+		$taglineURL_args			// arguments array
+	);
+}
 
 
 
