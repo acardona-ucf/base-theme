@@ -87,7 +87,7 @@
 			</div>
 			<div class="navbar-collapse collapse">
 				<?php
-				wp_nav_menu(array('menu' => 'Pages', 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				<p class="navbar-text navbar-right translate-button">
 					<a href="http://it.sdes.ucf.edu/translate/" class="navbar-link">Translate
@@ -99,5 +99,4 @@
 	</nav>
 
 	<!-- content area -->
-	<div class="container site-content">		
-		<?php !is_page('Home') ? the_title( '<div class="page-header">'.links().'<h1>', '</h1></div>' ) : false ?>	 
+	<div class="container site-content">

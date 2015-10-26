@@ -121,4 +121,55 @@ class SDES_Static
 		return $nav_menu;
 	}
 
+	/** fallback_navbar_list_pages - Call from wp_nav_menu as the 'fallback_cb'.
+	 *   Allow graceful failure when menu is not set by showing a formatted listing of pages
+	 *   instead of the default wp_page_menu output.
+	 *  $args - Accepts $args array used by wp_nav_menu (merged with any default values), plus the standard following params:
+	 *  $args['number'] - Number of pages to pull from wp_list_pages.
+	 *  $args['echo'] - Standard echo param, output to stdout if true.
+	 *  $args['warn'] - Boolean flag to display admin message (default to true).
+	 *  $args['warn_message'] - Format string for warning message (where %1$s is expended to the 'theme_location').
+	 *
+	 *  Testing Overrides:
+	 *  $shouldWarn - Override login and capabilities check.
+	 *  $get_query_var - Override call to get_query_var.
+	 *  $wp_list_pages - Override the call to wp_list_pages (Returns a string containing li>a elements).
+	 *  $esc_attr = Override the sanitize function provided by WordPress (used in testing).
+	 */
+	public static function fallback_navbar_list_pages($args,
+		$shouldWarn = null,	$get_query_var='get_query_var', $wp_list_pages='wp_list_pages',	 $esc_attr='esc_attr')
+	{
+		SDES_Static::set_default_keyValue($args, 'number', 6);
+		SDES_Static::set_default_keyValue($args, 'echo', false);
+		SDES_Static::set_default_keyValue($args, 'warn', true);
+		SDES_Static::set_default_keyValue($args, 'warn_message', 
+			'<li><a class="text-danger adminmsg" style="color: red !important;" href="/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Alert: Missing "%1$s" menu location.</a></li>'
+		);
+
+		if($args['depth'] != 1)	trigger_error("Calling 'fallback_navbar_list_pages' with a depth that is not 1. The SDES base-theme CSS does not currently support multi-level menus.");
+
+		$pages = $wp_list_pages(array(
+			'echo' => false
+			, 'title_li' => ''
+			, 'depth' => ($args['depth'])
+			, 'number' => ($args['number'])
+		));
+
+		$shouldWarn = (isset($shouldWarn)) ? $shouldWarn 
+			: SDES_Static::Is_UserLoggedIn_Can('edit_posts');
+
+		//Note: caching implications for conditional output on '?preview=true'
+		if($args['warn'] && !$get_query_var('preview') && $shouldWarn) {
+			$pages .= sprintf($args['warn_message'], $args['theme_location']);
+		}
+
+		$menu_id = $esc_attr($args['menu_id']);
+		$menu_class = $esc_attr($args['menu_class']);
+		$nav_menu = sprintf( $args['items_wrap'], $menu_id, $menu_class, $pages);
+		if($args['echo']) {
+			echo $nav_menu;
+		}
+		return $nav_menu;
+	}
+
 }

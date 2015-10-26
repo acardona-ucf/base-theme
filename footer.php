@@ -4,7 +4,7 @@
 		<nav class="navbar navbar-default site-nav-repeated">
 			<div class="container-fluid">
 				<?php
-				wp_nav_menu(array('menu' => 'Pages', 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				
 				<p class="nav navbar-text navbar-right icons">
