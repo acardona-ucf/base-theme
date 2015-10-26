@@ -41,6 +41,7 @@ Control - representation of an html form element(s)
 */
 
 
+//TODO: Investigate possible changes to panels and sections in WordPress 4.3.1.
 /**
  * Defines all of the sections, settings, and controls for the various
  * options introduced into the Theme Customizer
@@ -119,7 +120,7 @@ function add_panel_DisplayOptions( $wp_customizer, $args = null ) {
 	add_section_DisplayOptions($wp_customizer, $args);
 }
 
-
+//TODO: Convert to using SDES_Customizer_Helper
 require_once('Classes_WP_Customize_Control.php');
 require_once('Class_SDES_Customizer_Helper.php');
 function add_section_ContactOptions( $wp_customizer, $args = null) {
