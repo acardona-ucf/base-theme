@@ -51,5 +51,18 @@ class SDES_Static
 		return $output;
 	}
 
+	// Check if user is both logged in and has a given capability.
+	public static function Is_UserLoggedIn_Can($capability)
+	{
+		return is_user_logged_in() && current_user_can($capability);
+	}
+
+	// Get a string of class names for a WP_Post object and optionally apply a filter.
+	public static function Get_ClassNames($wp_post, $filter_tag='')
+	{
+	    $classes = empty( $wp_post->classes ) ? array() : (array) $wp_post->classes;
+	    $class_names = join( ' ', apply_filters( $filter_tag, array_filter($classes), $wp_post ) );
+	    return $class_names;
+	}
 
 }
