@@ -172,4 +172,90 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         // Assert
         $this->assertEquals($expected, $result);
     }
+
+
+
+
+    // wp_nav_menu: defaults set internally
+    public static $WP_NAV_MENU_DEFAULTS = array( 'menu' => '', 'container' => 'div', 'container_class' => '', 'container_id' => '', 'menu_class' => 'menu', 'menu_id' => '',
+        'echo' => true, 'fallback_cb' => 'wp_page_menu', 'before' => '', 'after' => '', 'link_before' => '', 'link_after' => '', 'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+        'depth' => 0, 'walker' => '', 'theme_location' => '' );
+
+    ///////////  SDES_Static::fallback_navpills_warning()  ////////////////////
+    public function test_fallback_navpills_warning__AdminNoWarn__ReturnsEmptyUl()
+    {
+        // Arrange
+        $args = array('warn' => false, 'depth' => 1);
+        $shouldWarn = true;
+        $esc_attr = function($a){ return $a; }; // Bypass sanitize function for testing
+        $get_query_var_preview = function(){ return false; };
+        $expected = '<ul id="" class="menu"></ul>';
+
+        // Act
+        $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
+        $result = SDES_Static::fallback_navpills_warning($args, $shouldWarn, 
+            $get_query_var_preview, $esc_attr);
+
+        // Assert
+        $this->assertEquals($expected, $result);        
+    }
+
+    public function test_fallback_navpills_warning__AdminYesWarn_ReturnsUlWithWarningLi()
+    {
+        // Arrange
+        $args = array('warn' => true, 'theme_location' =>'pg-Home', 'depth' => 1);
+        $shouldWarn = true;
+        $esc_attr = function($a){ return $a; }; // Bypass sanitize function for testing
+        $get_query_var_preview = function(){ return false; };
+        $expected = 
+        '<ul id="" class="menu"><li><a class="text-warning adminmsg" style="color: #8a6d3b !important;" href="/wp-admin/nav-menus.php?action=locations#locations-pg-Home">Admin Warning: No menu set for "pg-Home" menu location.</a></li></ul>';
+
+        // Act
+        $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
+        $result = SDES_Static::fallback_navpills_warning($args, $shouldWarn,
+            $get_query_var_preview, $esc_attr);
+
+        // Assert
+        $this->assertEquals($expected, $result);        
+    }
+
+    public function test_fallback_navpills_warning__AdminNoWarnEcho__OutputsEmptyUl()
+    {
+        // Arrange
+        $args = array('warn' => false, 'echo' => true, 'depth' => 1);
+        $shouldWarn = true;
+        $esc_attr = function($a){ return $a; }; // Bypass sanitize function for testing
+        $get_query_var_preview = function(){ return false; };
+        $expected = '<ul id="" class="menu"></ul>';
+
+        // Act
+        $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
+        SDES_Static::fallback_navpills_warning($args, $shouldWarn, 
+            $get_query_var_preview, $esc_attr);
+
+        // Assert
+        $this->expectOutputString($expected);
+    }
+
+    /** @dataProvider provide_test_fallback_navpills_warning__DepthNot1__ThrowsNotice */
+    public function test_fallback_navpills_warning__DepthNot1__ThrowsNotice($depth)
+    {
+        // Assert
+        $this->setExpectedException('PHPUnit_Framework_Error_Notice');
+
+        // Arrange
+        $args = array('warn' => false, 'echo' => true, 'depth' => $depth);
+        $shouldWarn = true;
+        $esc_attr = function($a){ return $a; }; // Bypass sanitize function for testing
+        $get_query_var_preview = function(){ return false; };
+        $expected = '<ul id="" class="menu"></ul>';
+
+        // Act
+        $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
+        SDES_Static::fallback_navpills_warning($args, $shouldWarn, 
+            $get_query_var_preview, $esc_attr);
+    }
+    public function provide_test_fallback_navpills_warning__DepthNot1__ThrowsNotice(){ return [ [-1], [0], [2], [3], [4] ];}
+
+
 }

@@ -848,6 +848,26 @@ require_once('shortcodes.php');
 
 
 
+add_action( 'init', 'register_navpill_dynamic_menus' );
+function register_navpill_dynamic_menus() {
+    // Add menu locations for all posts/pages that match the WP_Query below.
+    $query_navpill_locations =
+        new WP_Query(
+            array(
+                'post_type' => 'page'
+            )
+    );
+
+    $nav_locations = array();
+    while ( $query_navpill_locations->have_posts() ) {
+        $query_navpill_locations->the_post();
+        $key = SDES_Static::the_locationKey_navpills();
+        $nav_locations[$key] = SDES_Static::the_locationValue_navpills();
+    }
+    wp_reset_postdata(); // Restore original Post Data
+
+    register_nav_menus($nav_locations);
+}
 
 
 

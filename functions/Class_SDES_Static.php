@@ -65,4 +65,60 @@ class SDES_Static
 	    return $class_names;
 	}
 
+	// Generate a key for a post's navpill menu location. Used as the 'theme_location' by wp_nav_menu()'s $args parameter and by the "Currently set to:" in Customizer.
+	public static function the_locationKey_navpills()
+	{
+		//Assume called within TheLoop
+		return "pg-" . the_title_attribute(array('echo'=>false));
+	}
+	// Generate a value for a post's navpill menu location. This is the display text shown in "Menu Locations" and "Manage Locations".
+	public static function the_locationValue_navpills()
+	{
+		//Assume called within TheLoop
+		return "Page " . the_title_attribute(array('echo'=>false));
+	}
+
+
+
+	/** fallback_navpills_warning - Call from wp_nav_menu as the 'fallback_cb' for navpills locations.
+	 *    Optionally show a warning for logged in users (if the navpills are missing).
+	 *  $args - Accepts $args array used by wp_nav_menu (merged with any default values), plus the standard following params:
+	 *  $args['echo'] - Standard echo param, output to stdout if true.
+	 *  $args['warn'] - Boolean flag to display admin message (default to true).
+	 *  $args['warn_message'] - Format string for warning message (where %1$s is expended to the 'theme_location').
+	 *
+	 *  Testing Overrides:
+	 *  $shouldWarn - Override login and capabilities check.
+	 *  $get_query_var - Override call to get_query_var.
+	 *  $esc_attr = Override the sanitize function provided by WordPress (used in testing).
+	 */
+	public static function fallback_navpills_warning($args,
+		$shouldWarn = null, $get_query_var='get_query_var', $esc_attr='esc_attr')
+	{
+		SDES_Static::set_default_keyValue($args, 'echo', false);
+		SDES_Static::set_default_keyValue($args, 'warn', true);
+		SDES_Static::set_default_keyValue($args, 'warn_message', 
+			'<li><a class="text-warning adminmsg" style="color: #8a6d3b !important;" href="/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Warning: No menu set for "%1$s" menu location.</a></li>'
+		);
+
+		if($args['depth'] != 1)	trigger_error("Calling 'fallback_navpills_warning' with a depth that is not 1. The SDES base-theme CSS does not currently support multi-level menus.");
+
+		$shouldWarn = (isset($shouldWarn)) ? $shouldWarn 
+			: SDES_Static::Is_UserLoggedIn_Can('edit_posts');
+
+		//Note: caching implications for conditional output on '?preview=true'
+		$pages = '';
+		if($args['warn'] && !$get_query_var('preview') && $shouldWarn ) {
+			$pages .= sprintf($args['warn_message'], $args['theme_location']);
+		}
+
+		$menu_id = $esc_attr($args['menu_id']);
+		$menu_class = $esc_attr($args['menu_class']);
+		$nav_menu = sprintf( $args['items_wrap'], $menu_id, $menu_class, $pages);
+		if($args['echo']) {
+			echo $nav_menu;
+		}
+		return $nav_menu;
+	}
+
 }
