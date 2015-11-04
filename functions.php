@@ -876,6 +876,24 @@ function register_navpill_dynamic_menus() {
 
 
 
+function customize_admin_bar_menu(){
+    global $wp_admin_bar;
+
+    $settings = (array) get_option( 'sdes_theme_settings' );
+    $dir_acronym = esc_attr( $settings['directory_cms_acronym'] );
+    $office = 'slug/' . $dir_acronym;  //TODO: Update Directory to accept slugs for offices
+    $office = 'details/51';
+
+    $wp_admin_bar->add_menu( array(
+        'id' => 'abm-sdes'
+        , 'title' => 'SDES Directory'
+        , 'href' => 'https://directory.sdes.ucf.edu/admin/office/' . $office
+        , 'meta' => array( 
+            'target' => '_blank' 
+        )
+    ));
+}
+add_action( 'admin_bar_menu', 'customize_admin_bar_menu', 65);
 
 
 
