@@ -897,6 +897,13 @@ add_action( 'admin_bar_menu', 'customize_admin_bar_menu', 65);
 
 
 
+function customize_admin_theme()
+{
+    wp_enqueue_style( 'admin-theme', get_stylesheet_directory_uri() . '/css/admin.css');
+    wp_enqueue_script( 'admin-theme', get_stylesheet_directory_uri() . '/js/admin.js');
+}
+add_action('admin_enqueue_scripts','customize_admin_theme');
+
 
 
 
