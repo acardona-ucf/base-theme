@@ -23,6 +23,11 @@ function register_my_menus() {
 }
 add_action( 'init', 'register_my_menus' );
 
+
+require_once('custom-taxonomies.php');    // Define and Register taxonomies for this theme
+//require_once('custom-post-types.php');  // Define and Register custom post types (CPTs) for this theme
+//TODO: extract Custom Post Type classes to their own file.
+//TODO: customize CPT display text, consider renaming.
 /*-------------------------------------------------------------------------------------------*/
 /* news_list Post Type */
 /*-------------------------------------------------------------------------------------------*/
@@ -112,6 +117,7 @@ class staff_list {
             'capability_type' => 'post',
             'hierarchical' => false,
             'supports' => array('title','editor', 'thumbnail'),
+            'taxonomies' => array('org_groups'),
             'has_archive' => true,
             'rewrite' => array('slug' => 'stafflist'),
             'query_var' => true,
