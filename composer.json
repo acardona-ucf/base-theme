@@ -10,5 +10,12 @@
         "phpunit/php-code-coverage": "^2.2",
         "squizlabs/php_codesniffer": "^2.3",
         "fabpot/php-cs-fixer": "^1.10"
+    },
+    "scripts": {
+        "test": "phpunit -v -c ./tests/phpunit.xml --coverage-html ./tests/cov ./tests/SDES_Static_Tests.php",
+        "test:simple": "phpunit -v -c .\\tests\\phpunit.xml .\\tests\\SDES_Static_Tests.php",
+	"phpcs": "phpcs --ignore=vendor",
+	"phpcs:sum": "phpcs --report=summary --ignore=vendor .",
+        "some-php-script": "php -l .\\vendor\\phpunit\\php-code-coverage\\src\\CodeCoverage.php"
     }
 }

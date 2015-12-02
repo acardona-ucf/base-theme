@@ -1,0 +1,1 @@
+phpunit -v -c .\tests\phpunit.xml --coverage-text .\tests\SDES_Static_Tests.php |% { $_ -replace '\x1b\[([0-9]{1,2}(;[0-9]{1,2}){0,2})?[mGK]', '' }
