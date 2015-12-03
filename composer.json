@@ -9,13 +9,20 @@
         "phpunit/phpunit": "^4.8",
         "phpunit/php-code-coverage": "^2.2",
         "squizlabs/php_codesniffer": "^2.3",
-        "fabpot/php-cs-fixer": "^1.10"
+        "fabpot/php-cs-fixer": "^1.10",
+        "wp-coding-standards/wpcs": "2014-12-11"
     },
     "scripts": {
         "test": "phpunit -v -c ./tests/phpunit.xml --coverage-html ./tests/cov ./tests/SDES_Static_Tests.php",
         "test:simple": "phpunit -v -c .\\tests\\phpunit.xml .\\tests\\SDES_Static_Tests.php",
-	"phpcs": "phpcs --ignore=vendor",
+	"phplint": "php -l",
+	"csfixer": "php-cs-fixer",
+	"phpcs-": "phpcs --ignore=vendor",
+	"phpcs:wp-install": "phpcs --config-set installed_paths %cd%\\vendor\\wp-coding-standards\\wpcs",
+	"phpcs": ["@phpcs:wp-install", "phpcs --ignore=vendor --standard=WordPress"],
 	"phpcs:sum": "phpcs --report=summary --ignore=vendor .",
+	"phpcbf": "phpcbf --no-patch --standard=WordPress",
+	"phpcbf-": "phpcbf",
         "some-php-script": "php -l .\\vendor\\phpunit\\php-code-coverage\\src\\CodeCoverage.php"
     }
 }
