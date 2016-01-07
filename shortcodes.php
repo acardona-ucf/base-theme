@@ -1,6 +1,6 @@
 <?php
 
-require_once('functions/Class_SDES_Static.php');
+require_once('functions/class-sdes-static.php');
 
 /**
  * [menuPanel] - Return an in-line menu panel (DIV.panel) using a user-configured Menu.

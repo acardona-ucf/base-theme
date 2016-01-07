@@ -1,5 +1,5 @@
 <?php
-// require_once('Class_SDES_Static.php');
+// require_once('class-sdes-static.php');
 // require_once('Classes_WP_Customize_Control.php');
 
 // Theme Customizer ///////////////////////////////////////////////////////////

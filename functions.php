@@ -1,5 +1,5 @@
 <?php
-// require_once('functions/Class_SDES_Static.php');
+// require_once('functions/class-sdes-static.php');
 
 /*-------------------------------------------------------------------------------------------*/
 //Home title fix
@@ -342,7 +342,7 @@ add_filter('excerpt_more', 'new_excerpt_more');
 
 
 
-require_once('functions/Class_SDES_Static.php');
+require_once('functions/class-sdes-static.php');
 /*-------------------------------------------------------------------------------------------*/
 /* Reads in and displays department information
 /*-------------------------------------------------------------------------------------------*/
