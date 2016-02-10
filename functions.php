@@ -24,19 +24,26 @@ function register_my_menus() {
 add_action( 'init', 'register_my_menus' );
 
 
+
+// Enqueue Datepicker + jQuery UI CSS
+add_action( 'wp_enqueue_scripts', 'enqueue_scripts_and_styles');
+function enqueue_scripts_and_styles(){
+  wp_enqueue_script( 'jquery-ui-datepicker' );
+  wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
+}
+
+
+
 require_once('custom-taxonomies.php');    // Define and Register taxonomies for this theme
+
 //require_once('custom-post-types.php');  // Define and Register custom post types (CPTs) for this theme
 //TODO: extract Custom Post Type classes to their own file.
 //TODO: customize CPT display text, consider renaming.
-/*-------------------------------------------------------------------------------------------*/
 /* news_list Post Type */
-/*-------------------------------------------------------------------------------------------*/
 class news_list {
-
     function news_list() {
         add_action('init',array($this,'create_post_type'));
     }
-
     function create_post_type() {
         $labels = array(
             'name' => 'news_lists',
@@ -75,18 +82,12 @@ class news_list {
         register_post_type('news_list',$args);
     }
 }
-
 $news_list = new news_list();
-
-/*-------------------------------------------------------------------------------------------*/
 /* staff_list Post Type */
-/*-------------------------------------------------------------------------------------------*/
 class staff_list {
-
     function staff_list() {
         add_action('init',array($this,'create_post_type'));
     }
-
     function create_post_type() {
         $labels = array(
             'name' => 'staff_lists',
@@ -126,20 +127,11 @@ class staff_list {
         register_post_type('staff_list',$args);
     }
 }
-
 $staff_list = new staff_list();
-
-/*-------------------------------------------------------------------------------------------*/
-/* Adds feature image to News, Staff
-/*-------------------------------------------------------------------------------------------*/
+/* Adds feature image to News, Staff */
 add_theme_support( 'post-thumbnails', array('news_list', 'staff_list') );
-
-
-/*-------------------------------------------------------------------------------------------*/
-/* Add thumbnail column to admin page 
-/*-------------------------------------------------------------------------------------------*/
+/* Add thumbnail column to admin page */
 if ( !function_exists('AddThumbColumn') && function_exists('add_theme_support') ) { 
-
     function AddThumbColumn($cols) { 
         $cols['thumbnail'] = __('Thumbnail'); return $cols; 
     } 
@@ -157,24 +149,19 @@ if ( !function_exists('AddThumbColumn') && function_exists('add_theme_support') 
                     $thumb = wp_get_attachment_image( $attachment_id, array($width, $height), true ); 
                 } 
             } 
-            if ( isset($thumb) && $thumb ) { echo $thumb; } else { echo __('None'); 
-        } 
-    }
-} 
-
-
-     // for posts
-add_filter( 'manage_posts_columns', 'AddThumbColumn' ); 
-add_action( 'manage_posts_custom_column', 'AddThumbValue', 10, 2 ); 
-/*     // for pages 
-add_filter( 'manage_pages_columns', 'AddThumbColumn' ); 
-add_action( 'manage_pages_custom_column', 'AddThumbValue', 10, 2 );*/ 
+            if ( isset($thumb) && $thumb ) { echo $thumb; } else { echo __('None'); } 
+        }
+    } 
+    // for posts
+    add_filter( 'manage_posts_columns', 'AddThumbColumn' ); 
+    add_action( 'manage_posts_custom_column', 'AddThumbValue', 10, 2 ); 
+    /*     // for pages 
+    add_filter( 'manage_pages_columns', 'AddThumbColumn' ); 
+    add_action( 'manage_pages_custom_column', 'AddThumbValue', 10, 2 );*/ 
 }
 
 
-/*-------------------------------------------------------------------------------------------*/
-/* function to return a custom field value.
-/*-------------------------------------------------------------------------------------------*/
+/* function to return a custom field value. */
 function get_custom_field( $value ) {
     global $post;
 
@@ -184,27 +171,13 @@ function get_custom_field( $value ) {
 
     return false;
 }
-
-/*-------------------------------------------------------------------------------------------*/
-/* Register the Custom Fields for Custom Post Types
-/*-------------------------------------------------------------------------------------------*/
+/* Register the Custom Fields for Custom Post Types */
 function add_custom_meta_box() {
     add_meta_box( 'meta-box-for-details', __( 'Details', 'sdes' ), 'meta_box_output_for_news', 'news_list' , 'normal', 'high' );
     add_meta_box( 'meta-box-for-details', __( 'Details', 'sdes' ), 'meta_box_output_for_staff', 'staff_list' , 'normal', 'high' );
 }
-
-// Enqueue Datepicker + jQuery UI CSS
-function enqueue_scripts_and_styles(){
-wp_enqueue_script( 'jquery-ui-datepicker' );
-wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
-}
-add_action( 'wp_enqueue_scripts', 'enqueue_scripts_and_styles');
-
 add_action( 'add_meta_boxes', 'add_custom_meta_box' );                                     
-
-/*-------------------------------------------------------------------------------------------*/
-/* Output the Meta box for news
-/*-------------------------------------------------------------------------------------------*/
+/* Output the Meta box for news */
 function meta_box_output_for_news($post) {
     // create a nonce field
     wp_nonce_field('my_news_nonce', 'news_nonce'); ?>  
@@ -239,12 +212,8 @@ function meta_box_output_for_news($post) {
     </script>
     
     <?php
-
 }
-
-/*-------------------------------------------------------------------------------------------*/
-/* Save the Meta box values for news
-/*-------------------------------------------------------------------------------------------*/
+/* Save the Meta box values for news */
 function meta_box_news_save( $post_id ) {
     // Stop the script when doing autosave
     if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
@@ -270,14 +239,9 @@ function meta_box_news_save( $post_id ) {
     // Save the news_link
     if( isset( $_POST['news_link'] ) )
         update_post_meta( $post_id, 'news_link', esc_attr( $_POST['news_link'] ) );
-
 }
-
 add_action( 'save_post', 'meta_box_news_save' );
-
-/*-------------------------------------------------------------------------------------------*/
-/* Output the Meta box for news
-/*-------------------------------------------------------------------------------------------*/
+/* Output the Meta box for news */
 function meta_box_output_for_staff($post) {
     // create a nonce field
     wp_nonce_field('my_staff_nonce', 'staff_nonce'); ?>  
@@ -300,12 +264,9 @@ function meta_box_output_for_staff($post) {
     <br><br><br>
     
     <?php
-
 }
 
-/*-------------------------------------------------------------------------------------------*/
-/* Save the Meta box values for news
-/*-------------------------------------------------------------------------------------------*/
+/* Save the Meta box values for news */
 function meta_box_staff_save( $post_id ) {
     // Stop the script when doing autosave
     if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
@@ -327,11 +288,8 @@ function meta_box_staff_save( $post_id ) {
     // Save the staff_phone
     if( isset( $_POST['staff_phone'] ) )
         update_post_meta( $post_id, 'staff_phone', esc_attr( $_POST['staff_phone'] ) );
-
 }
-
 add_action( 'save_post', 'meta_box_staff_save' );
-
 // Replaces the excerpt "[Read more]" text by a link
 function new_excerpt_more($more) {
    global $post;
@@ -342,10 +300,10 @@ add_filter('excerpt_more', 'new_excerpt_more');
 
 
 
+
+
 require_once('functions/class-sdes-static.php');
-/*-------------------------------------------------------------------------------------------*/
-/* Reads in and displays department information
-/*-------------------------------------------------------------------------------------------*/
+/* Reads in and displays department information */
 function get_department_info($action = NULL) {
     $json = file_get_contents('http://directory.sdes.ucf.edu/feed'); 
     $decodejson = json_decode($json);        
@@ -464,9 +422,7 @@ function get_department_info($action = NULL) {
     return $yield;    
 }
 
-/*-------------------------------------------------------------------------------------------*/
-/* Display hours from directory feed
-/*-------------------------------------------------------------------------------------------*/
+/* Display hours from directory feed */
 function html_site_hours($hours){
     $output = null;
     $collections = array();
@@ -549,9 +505,7 @@ function html_site_hours($hours){
     return $output;
 }
 
-/*-------------------------------------------------------------------------------------------*/
-/* wrapper for calendar feed
-/*-------------------------------------------------------------------------------------------*/
+/* wrapper for calendar feed */
 function render_calendar($id, $limit = 6, $header_text = "Upcoming Events"){
     if($id == null) return true;
     
@@ -625,9 +579,9 @@ function render_calendar($id, $limit = 6, $header_text = "Upcoming Events"){
     return $output;
 }
 
+// Is this function called anywhere?
 function links(){
     $output = null;
-
     if (is_page('Departments')) {
         $output .= '<ul class="nav nav-pills pull-right">';
         $output .= '<li><a href="programs-and-services">Programs and Services</a></li>';
@@ -641,15 +595,17 @@ function links(){
     } elseif (is_page('pagename')) {
             # code...
     }
-
     return $output; 
 }
 
-//new options for admins/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//new options for admins//////////////////////////////////////////////
 
 // Section - group of related fields/settings
 // Field - the label and input area
-// Setting - the actual value saved in the database.  Also called an option.
+// Setting - the actual value saved in the database. Also called an option.
 // Page - container for a collection of sections
 // Tabs - sugar for showing multiple sections
 
@@ -667,16 +623,14 @@ SECTIONS, SETTINGS, AND FIELDS
     Hooks: admin_init
 
 CALLBACKS
-    Functions: settings_errors, settings_fields, do_settings_sections, submit_button
-        POST to options.php, get_options, echo
+    Functions: settings_errors, settings_fields, do_settings_sections, 
+        submit_button, POST to options.php, get_options, echo
     Hooks: n/a (?)
 
 Field-Callback-Option is added to a Page-Section.
-
 */
 
 require_once('functions/SettingsCallbacks.php');
-
 // TODO: Initialize theme settings on theme init (for SDES Directory values, initialize with default value of NULL)
 
 // Add SDES Theme Options Page
@@ -692,10 +646,8 @@ function option_page_settings() {
     // register_setting( $option_group, $option_name, $sanitize_callback );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings' );
 
-
     // add_settings_section( $id, $title, $callback, $page );
     add_settings_section( 'sdes_section_one', 'SDES Theme Settings', 'section_one_callback', 'sdes_settings' );
-
 
     // add_settings_field( $id, $title, $callback,
     //                     $page, $section, $args );
@@ -718,7 +670,7 @@ function option_page_settings() {
                         'sdes_settings', 'sdes_section_one' );
 }
 add_action( 'admin_init', 'option_page_settings' );
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 function menu_with_submenus() {
     // add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
@@ -739,7 +691,7 @@ function menu_with_submenus() {
 }
 add_action( 'admin_menu', 'menu_with_submenus' );
 
-function render_sdes_menu(){
+function render_sdes_menu() {
     ?>
         <br><br>
         This text should be displayed on /wp-admin/admin.php?page=sdes_options
@@ -750,7 +702,7 @@ function render_sdes_menu(){
     <?php
 }
 
-function render_developer_settings(){
+function render_developer_settings() {
     sdes_settings_render();
 }
 
@@ -762,15 +714,13 @@ function redirect_to_customize() {
     <?php
 }
 
-
 /*
 WordPress CSS:
 .nav-tab-wrapper
 .nav-tab
 .nav-tab-active
 */
-function render_tabbed_settings_nav_tabs(&$tabs, $active_tab)
-{
+function render_tabbed_settings_nav_tabs(&$tabs, $active_tab) {
     ?>
     <h3 class="nav-tab-wrapper"> 
         <?php foreach ($tabs as $tab) { 
@@ -785,12 +735,9 @@ function render_tabbed_settings_nav_tabs(&$tabs, $active_tab)
     <?php
 }
 
-
 require_once 'vendor/autoload.php';
 use Underscore\Types\Arrays;
-
 function render_tabbed_settings() {
-
     if( isset( $_GET[ 'slug' ] ) ) {
         $active_tab = $_GET[ 'slug' ];
     }
@@ -878,7 +825,7 @@ function register_navpill_dynamic_menus() {
 
 
 
-function customize_admin_bar_menu(){
+function customize_admin_bar_menu() {
     global $wp_admin_bar;
 
     $settings = SDES_Static::get_theme_mod_defaultIfEmpty(
@@ -901,8 +848,7 @@ add_action( 'admin_bar_menu', 'customize_admin_bar_menu', 65);
 
 
 
-function customize_admin_theme()
-{
+function customize_admin_theme() {
     wp_enqueue_style( 'admin-theme', get_stylesheet_directory_uri() . '/css/admin.css');
     wp_enqueue_script( 'admin-theme', get_stylesheet_directory_uri() . '/js/admin.js');
 }
