@@ -87,7 +87,10 @@ Similar to: javadoc, jsdoc
 
 --
 [1]: Specifcally, [Chef Solo](https://docs.chef.io/chef_solo.html)
+
 [2]: Hosts file on windows: c:\Windows\System32\drivers\etc\hosts (must edit as administrator).
+
 [3]: By default, VCCW uses Virtualbox's NAT networking mode.
+
 [4]: You may want to add an NTFS junction point that links from your c:\github folder and targets the cloned folder's location. From cmd.exe, run `mklink /j` (or using Powershell Community Extenions, `new-junction`). Creating a junction in the other direction (targeting the vccw folder) will be difficult/impossible due to Virtualbox security concerns, involving the setting ```VBoxManage.exe setextradata <VM Name> VBoxInternal2/SharedFoldersEnableSymlinksCreate/<volume> 1```.
 [NTFS junction]: See https://en.wikipedia.org/wiki/NTFS_junction_point and http://www.hanselman.com/blog/MoreOnVistaReparsePoints.aspx
