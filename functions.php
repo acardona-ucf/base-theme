@@ -881,7 +881,9 @@ function register_navpill_dynamic_menus() {
 function customize_admin_bar_menu(){
     global $wp_admin_bar;
 
-    $settings = (array) get_option( 'sdes_theme_settings' );
+    $settings = SDES_Static::get_theme_mod_defaultIfEmpty(
+                'sdes_theme_settings',
+                array( 'directory_cms_acronym'=>'' ) );
     $dir_acronym = esc_attr( $settings['directory_cms_acronym'] );
     $office = 'slug/' . $dir_acronym;  //TODO: Update Directory to accept slugs for offices
     $office = 'details/51';

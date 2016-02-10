@@ -4,8 +4,8 @@
 		// Template Function
 		// wp.customize( 'theme_customizer_setting_name', function( value ) {
 		// 	value.bind( function( to ) {
-		// 		// Bind dynamically using javascript when using Them Customizer inferace.
-		//		// This will match anywhere that you use get_theme_mod() for this setting..
+		// 		// Bind dynamically using javascript when using Theme Customizer inferace.
+		//		// This will match anywhere that you use get_theme_mod() for this setting.
 		// 	});
 		// });
 
