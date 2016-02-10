@@ -14,6 +14,7 @@ WordPress theme for SDES Template Rev. 2015 layout.
 # Virtual Machine for Local Development
 [VCCW](http://vccw.cc/) is a configuation/stack for setting up a virtual development environment with VirtualBox + Vagrant + Chef + WordPress. The virtual machine is run on [VirtualBox](https://www.virtualbox.org/). Vagrant spins up a virtual machine harddrive from a template "box", [Chef](https://www.chef.io/chef/)[1] is used for configuration management, and WordPress is already installed with all requirements/dependencies, along with a suite of tools.
 Quick Install notes (see VCCW homepage for details):
+
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 2. Install [Vagrant](https://www.vagrantup.com/downloads.html).
 3. Download the vccw harddrive image with vagrant: `vagrant box add miya0001/vccw --box-version ">=2.19.0"` (this may take a long time -- 1.55GB+ download)
