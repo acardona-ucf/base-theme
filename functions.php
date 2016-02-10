@@ -677,6 +677,8 @@ Field-Callback-Option is added to a Page-Section.
 
 require_once('functions/SettingsCallbacks.php');
 
+// TODO: Initialize theme settings on theme init (for SDES Directory values, initialize with default value of NULL)
+
 // Add SDES Theme Options Page
 function options_page() {
     // Add page under regular settings area
