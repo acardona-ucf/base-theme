@@ -54,13 +54,13 @@ li:empty{
 .container.header{
 	margin: 2.5em auto 1.5em;
 }
-
 .site-title{
 	font-size: 3.5em;
 	letter-spacing: -2px;
 	line-height: 1em;
 }
 
+/* TODO: Should .site-subtitle be renamed to .site-tagline or .site-description to match the built-in Theme Customizer field? */
 .site-subtitle{
 	color: #777;
 	display: inline-block;

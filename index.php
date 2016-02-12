@@ -8,12 +8,10 @@ if(is_front_page()){
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 	<?php if(is_front_page()){ ?>
 	<?php
-		$settings = SDES_Static::get_theme_mod_defaultIfEmpty(
-					'sdes_theme_settings',
-			 		array( 'directory_cms_acronym'=>null ) );
+		$directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'));
 		$departmentInfo = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
-		if( null != $settings['directory_cms_acronym'] && !ctype_space($settings['directory_cms_acronym']) ) {
-			$departmentInfo = get_department_info(esc_attr( $settings['directory_cms_acronym'] ));
+		if( null != $directory_cms_acronym && !ctype_space($directory_cms_acronym) ) {
+			$departmentInfo = get_department_info( $directory_cms_acronym );
 		}
 	?>    
 

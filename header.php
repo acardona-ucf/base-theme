@@ -44,7 +44,9 @@
 		<div class="site-title">
 			<a href="#"><?php bloginfo('name'); ?></a>
 			<div class="site-subtitle">
-				<a href="<?= SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ); ?>"><?= html_entity_decode(get_bloginfo('description')); ?></a>
+				<a href="<?= SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ); ?>">
+					<?= html_entity_decode(get_bloginfo('description')); ?>
+				</a>
 			</div>
 		</div>
 	</div>

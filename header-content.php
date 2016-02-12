@@ -19,41 +19,43 @@
 	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.min.js"></script>
 
 	
-	<?php $settings = (array) get_option( 'sdes_theme_settings' ); ?>
-	<?php if (!empty($settings['javascript'])) { ?>			
+	<?php
+		$sdes_theme_settings_js = esc_attr(get_option('sdes_theme_settings_js', ''));
+		if ( '' != $sdes_theme_settings_js )
+		{ ?>
 		<script>
 			$(document).ready(function(){
-				<?= $settings['javascript'] ?>
+				<?= $sdes_theme_settings_js ?>
 			});	
 		</script>
 	<?php } ?>
 
-	<?php if (!empty($settings['javascript_libraries'])) { ?>			
-		<script type="text/javascript" src="<?= $settings['javascript_libraries'] ?>"></script>
+	<?php $sdes_theme_settings_js_lib = esc_attr(get_option('sdes_theme_settings_js_lib', ''));
+		if ( '' != $sdes_theme_settings_js_lib )
+		  { ?>			
+			<script type="text/javascript" src="<?= $sdes_theme_settings_js_lib ?>"></script>
 	<?php } ?>
 
-	<?php if (!empty($settings['google_analytics_id'])) { ?>
+	<?php
+		$sdes_theme_settings_ga_id = esc_attr(get_option('sdes_theme_settings_ga_id', ''));
+		if ( '' != $sdes_theme_settings_ga_id )
+		{ ?>
 		<script>
-
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-			ga('create', "<?= $settings['google_analytics_id'] ?>", 'ucf.edu');
+			ga('create', "<?= $sdes_theme_settings_ga_id ?>", 'ucf.edu');
 			ga('send', 'pageview');
-			
 		</script>
 	<?php } ?>
 
-	<?php if (!empty($settings['css'])) { ?>			
-		<link rel="stylesheet" href="<?= $settings['css'] ?>">
-	<?php } ?>
-
-	<?php if (!empty($settings['subtitle'])) { 
-		$subtitle = explode(":", $settings['subtitle']);
-	 } ?>
-	
+	<?php
+		$sdes_theme_settings_css = esc_attr(get_option('sdes_theme_settings_css', ''));
+		if ( '' != $sdes_theme_settings_css )
+		  { ?>		
+			<link rel="stylesheet" href="<?= $sdes_theme_settings_css ?>">
+	<?php } ?>	
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -69,7 +71,9 @@
 		<div class="site-title">
 			<a href="#"><?php bloginfo('name'); ?></a>
 			<div class="site-subtitle">
-				<a href="<?= $subtitle[1] ?>"><?= $subtitle[0] ?></a>
+				<a href="<?= SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ); ?>">
+					<?= html_entity_decode(get_bloginfo('description')); ?>
+				</a>
 			</div>
 		</div>
 	</div>
