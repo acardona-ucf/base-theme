@@ -12,18 +12,33 @@ WordPress theme for SDES Template Rev. 2015 layout.
 
 
 # Virtual Machine for Local Development
-[VCCW](http://vccw.cc/) is a configuation/stack for setting up a virtual development environment with VirtualBox + Vagrant + Chef + WordPress. The virtual machine is run on [VirtualBox](https://www.virtualbox.org/). Vagrant spins up a virtual machine harddrive from a template "box", [Chef](https://www.chef.io/chef/)[1] is used for configuration management, and WordPress is already installed with all requirements/dependencies, along with a suite of tools.
-Quick Install notes (see VCCW homepage for details):
+[VCCW](http://vccw.cc/) is a configuation/stack for setting up a virtual development environment with Vagrant + VirtualBox + CentOS + Chef + WordPress.
+* [Vagrant](https://www.vagrantup.com/) spins up a virtual machine harddrive from a template "box".
+* [VirtualBox](https://www.virtualbox.org/) runs the virtual machine.
+* [CentOS](https://www.centos.org/) is a redhat compatible Linux distro.
+* [Chef](https://www.chef.io/chef/)<sup id="a1">[1](#fn1)</sup> is used for configuration management.
+* [WordPress](https://wordpress.org/) is already installed with all requirements/dependencies, along with a suite of development tools, including [WP-CLI](http://wp-cli.org/), [PHP Composer](https://getcomposer.org/), and [PHPUnit](https://phpunit.de/).
 
-1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
-2. Install [Vagrant](https://www.vagrantup.com/downloads.html).
+Quick Install notes (see [VCCW homepage](http://vccw.cc/) for more details):
+
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads). The installer may temporarily disable the network and/or require a restart.
+2. Install [Vagrant](https://www.vagrantup.com/downloads.html). This may require a restart (adds to $env:PATH).
 3. Download the vccw harddrive image with vagrant: `vagrant box add miya0001/vccw --box-version ">=2.19.0"` (this may take a long time -- 1.55GB+ download)
 4. Create a folder for the Vagrant virtual machine (based on, for example: https://github.com/vccw-team/vccw/archive/2.19.0.zip)
 5. From cmd.exe or powershell, `cd` into the directory.
-6. If you wish to customize any local settings, `cp provision\default.yml site.yml` and edit site.yml.
+6. Make a site.yml file in the Vagrant directory via: `cp provision\default.yml site.yml` and edit the following values:
+   ```
+   multisite: true
+   plugins:
+     - dynamic-hostname
+     - wp-total-hacks
+     - tinymce-templates
+     - what-the-file
+     - wordpress-mu-domain-mapping
+   ```
 7. `vagrant up` (initial provisioning may take several minutes).
-8. Add an entry to your HOSTS file[2] for the VM's IP address[3]: `192.168.33.10 vccw.dev`
-9. Clone this repository to the "www\wordpress\wp-content\themes\" folder of your vccw-x.xx.x installation. Use either GitHub for windows or `git clone https://github.com/ucf-sdes-it/base-theme.git`[4].
+8. Add an entry to your HOSTS file<sup id="a2">[2](#fn2)</sup>. for the VM's IP address<sup id="a3">[3](#fn3)</sup>.: `192.168.33.10 vccw.dev`
+9. Clone this repository to the "www\wordpress\wp-content\themes\" folder of your vccw-x.xx.x installation. Use either GitHub for windows or `git clone https://github.com/ucf-sdes-it/base-theme.git`<sup id="a4">[4](#fn4)</sup>.
 10. Access the WordPress install in your browser from http://vccw.dev/ or http://192.168.33.10 and develop as normal.  The following Vagrant commands may prove useful:
   - Start/Recreate VM: `vagrant up`
   - Suspend VirtualBox VM:  `vagrant suspend`
@@ -32,6 +47,8 @@ Quick Install notes (see VCCW homepage for details):
   - Restart and reload Vagrantfile: `vagrant reload`
   - Delete VM (leaves directory from step 4 intact): `vagrant destroy` (this may take several minutes).
   Consult `vagrant help` or the [Vagrant Documentation](https://www.vagrantup.com/docs/) for additional information.
+11. Remember to "Network Activate" the theme from http://vccw.dev/wp-admin/network/themes.php
+12. Optionally, install [vagrant-multi-putty](https://github.com/nickryand/vagrant-multi-putty) with `vagrant plugin install vagrant-multi-putty`.  This enables the command `vagrant putty` to open an SSH session using PuTTY<sup id="a5">[5](#fn5)</sup>.
 
 VCCW also offers another VM specifcally for [Theme Reviewing](https://github.com/vccw-team/vccw-for-theme-review).
 Testing in a fresh environment could be useful after feature completion, whether for a feature branch or alpha testing.
@@ -87,11 +104,14 @@ Similar to: javadoc, jsdoc
 
 
 --
-[1]: Specifcally, [Chef Solo](https://docs.chef.io/chef_solo.html)
+<a id="fn1"/>[^1](#a1): Specifcally, [Chef Solo](https://docs.chef.io/chef_solo.html)
 
-[2]: Hosts file on windows: c:\Windows\System32\drivers\etc\hosts (must edit as administrator).
+<a id="fn2"/>[^2](#a2): Hosts file on windows: c:\Windows\System32\drivers\etc\hosts (must edit as administrator).
 
-[3]: By default, VCCW uses Virtualbox's NAT networking mode.
+<a id="fn3"/>[^3](#a3)</span>: By default, VCCW uses Virtualbox's [NAT networking mode](http://www.virtualbox.org/manual/ch06.html#network_nat) for Adapter 1 and [Host-only networking](http://www.virtualbox.org/manual/ch06.html#network_hostonly) for Adapter 2.
 
-[4]: You may want to add an NTFS junction point that links from your c:\github folder and targets the cloned folder's location. From cmd.exe, run `mklink /j` (or using Powershell Community Extenions, `new-junction`). Creating a junction in the other direction (targeting the vccw folder) will be difficult/impossible due to Virtualbox security concerns, involving the setting ```VBoxManage.exe setextradata <VM Name> VBoxInternal2/SharedFoldersEnableSymlinksCreate/<volume> 1```.
-[NTFS junction]: See https://en.wikipedia.org/wiki/NTFS_junction_point and http://www.hanselman.com/blog/MoreOnVistaReparsePoints.aspx
+<a id="fn4"/>[^4](#a4): You may want to add an NTFS junction point* that links from your c:\github folder and targets the cloned folder's location. From cmd.exe, run `mklink /j` (or using Powershell Community Extenions, `new-junction`). Creating a junction in the other direction (targeting the vccw folder) will be difficult/impossible due to Virtualbox security concerns, involving the setting ```VBoxManage.exe setextradata <VM Name> VBoxInternal2/SharedFoldersEnableSymlinksCreate/<volume> 1```.
+
+<a id="fn5"/>[^5](#a5): [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) is a windows and *nix client for SSH, telnet, and rlogin. To use the VM's private key instead of a password every time, follow [these instructions](https://github.com/nickryand/vagrant-multi-putty#ssh-private-key-conversion-using-puttygen) with `vccw-x.xx.x\.vagrant\machines\vccw.dev\virtualbox\private_key`.
+
+*[NTFS junction point]: See https://en.wikipedia.org/wiki/NTFS_junction_point and http://www.hanselman.com/blog/MoreOnVistaReparsePoints.aspx
