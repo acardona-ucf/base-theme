@@ -2,12 +2,18 @@
 
 require_once('class-sdes-static.php');
 /**
-*  Helper methods for working with the Theme Customizer 
+* Helper methods for working with the Theme Customizer.
+* @see SDES_Static::set_default_keyValue()	Set default value for an args array.
+* @see https://codex.wordpress.org/Class_Reference/WP_Customize_Manager/add_setting
+* @see https://codex.wordpress.org/Class_Reference/WP_Customize_Manager/add_control
+* @see https://developer.wordpress.org/themes/advanced-topics/customizer-api/
+* @see https://codex.wordpress.org/Theme_Customization_API
 */
 class SDES_Customizer_Helper
 {
 	/**
 	* Switch on the control type.
+	* @see SDES_Customizer_Helper::add_setting_and_control__WP_Customize_Control()
 	*/
 	public static function add_setting_and_control($controlType, $wp_customizer, $id, $label, $section, $args)
 	{
@@ -27,6 +33,7 @@ class SDES_Customizer_Helper
 
 	/**
 	* Add a setting and control for a WP_Customize_Control.
+	* @see SDES_Customizer_Helper::add_setting_and_control
 	*/
 	public static function add_setting_and_control__WP_Customize_Control($wp_customizer, $id, $label, $section, $args){
 		SDES_Static::set_default_keyValue($args, 'default', '');
@@ -36,7 +43,7 @@ class SDES_Customizer_Helper
 		SDES_Static::set_default_keyValue($args, 'capability', 'edit_theme_options');
 		SDES_Static::set_default_keyValue($args, 'setting_type', 'theme_mod');
 		SDES_Static::set_default_keyValue($args, 'theme_supports', '');
-		SDES_Static::set_default_keyValue($args, 'type', 'text');
+		SDES_Static::set_default_keyValue($args, 'control_type', 'text');
 
 		$wp_customizer->add_setting(
 			$id,
@@ -58,7 +65,7 @@ class SDES_Customizer_Helper
 					'label'    => $label,
 					'section'  => $section,
 					'settings' => $id,
-					'type' => $args["type"],
+					'type' => $args["control_type"],
 				)
 			)
 		);
