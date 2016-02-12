@@ -8,9 +8,26 @@
 				?> 
 				
 				<p class="nav navbar-text navbar-right icons">
-					<a href="#"><img src="<?php bloginfo('template_url'); ?>/images/facebook.png" alt="icon" title="Facebook"></a>
-					<a href="#"><img src="<?php bloginfo('template_url'); ?>/images/twitter.png" alt="icon" title="Twitter"></a>
-					<a href="#"><img src="<?php bloginfo('template_url'); ?>/images/youtube.png" alt="icon" title="YouTube"></a>
+				<?php
+					$url_facebook = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-facebook', '');
+					$url_twitter = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-twitter', '');
+					$url_youtube = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-youtube', '');
+					if( '' != $url_facebook) { 
+					?>
+					<a href="<?= $url_facebook ?>">
+						<img src="<?php bloginfo('template_url'); ?>/images/facebook.png" alt="icon" title="Facebook">
+					</a>
+				<?php } 
+					if( '' != $url_twitter) { ?>
+					<a href="<?= $url_twitter ?>">
+						<img src="<?php bloginfo('template_url'); ?>/images/twitter.png" alt="icon" title="Twitter">
+					</a>
+				<?php }
+					if( '' != $url_youtube) {?>
+					<a href="<?= $url_youtube ?>">
+						<img src="<?php bloginfo('template_url'); ?>/images/youtube.png" alt="icon" title="YouTube">
+					</a>
+				<?php } ?>
 					<a href="http://get.adobe.com/reader/"><img src="<?php bloginfo('template_url'); ?>/images/content-end-pdf.jpg" alt="icon" title="Get Adobe Reader"></a>
 				</p>
 			</div>

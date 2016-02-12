@@ -56,6 +56,8 @@ function register_theme_customizer( $wp_customizer ) {
 	add_section_ContactOptions($wp_customizer);
 
 	add_to_section_TitleAndTagline($wp_customizer);
+
+	add_section_social_options($wp_customizer);
 }
 add_action( 'customize_register', 'register_theme_customizer' );
 
@@ -232,6 +234,7 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 
 
 
+// TODO: should tagline be called description to match the built-in Theme Customizer name? And/or should CSS .site-subtitle be updated?
 function add_to_section_TitleAndTagline( $wp_customizer, $args = null) {
 	$section = 'title_tagline';
 
@@ -246,6 +249,63 @@ function add_to_section_TitleAndTagline( $wp_customizer, $args = null) {
 		'Tagline URL',				// label
 		$section,					// section
 		$taglineURL_args			// arguments array
+	);
+}
+
+
+/** Register the social_options section, add settings and controls. */
+function add_section_social_options( $wp_customizer, $args = null) {
+	/* SECTION */
+	$section = 'sdes_rev_2015-social_options';
+	$wp_customizer->add_section(
+		$section,
+		array(
+			'title'    => 'Social',
+			'priority' => 300,
+			'panel' => $args['panelId'],
+		)
+	);
+
+	/* ARGS */
+	// TODO: Sanitize social links.
+	$facebook_args = $args['sdes_rev_2015-facebook'];
+	SDES_Static::set_default_keyValue($facebook_args, 'sanitize_callback', 'esc_url');
+	SDES_Static::set_default_keyValue($facebook_args, 'sanitize_js_callback', 'esc_url');
+
+	$twitter_args = $args['sdes_rev_2015-twitter'];
+	SDES_Static::set_default_keyValue($twitter_args, 'sanitize_callback', 'esc_url');
+	SDES_Static::set_default_keyValue($twitter_args, 'sanitize_js_callback', 'esc_url');
+
+	$youtube_args = $args['sdes_rev_2015-youtube'];
+	SDES_Static::set_default_keyValue($youtube_args, 'sanitize_callback', 'esc_url');
+	SDES_Static::set_default_keyValue($youtube_args, 'sanitize_js_callback', 'esc_url');
+
+	/* FIELDS */
+	// Facebook
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-facebook',	// id
+		'Facebook',				// label
+		$section,				// section
+		$facebook_args			// arguments array
+	);
+
+	// Twitter
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			 // WP_Customize_Manager
+		'sdes_rev_2015-twitter', // id
+		'Twitter',				 // label
+		$section,				 // section
+		$twitter_args			 // arguments array
+	);
+
+	// Youtube
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			 // WP_Customize_Manager
+		'sdes_rev_2015-youtube', // id
+		'Youtube',				 // label
+		$section,				 // section
+		$twitter_args			 // arguments array
 	);
 }
 
