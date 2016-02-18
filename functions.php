@@ -894,5 +894,6 @@ add_action('admin_enqueue_scripts','customize_admin_theme');
 
 
 
+require_once( 'functions/class-render-template.php' );
 
 //TODO: add screenshot.png for Theme.

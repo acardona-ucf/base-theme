@@ -55,17 +55,15 @@
 						</ul>
 					</div>
 					<div class="col-md-4">
-						<h2>UCF Today News</h2>
-						<ul>
-							<li><a href="#">UCFs First C-USA Athlete of the Year</a></li>
-							<li><a href="#">Tech Time Conference to Provide Computer Tips</a></li>
-							<li><a href="#">UCF Composer Partners with Innovative Arts Al&hellip;</a></li>
-							<li><a href="#">Meet Thomas Bryer: Teaching Students About Th&hellip;</a></li>
-							<li><a href="#">Magazine Names 5 UCF Leaders, 8 Alumni to Orl&hellip;</a></li>
-							<li><a href="#">Greek Students Achieve Record GPAs</a></li>
-							<li><a href="#">Workshop Focuses on Jail-to-Community Transition</a></li>
-							<li><a href="#">Jeanette Bolden: Gold Medalist and Hall of Fa&hellip;</a></li>
-						</ul>
+						<?php
+							/* TODO: consider caching ['anchors'] with WP Transients, or a general php alternative
+							 * (libraries like C#'s memorycache, not servers like memcached, redis).
+							 * Maybe desarrolla2/cache, doctrine/cache, or something under cache/cache on Packagist.org
+							 */
+							$ctx_ucf_today['header'] = 'UCF Today News';
+							$ctx_ucf_today['anchors'] = SDES_Static::get_rss_links_and_titles( 'http://today.ucf.edu/feed/' );
+							Render_Template::footer_links( $ctx_ucf_today );
+						?>
 					</div>
 					<div class="col-md-4">
 						<h2>Search</h2>

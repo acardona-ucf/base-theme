@@ -23,6 +23,36 @@ class SDES_Static
 	}
 
 
+	// TODO: add tests, try-catch block.
+	/**
+	 * Return a collection links and titles from an RSS feed.
+	 * @param string           $uri           The uri of the RSS feed.
+	 * @param int              $max_count         The number of items to return.
+	 * @param int              $char_limit    Limit the number of characters in the titles, add &hellip; if over.
+	 * @param SimpleXMLElement $xml           Reuse an existing SimpleXMLElement.
+	 * @return Array A collection of anchors (array of arrays). Each anchor has the keys: 'link', 'title'.
+	 */
+	public static function get_rss_links_and_titles( $uri,
+		$max_count = 8, $char_limit = 45,
+		$xml = null ) {
+		if ( null === $xml ) { $xml = simplexml_load_file( $uri ); }
+
+		$output = array();
+		$i = 0;  // TODO: refactor with generator pattern when VCCW upgrades to PHP 5.5+.
+		foreach ( $xml->channel->item  as $idx => $item ) if ( $i++ < $max_count ) {
+			$title_truncated
+				= ( strlen( $item->title ) > $char_limit )
+					? substr( $item->title, 0, $char_limit ) . '&hellip;'
+					: (string) $item->title;
+			$output[] = [
+				'link' => (string) $item->link,
+				'title' => $title_truncated,
+			];
+		}
+		return $output;
+	}
+
+
 	// TODO: Needs tests.
 	/**
 	 * Always include an area code, show only numbers and the dash symbol, always show 2 dashes.
@@ -84,9 +114,9 @@ class SDES_Static
 	 * @param string $filter_tag	A filter to pass to apply_filters.
 	 */
 	public static function Get_ClassNames( $wp_post, $filter_tag = '' ) {
-	    $classes = empty( $wp_post->classes ) ? array() : (array) $wp_post->classes;
-	    $class_names = join( ' ', apply_filters( $filter_tag, array_filter( $classes ), $wp_post ) );
-	    return $class_names;
+		$classes = empty( $wp_post->classes ) ? array() : (array) $wp_post->classes;
+		$class_names = join( ' ', apply_filters( $filter_tag, array_filter( $classes ), $wp_post ) );
+		return $class_names;
 	}
 
 	/**
