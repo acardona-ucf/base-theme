@@ -13,6 +13,47 @@ require_once( 'class-sdes-static.php' );
 class Render_Template
 {
 	/**
+	 * HTML for contact block in the footer.
+	 * @see Render_Template::echo_and_validate
+	 * @see SDES_Static::set_default_keyValue()
+	 * @param Array $context Array containing key-value pairs to insert into the HTML template.
+	 *  Context variables:
+	 *   header => The H2 header for this block (defaults to "Contact").
+	 *   departmentName => The department name.
+	 *   phone => The department phone number.
+	 *   email => The department email.
+	 *   buildingNumber => The department building number used by map.ucf.edu.
+	 *   buildingName => The name of the building.
+	 * @param Array $args  Any additional arguments for this function.
+	 *  Bool   echo          Flag to whether to echo or return text (defaults to true).
+	 *  String validate_with Specify how to validate before echoing.
+	 * @return null|String  Echo the html or return as a string.
+	 */
+	public static function footer_contact( $context, $args = null ) {
+		SDES_Static::set_default_keyValue( $context, 'header', 'Contact' );
+
+		SDES_Static::set_default_keyValue( $args, 'echo', true );
+		SDES_Static::set_default_keyValue( $args, 'validate_with', 'wp_kses' );
+
+		ob_start();
+		?>
+		<h2><?= $context['header'] ?></h2>
+		<p>
+			<?= $context['departmentName'] ?><br />
+			Phone: <?= $context['phone'] ?> &bull; Email: <a href="mailto:<?= $context['email'] ?>"><?= $context['email'] ?></a><br />
+			Location: <a href="http://map.ucf.edu/?show=<?= $context['buildingNumber'] ?>">
+				<?= $context['buildingName'] . ' ' . $context['roomNumber'] ?>
+			</a>
+		</p>
+		<?php
+		if ( false === $args['echo'] ) {
+			return ob_get_clean();
+		} else {
+			Render_Template::echo_and_validate( ob_get_clean(), $args );
+		}
+	}
+
+	/**
 	 * Render HTML for footer links with a given context.
 	 * @see Render_Template::echo_and_validate
 	 * @see SDES_Static::set_default_keyValue()

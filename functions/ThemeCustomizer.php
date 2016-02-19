@@ -133,16 +133,35 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 
 	$args['sdes_rev_2015-email']['transport'] = 'refresh';
 	$args['sdes_rev_2015-email']['default'] = 'StudentDevelopmentEnrollmentServices@ucf.edu';
-
-
+	
 	$section = 'sdes_rev_2015-contact_options';
 	$wp_customizer->add_section(
 		$section,
 		array(
-			'title'    => 'Contact Box',
+			'title'    => 'Contact Information',
 			'priority' => 250,
 			'panel' => $args['panelId'],
 		)
+	);
+
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-departmentName', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-buildingName', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-buildingNumber', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-roomNumber', array() );
+
+	$departmentName_args = $args['sdes_rev_2015-departmentName'];
+	SDES_Static::set_default_keyValue($departmentName_args, 'default', get_bloginfo( 'name' ) );
+	$buildingName_args = $args['sdes_rev_2015-buildingName'];
+	$buildingNumber_args = $args['sdes_rev_2015-buildingNumber'];
+	$roomNumber_args = $args['sdes_rev_2015-roomNumber'];
+
+	// departmentName
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-departmentName',	// id
+		'Department Name',		// label
+		$section,				// section
+		$departmentName_args	// arguments array
 	);
 
 
@@ -223,12 +242,39 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 
 
 	// Email
-	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
 		$wp_customizer,			// WP_Customize_Manager
 		'sdes_rev_2015-email',	// id
 		'Email',				// label
 		$section,				// section
-		$args['sdes_rev_2015-email']			// arguments array
+		$args['sdes_rev_2015-email']	// arguments array
+	);
+
+	// buildingName
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,					// WP_Customize_Manager
+		'sdes_rev_2015-buildingName',	// id
+		'Building Name',				// label
+		$section,						// section
+		$buildingName_args				// arguments array
+	);
+
+	// buildingNumber
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,					// WP_Customize_Manager
+		'sdes_rev_2015-buildingNumber',	// id
+		'Building Number',				// label
+		$section,						// section
+		$buildingNumber_args			// arguments array
+	);
+
+	// roomNumber
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,					// WP_Customize_Manager
+		'sdes_rev_2015-roomNumber',		// id
+		'Room Number',					// label
+		$section,						// section
+		$roomNumber_args				// arguments array
 	);
 }
 

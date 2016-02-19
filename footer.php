@@ -81,13 +81,20 @@
 								</div>
 							</fieldset>
 						</form>
-
-						<h2>Contact</h2>
-						<p>
-							Student Development and Enrollment Services<br />
-							Phone: 407-823-4625 &bull; Email: <a href="mailto:sdes@ucf.edu">sdes@ucf.edu</a><br />
-							Location: <a href="http://map.ucf.edu/?show=1">Millican Hall 282</a>
-						</p>
+						<?php
+							// TODO: should directory CMS feed be more granular?
+							require_once( 'functions/class-sdes-helper.php' );
+							$directory_cms_acronym = esc_attr( get_option( 'sdes_theme_settings_dir_acronym' ) );
+							$dept_feed = SDES_Helper::get_sdes_directory_department( $directory_cms_acronym );
+							
+							$ctx_contact['departmentName'] = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-departmentName', $dept_feed['name'] );
+							$ctx_contact['phone'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-phone', $dept_feed['phone'] );
+							$ctx_contact['email'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', $dept_feed['email'] );
+							$ctx_contact['buildingNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-buildingNumber', $dept_feed['location']['buildingNumber'] );
+							$ctx_contact['buildingName'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-buildingName', $dept_feed['location']['building'] );
+							$ctx_contact['roomNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-roomNumber', $dept_feed['location']['roomNumber'] );
+							Render_Template::footer_contact( $ctx_contact );
+						?>
 					</div>
 				</div>
 			</div>
