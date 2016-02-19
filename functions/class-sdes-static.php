@@ -89,14 +89,15 @@ class SDES_Static
 	 * WordPress functions
 	 ***********************/
 	/**
-	 * Returns the default even if the value in the database is null or whitespace.
+	 * Returns the default even if the value in the database is null, whitespace, or an empty string.
 	 * @param string $value				The theme modification name to pass to get_theme_mod.
 	 * @param string $default_to		Default value to return.
 	 * @param string $get_theme_mod		Reference to the get_theme_mod function, or a mock for testing.
 	 */
 	public static function get_theme_mod_defaultIfEmpty( $value, $default_to, $get_theme_mod = 'get_theme_mod' ) {
 		$output = $get_theme_mod( $value, $default_to );  // Default if no value stored in database.
-		if ( null === $output || ctype_space( $output ) ) { $output = $default_to; } // If value in database is null or whitespace.
+		// Default if value in db is null, empty string, or whitespace.
+		if ( null === $output || '' === $output || ctype_space( $output ) ) { $output = $default_to; }
 		return $output;
 	}
 
