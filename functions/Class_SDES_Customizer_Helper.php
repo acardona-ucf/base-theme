@@ -33,6 +33,7 @@ class SDES_Customizer_Helper
 
 	/**
 	* Add a setting and control for a WP_Customize_Control.
+	* @see http://codex.wordpress.org/Class_Reference/WP_Customize_Control
 	* @see SDES_Customizer_Helper::add_setting_and_control
 	*/
 	public static function add_setting_and_control__WP_Customize_Control($wp_customizer, $id, $label, $section, $args){
