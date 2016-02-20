@@ -34,6 +34,40 @@
 		</nav>
 	</div>
 
+<?php
+	require_once('functions/class-sdes-helper.php');
+	class Footer {
+		public static function get_header( $position = 'center', $ctx_header = null, $template_args = null) {
+			$default_header = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_header-{$position}", 'UCF Today News' );
+			SDES_Static::set_default_keyValue( $ctx_header, 'header', $default_header);
+			return Render_Template::footer_header( $ctx_header, $template_args );
+		}
+
+		public static function get_feed_links( $position = 'center', $ctx_links = null, $template_args = null) {
+			/* TODO: consider caching ['anchors'] with WP Transients, or a general php alternative
+			 * (libraries like C#'s memorycache, not servers like memcached, redis).
+			 * Maybe desarrolla2/cache, doctrine/cache, or something under cache/cache on Packagist.org
+			 */
+			$rss_url = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_feed-{$position}", 'http://today.ucf.edu/feed/' );
+			$default_anchors = SDES_Static::get_rss_links_and_titles( $rss_url );
+			SDES_Static::set_default_keyValue( $ctx_links, 'anchors', $default_anchors );
+			return Render_Template::footer_links( $ctx_links, $template_args );
+		}
+
+		public static function get_nav_menu( $position = 'center' ) {
+			return
+				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
+				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
+					'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages',
+					'links_cb' => ['Footer::get_feed_links', [$position, ['echo'=>false]] ],
+				) );
+		}
+
+		public static function should_show_nav_menu( $position = 'center' ) {
+			return SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_showLinks-{$position}", false );
+		}
+	}
+?>
 	<!-- footers -->
 	<footer class="site-footer-container">
 
@@ -42,27 +76,23 @@
 			<div class="container"> 
 				<div class="row">
 					<div class="col-md-4">
-						<h2>Site Hosted by SDES</h2>
-						<ul>
-							<li><a href="http://www.sdes.ucf.edu/">Student Development and Enrollment Services</a></li>
-							<li><a href="http://www.sdes.ucf.edu/about">What is SDES? / Students, Parents, Faculty, Staff</a></li>
-							<li><a href="http://www.sdes.ucf.edu/departments">SDES Departments, Offices, and Services</a></li>
-							<li><a href="http://www.sdes.ucf.edu/events">Division Events and Calendar</a></li>
-							<li><a href="http://www.sdes.ucf.edu/contact">Contact SDES</a></li>
-							<li><a href="http://www.sdes.ucf.edu/staff">SDES Leadership Team</a></li>
-							<li><a href="http://creed.sdes.ucf.edu/">The UCF Creed</a></li>
-							<li><a href="http://it.sdes.ucf.edu/">SDES Information Technology</a></li>
-						</ul>
+						<?php
+							Footer::get_header( 'left' );
+							if ( Footer::should_show_nav_menu( 'left' ) ) {
+									Footer::get_nav_menu( 'left' );
+							} else {
+									Footer::get_feed_links( 'left' );
+							}
+							?>
 					</div>
 					<div class="col-md-4">
 						<?php
-							/* TODO: consider caching ['anchors'] with WP Transients, or a general php alternative
-							 * (libraries like C#'s memorycache, not servers like memcached, redis).
-							 * Maybe desarrolla2/cache, doctrine/cache, or something under cache/cache on Packagist.org
-							 */
-							$ctx_ucf_today['header'] = 'UCF Today News';
-							$ctx_ucf_today['anchors'] = SDES_Static::get_rss_links_and_titles( 'http://today.ucf.edu/feed/' );
-							Render_Template::footer_links( $ctx_ucf_today );
+							Footer::get_header( 'center' );
+							if ( Footer::should_show_nav_menu( 'center' ) ) {
+									Footer::get_nav_menu( 'center' );
+							} else {
+									Footer::get_feed_links( 'center' );
+							}
 						?>
 					</div>
 					<div class="col-md-4">

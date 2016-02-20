@@ -54,12 +54,37 @@ class Render_Template
 	}
 
 	/**
-	 * Render HTML for footer links with a given context.
+	 * Render HTML for footer header with a given context.
 	 * @see Render_Template::echo_and_validate
 	 * @see SDES_Static::set_default_keyValue()
 	 * @param Array $context Array containing key-value pairs to insert into the HTML template.
 	 *  Context variables:
 	 *   header => The H2 header for this block of footer links.
+	 * @param Array $args  Any additional arguments for this function.
+	 *  Bool   echo          Flag to whether to echo or return text (defaults to true).
+	 *  String validate_with Specify how to validate before echoing.
+	 * @return null|String  Echo the html or return as a string.
+	 */
+	public static function footer_header( $context, $args = null ) {
+		SDES_Static::set_default_keyValue( $args, 'echo', true );
+		SDES_Static::set_default_keyValue( $args, 'validate_with', 'wp_kses' );
+		ob_start();
+		?>
+			<h2><?= $context['header'] ?></h2>
+		<?php
+		if ( false === $args['echo'] ) {
+			return ob_get_clean();
+		} else {
+			Render_Template::echo_and_validate( ob_get_clean(), $args );
+		}
+	}
+
+	/**
+	 * Render HTML for footer links with a given context.
+	 * @see Render_Template::echo_and_validate
+	 * @see SDES_Static::set_default_keyValue()
+	 * @param Array $context Array containing key-value pairs to insert into the HTML template.
+	 *  Context variables:
 	 *   anchors => Array of anchors, where each anchor has the keys: 'link', 'title'.
 	 * @param Array $args  Any additional arguments for this function.
 	 *  Bool   echo          Flag to whether to echo or return text (defaults to true).
@@ -71,12 +96,11 @@ class Render_Template
 		SDES_Static::set_default_keyValue( $args, 'validate_with', 'wp_kses' );
 		ob_start();
 		?>
-		<h2><?= $context['header'] ?></h2>
-		<ul>
-			<?php foreach ( $context['anchors'] as $item ) : ?>
-			<li><a href="<?= $item['link']?>"><?= $item['title'] ?></a></li>
-			<?php endforeach ?>
-		</ul>
+			<ul>
+				<?php foreach ( $context['anchors'] as $item ) : ?>
+				<li><a href="<?= $item['link']?>"><?= $item['title'] ?></a></li>
+				<?php endforeach ?>
+			</ul>
 		<?php
 		if ( false === $args['echo'] ) {
 			return ob_get_clean();

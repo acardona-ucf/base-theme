@@ -18,6 +18,8 @@ function register_my_menus() {
   register_nav_menus(
     array(
       'main-menu' => __( 'Main Menu' ),
+      'footer-left-menu' => __( 'Footer Left Column' ),
+      'footer-center-menu' => __( 'Footer Center Column' ),
       )
     );
 }

@@ -4,4 +4,12 @@ $(function(){
         window.open(this.href);
         e.preventDefault();
     });
+
+    /* Link to Theme Customizer instead of nav-menus.php if Javascript is enabled.
+     * @see https://developer.wordpress.org/themes/advanced-topics/customizer-api/#focusing
+     */
+    $(".adminmsg-menu").each(function(idx, elem){
+    	$this = $(this);
+    	$this.attr("href", "../wp-admin/customize.php?autofocus[control]=" + $this.data('control-name') );
+    });
 });
