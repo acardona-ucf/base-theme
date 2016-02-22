@@ -666,6 +666,9 @@ function option_page_settings() {
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_js_lib' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_css' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_dir_acronym' );
+    register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-left' );
+    register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-center' );
+    register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-right' );
 
     // SECTIONS
     // add_settings_section( $id, $title, $callback,
@@ -689,6 +692,15 @@ function option_page_settings() {
                         'sdes_settings', 'sdes_section_one' );
 
     add_settings_field( 'sdes_theme_settings_dir_acronym', 'Acronym in SDES Directory/CMS', 'directory_cms_acronym_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_rev_2015-footer_content-left', 'Footer Static Content - Left', 'footer_content_left_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_rev_2015-footer_content-center', 'Footer Static Content - Center', 'footer_content_center_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_rev_2015-footer_content-right', 'Footer Static Content - Right', 'footer_content_right_callback',
                         'sdes_settings', 'sdes_section_one' );
 }
     

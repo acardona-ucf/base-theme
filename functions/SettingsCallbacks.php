@@ -35,6 +35,28 @@ function directory_cms_acronym_callback() {
     echo "<input type='text' name='sdes_theme_settings_dir_acronym' value='$sdes_theme_settings_dir_acronym' />";
 }
 
+function footer_content_left_callback() {
+    $footer_content_left
+        = wp_kses( get_option('sdes_rev_2015-footer_content-left', ''),
+                    wp_kses_allowed_html( 'post' ), null );
+    echo "<textarea name='sdes_rev_2015-footer_content-left'>$footer_content_left</textarea>";
+}
+
+function footer_content_center_callback() {
+    $footer_content_center
+        = wp_kses( get_option('sdes_rev_2015-footer_content-center', ''),
+                    wp_kses_allowed_html( 'post' ), null );
+    echo "<textarea name='sdes_rev_2015-footer_content-center'>$footer_content_center</textarea>";
+}
+
+function footer_content_right_callback() {
+    $footer_content_right
+        = wp_kses( get_option('sdes_rev_2015-footer_content-right', ''),
+                    wp_kses_allowed_html( 'post' ), null );
+    echo "<textarea name='sdes_rev_2015-footer_content-right'>$footer_content_right</textarea>";
+}
+
+
 function sdes_settings_render() {
     ?>
     Hello from sdes_settings_render().

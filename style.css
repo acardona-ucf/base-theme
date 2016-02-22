@@ -12,3 +12,7 @@
 @import url('//assets.sdes.ucf.edu/plugins/nivoslider3.2/themes/default/default.css');
 @import url('//assets.sdes.ucf.edu/css/sdes_main_rev2015.css');
 @import url('./css/style.css');
+
+.site-footer {
+	color: #ccc;  /* All text should be visible in footer, not just text in <P> tags.*/
+}

@@ -35,7 +35,9 @@
 	</div>
 
 <?php
-	require_once('functions/class-sdes-helper.php');
+	require_once( 'functions/class-sdes-helper.php' );
+	require_once( 'functions/class-render-template.php' );
+	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
 	class Footer {
 		public static function get_header( $position = 'center', $ctx_header = null, $template_args = null) {
 			$default_header = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_header-{$position}", 'UCF Today News' );
@@ -54,7 +56,7 @@
 			return Render_Template::footer_links( $ctx_links, $template_args );
 		}
 
-		public static function get_nav_menu( $position = 'center' ) {
+		public static function get_nav_menu( $position = 'left' ) {
 			return
 				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
 				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
@@ -62,6 +64,23 @@
 					'links_cb' => ['Footer::get_feed_links', [$position, ['echo'=>false]] ],
 				) );
 		}
+
+		public static function get_static_content( $position = 'left' ) {
+			SDES_Static::set_default_keyValue( $args, 'echo', true );
+
+			$output = wp_kses(
+					get_option("sdes_rev_2015-footer_content-{$position}", ''),
+					wp_kses_allowed_html( 'post' ),
+					null);
+
+			if ( $args['echo'] ) { echo $output; }
+			else { return $output; }
+		}
+
+		public static function should_show_static_content( $position = 'center' ) {
+			$content = get_option("sdes_rev_2015-footer_content-{$position}", '');
+			return '' !== $content && ! ctype_space($content);
+		}		
 
 		public static function should_show_nav_menu( $position = 'center' ) {
 			return SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_showLinks-{$position}", false );
@@ -77,25 +96,40 @@
 				<div class="row">
 					<div class="col-md-4">
 						<?php
-							Footer::get_header( 'left' );
-							if ( Footer::should_show_nav_menu( 'left' ) ) {
-									Footer::get_nav_menu( 'left' );
+							if ( Footer::should_show_static_content( 'left' ) ) {
+								Footer::get_static_content( 'left' );
 							} else {
+								Footer::get_header( 'left' );
+							 	if ( Footer::should_show_nav_menu( 'left' ) ) {
+									Footer::get_nav_menu( 'left' );
+								} else {
 									Footer::get_feed_links( 'left' );
+								}
 							}
 							?>
 					</div>
 					<div class="col-md-4">
 						<?php
-							Footer::get_header( 'center' );
-							if ( Footer::should_show_nav_menu( 'center' ) ) {
-									Footer::get_nav_menu( 'center' );
+							if ( Footer::should_show_static_content( 'center' ) ) {
+									Footer::get_static_content( 'center' );
 							} else {
+								Footer::get_header( 'center' );
+								if ( Footer::should_show_nav_menu( 'center' ) ) {
+									Footer::get_nav_menu( 'center' );
+								} else {
 									Footer::get_feed_links( 'center' );
+								}
 							}
 						?>
 					</div>
 					<div class="col-md-4">
+					 <?php
+							if ( Footer::should_show_static_content( 'right' ) ) {
+								Footer::get_static_content( 'right' );
+							} else {
+								// TODO: refactor search form to match template-logic-layout separation implemented above.
+								// TODO: move contact info to function in Footer class
+					 ?>
 						<h2>Search</h2>
 						<form action="http://google.cc.ucf.edu/search">
 							<fieldset>
@@ -125,6 +159,7 @@
 							$ctx_contact['roomNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-roomNumber', $dept_feed['location']['roomNumber'] );
 							Render_Template::footer_contact( $ctx_contact );
 						?>
+					 <?php } ?>
 					</div>
 				</div>
 			</div>
