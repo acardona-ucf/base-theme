@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Content Page Left Sidebar
+Template Name: Content Page Left Sidecolumn
 */
 ?>
 
