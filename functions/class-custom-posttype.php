@@ -1,6 +1,9 @@
 <?php
 
 require_once( 'class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/vendor/autoload.php' );
+use Underscore\Types\Object;
+use Underscore\Types\Arrays;
 
 /**
  * Abstract class for defining custom post types.
@@ -227,5 +230,19 @@ abstract class CustomPostType {
 	public function toHTML( $object ) {
 		$html = '<a href="'.get_permalink( $object->ID ).'">'.$object->post_title.'</a>';
 		return $html;
+	}
+
+	public static function Register_Thumbnails( $instances ) {
+		// if the key $instances[0]['instance'] exists.
+		if ( Arrays::has(Object::unpack($instances), 'instance') ) {
+			$instances = Arrays::pluck($instances, 'instance');
+		}
+
+		$thumbnail_posttypes
+		  = Arrays::from($instances)
+			->filter( function($x) { return true === $x->use_thumbnails; })
+			->pluck( 'name' )
+			->obtain();
+		add_theme_support( 'post-thumbnails', $thumbnail_posttypes );
 	}
 }

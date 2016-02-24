@@ -16,7 +16,7 @@ class Post extends CustomPostType {
 		$use_title      = True, 
 		$use_editor     = True,  // WYSIWYG editor, post content field
 		$use_revisions  = True,  // Revisions on post content and titles
-		$use_thumbnails = False, // Featured images
+		$use_thumbnails = True, // Featured images
 		$use_order      = True,  // Wordpress built-in order meta data
 		$use_metabox    = True,  // Enable if you have custom fields to display in admin
 		$use_shortcode  = False, // Auto generate a shortcode for the post type
@@ -76,14 +76,47 @@ class Page extends CustomPostType {
 	}
 }
 
+class Billboard extends CustomPostType {
+	public
+		$name           = 'billboard',
+		$plural_name    = 'Billboards',
+		$singular_name  = 'Billboard',
+		$add_new_item   = 'Add New Billboard',
+		$edit_item      = 'Edit Billboard',
+		$new_item       = 'New Billboard',
+		$public         = True,  // I dunno...leave it true
+		$use_title      = True,  // Title field
+		$use_editor     = True,  // WYSIWYG editor, post content field
+		$use_revisions  = True,  // Revisions on post content and titles
+		$use_thumbnails = True,  // Featured images
+		$use_order      = False, // Wordpress built-in order meta data
+		$use_metabox    = False, // Enable if you have custom fields to display in admin
+		$use_shortcode  = False, // Auto generate a shortcode for the post type
+		                         // (see also objectsToHTML and toHTML methods)
+		$taxonomies     = array( 'post_tag' ),
+		$built_in       = False,
+		// Optional default ordering for generic shortcode if not specified by user.
+		$default_orderby = null,
+		$default_order   = null;
+
+	public function fields() {
+		$prefix = $this->options('name').'_';
+		return array(
+			);
+	}
+}
+
+
 function register_custom_posttypes() {
 	$custom_posttypes = array(
 		'Post',
 		'Page',
+		'Billboard',
 		);
 	$class_instances = SDES_Static::instantiate_and_register_classes($custom_posttypes);
 	foreach ($class_instances as $registered_class) {
 		SDES_Metaboxes::$installed_custom_post_types[] = $registered_class['instance'];
 	}
+	CustomPostType::Register_Thumbnails($class_instances);
 }
 add_action('init', 'register_custom_posttypes');

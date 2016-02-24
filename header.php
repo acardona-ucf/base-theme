@@ -78,19 +78,33 @@
 	<!-- nivo slider -->
 	<div class="container site-billboard theme-default">
 		<div id="slider" class="nivoSlider">
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard2.jpg" alt="" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard3.jpg" alt="" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard4.jpg" alt="" title="#htmlcaption" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard5.jpg" alt="" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard6.jpg" alt="" >
+		  <?php
+			/* If using the WP Nivo Plugin, use the following code instead: */
+			// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
+			$post = array( 'post_type' => 'billboard' );
+			$billboards = new WP_Query( $post );
+			while ( $billboards->have_posts() ) : $billboards->the_post();
+				if ( has_post_thumbnail() ) :
+					the_post_thumbnail( 'post-thumbnail', array('title'=>'#nivo-caption-'.get_the_id(),) );
+				endif;
+			endwhile;
+			wp_reset_query();
+			?>
 		</div>
-		<div id="htmlcaption" class="nivo-html-caption">
-			<p>
-				<strong>This</strong> is an example of a <em>HTML</em> caption with <a href="#">a link</a>.
-			</p>
-		</div>
+		  <?php 
+			while ( $billboards->have_posts() ) : $billboards->the_post();
+				if ( has_post_thumbnail() ) :
+		  ?>
+					<div id="nivo-caption-<?= the_id(); ?>" class="nivo-html-caption">
+						<?= the_content(); ?>
+					</div>
+		  <?php
+				endif;
+			endwhile;
+			wp_reset_query();
+		  ?>
 	</div>
 
 	<!-- content area -->
 	<div class="container site-content">		
-		<?php !is_page('Home') ? the_title( '<h1 class="page-header">', '</h1>' ) : false ?>	
+		<?php !is_page('Home') ? the_title( '<h1 class="page-header">', '</h1>' ) : false ?>
