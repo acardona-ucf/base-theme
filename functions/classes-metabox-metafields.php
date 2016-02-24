@@ -18,7 +18,7 @@ abstract class MetaField {
 		$this->name        = @$attr['name'];
 		$this->id          = @$attr['id'];
 		$this->value       = @$attr['value'];
-		$this->description = @$attr['description'];
+		$this->description = @$attr['descr'];
 		$this->default     = @$attr['default'];
 		$this->check_for_default();
 	}

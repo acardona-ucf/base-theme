@@ -32,7 +32,7 @@ class Post extends CustomPostType {
 		return array(
 			[
 				'name' => 'Stylesheet',
-				'desc' => '',
+				'descr' => '',
 				'id' => $prefix.'stylesheet',
 				'type' => 'file',
 			],
@@ -60,10 +60,17 @@ class Page extends CustomPostType {
 		$prefix = $this->options('name').'_';
 		return array(
 			[
-				'name' => 'Stylesheet',
-				'desc' => '',
-				'id' => $prefix.'stylesheet',
-				'type' => 'file',
+				'name'  => 'Stylesheet',
+				'descr' => '',
+				'id'    => $prefix.'stylesheet',
+				'type'  => 'file',
+			],
+			[
+				'name'  => 'Sidecolumn',
+				'descr' => 'Show content in column to the right or left of the page (e.g., menuPanels).',
+				'id'    => $prefix.'sidecolumn',
+				'type'  => 'editor',
+				'args'  => ['tinymce'=>true,],
 			],
 		);
 	}

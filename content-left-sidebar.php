@@ -9,9 +9,10 @@ Template Name: Content Page Left Sidebar
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
 	<div class="col-sm-4">
-
-		<h2>sidebar stuffs</h2>
-
+		<?php
+			$prefix = SDES_Static::get_post_type( get_the_ID() ).'_';
+			echo get_post_meta(get_the_ID(),  $prefix.'sidecolumn', true ); 
+		?>
 	</div>
 	<div class="col-sm-8">
 
