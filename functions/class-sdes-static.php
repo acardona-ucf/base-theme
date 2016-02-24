@@ -22,6 +22,22 @@ class SDES_Static
 			 : $default_value;
 	}
 
+	// TODO: add tests, verify that register function exists.
+	/**
+	 * For each class provided, create a new instance of the class and call its the register function.
+	 * @param Array $classnames_to_register  Listing of class names to `->register()`.
+	 * @return Array Array of instantiated classes (array of arrays). Each item has the keys: 'classname', 'instance'.
+	 */
+	public static function instantiate_and_register_classes( $classnames_to_register = null ) {
+		if ( null == $classnames_to_register ) return;
+		$get_class = function($classname){ return ['classname'=>$classname, 'instance'=>new $classname]; };
+		$class_instances = array_map($get_class, $classnames_to_register);
+		foreach ($class_instances as $new_class) {
+			$new_class['instance']->register();
+		}
+		return $class_instances;
+	}
+
 
 	// TODO: add tests, try-catch block.
 	/**

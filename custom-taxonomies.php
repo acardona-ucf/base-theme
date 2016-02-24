@@ -1,5 +1,7 @@
 <?php
 
+require_once( 'functions/class-sdes-static.php' );
+
 /**
  * Abstract class for defining custom taxonomies.  
  * 
@@ -120,11 +122,9 @@ class OrganizationalGroups extends CustomTaxonomy
 
 
 function register_custom_taxonomies() {
-	$taxonomy_names = array('OrganizationalGroups', );
-	$instantiate_class = function($class){ return new $class;};
-	$custom_taxonomies = array_map($instantiate_class, $taxonomy_names);
-	foreach ($custom_taxonomies as $custom_taxonomy) {
-		$custom_taxonomy->register();
-	}
+	$custom_taxonomies = [
+		'OrganizationalGroups',
+		];
+	$class_instances = SDES_Static::instantiate_and_register_classes($custom_taxonomies);
 }
 add_action('init', 'register_custom_taxonomies');

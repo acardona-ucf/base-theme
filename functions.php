@@ -38,7 +38,7 @@ function enqueue_scripts_and_styles(){
 
 require_once('custom-taxonomies.php');    // Define and Register taxonomies for this theme
 
-//require_once('custom-post-types.php');  // Define and Register custom post types (CPTs) for this theme
+require_once('custom-posttypes.php');  // Define and Register custom post_type's (CPTs) for this theme
 //TODO: extract Custom Post Type classes to their own file.
 //TODO: customize CPT display text, consider renaming.
 /* news_list Post Type */
