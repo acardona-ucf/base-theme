@@ -156,6 +156,9 @@ class SDES_Metaboxes {
 			$field['post_id'] = $post_id;
 			$field_obj = new FileMetaField( $field );
 			break;
+		case 'editor':
+			$field_obj = new EditorMetaField( $field );
+			break;
 		default:
 			break;
 		}

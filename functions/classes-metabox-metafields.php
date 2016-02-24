@@ -255,3 +255,16 @@ class FileMetaField extends MetaField {
 		return ob_get_clean();
 	}
 }
+
+class EditorMetaField extends MetaField {
+	function __construct( $attr ) {
+		parent::__construct( $attr );
+		$this->args = isset( $attr['args'] )
+			 ? $attr['args']
+			 : array();
+	}
+
+	function input_html() {
+		wp_editor( $this->value, $this->id, $this->args );
+	}
+}
