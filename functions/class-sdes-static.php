@@ -136,6 +136,30 @@ class SDES_Static
 		return $class_names;
 	}
 
+
+	/**
+	 * Really get the post type.  A post type of revision will return its parent
+	 * post type.
+	 * @param int|WPPost $post  The post or the post's ID.
+	 * @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L411-L432
+	 * @return string  The 'post_type' for a post.
+	 * @author Jared Lang
+	 * */
+	public static function get_post_type( $post ) {
+		if ( is_int( $post ) ) {
+			$post = get_post( $post );
+		}
+		// check post_type field
+		$post_type = $post->post_type;
+		if ( $post_type === 'revision' ) {
+			$parent    = (int)$post->post_parent;
+			$post_type = self::get_post_type( $parent );
+		}
+		return $post_type;
+	}
+
+
+	// TODO: move the_locationKey_navpills and the_locationValue_navpills to class-sdes-helper.php
 	/**
 	 * Generate a key for a post's navpill menu location.
 	 * Used as the 'theme_location' by wp_nav_menu()'s $args parameter and by the "Currently set to:" in Customizer.

@@ -1,8 +1,12 @@
 <?php
 
+require_once( 'class-sdes-metaboxes.php' );
+
 /**
  * Abstract class for defining custom post types.
  *
+ * @see SDES_Metaboxes::$installed_custom_post_types
+ * @see SDES_Metaboxes::show_meta_boxes (calls SDES_Metaboxes::display_meta_box_field)
  * Based on: https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/custom-post-types.php#L1-L242
  **/
 abstract class CustomPostType {
@@ -139,6 +143,7 @@ abstract class CustomPostType {
 
 	/**
 	 * Registers metaboxes defined for custom post type.
+	 * @see SDES_Metaboxes::show_meta_boxes (calls SDES_Metaboxes::display_meta_box_field)
 	 * */
 	public function register_metaboxes() {
 		if ( $this->options( 'use_metabox' ) ) {
@@ -146,7 +151,7 @@ abstract class CustomPostType {
 			add_meta_box(
 				$metabox['id'],
 				$metabox['title'],
-				'show_meta_boxes',
+				'SDES_Metaboxes::show_meta_boxes',
 				$metabox['page'],
 				$metabox['context'],
 				$metabox['priority']
