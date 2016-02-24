@@ -18,6 +18,8 @@ function register_my_menus() {
   register_nav_menus(
     array(
       'main-menu' => __( 'Main Menu' ),
+      'footer-left-menu' => __( 'Footer Left Column' ),
+      'footer-center-menu' => __( 'Footer Center Column' ),
       )
     );
 }
@@ -36,7 +38,7 @@ function enqueue_scripts_and_styles(){
 
 require_once('custom-taxonomies.php');    // Define and Register taxonomies for this theme
 
-//require_once('custom-post-types.php');  // Define and Register custom post types (CPTs) for this theme
+require_once('custom-posttypes.php');  // Define and Register custom post_type's (CPTs) for this theme
 //TODO: extract Custom Post Type classes to their own file.
 //TODO: customize CPT display text, consider renaming.
 /* news_list Post Type */
@@ -664,6 +666,9 @@ function option_page_settings() {
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_js_lib' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_css' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_dir_acronym' );
+    register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-left' );
+    register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-center' );
+    register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-right' );
 
     // SECTIONS
     // add_settings_section( $id, $title, $callback,
@@ -687,6 +692,15 @@ function option_page_settings() {
                         'sdes_settings', 'sdes_section_one' );
 
     add_settings_field( 'sdes_theme_settings_dir_acronym', 'Acronym in SDES Directory/CMS', 'directory_cms_acronym_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_rev_2015-footer_content-left', 'Footer Static Content - Left', 'footer_content_left_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_rev_2015-footer_content-center', 'Footer Static Content - Center', 'footer_content_center_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_rev_2015-footer_content-right', 'Footer Static Content - Right', 'footer_content_right_callback',
                         'sdes_settings', 'sdes_section_one' );
 }
     
@@ -894,5 +908,6 @@ add_action('admin_enqueue_scripts','customize_admin_theme');
 
 
 
+require_once( 'functions/class-render-template.php' );
 
 //TODO: add screenshot.png for Theme.

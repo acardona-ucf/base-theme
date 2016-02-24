@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Content Page Right Sidebar
+Template Name: Content Page Right Sidecolumn
 */
 ?>
 
@@ -10,7 +10,10 @@ Template Name: Content Page Right Sidebar
 		<?php the_content(); ?>
 	</div>
 	<div class="col-sm-4">
-		<h2>sidebar stuffs</h2>
+		<?php
+			$prefix = SDES_Static::get_post_type( get_the_ID() ).'_';
+			echo get_post_meta(get_the_ID(),  $prefix.'sidecolumn', true ); 
+		?>
 	</div>
 <?php endwhile; else: ?>
 <?php endif; ?>

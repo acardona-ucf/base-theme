@@ -19,7 +19,7 @@
 	"csfix": "php-cs-fixer fix",
 	"csfixer": "php-cs-fixer",
 	"phpcs:wp-install": "phpcs --config-set installed_paths %cd%\\vendor\\wp-coding-standards\\wpcs",
-	"phpcs": ["@phpcs:wp-install", "phpcs --ignore=vendor --standard=.\\tests\\ucfsdes_wordpress_ruleset.xml"],
+	"phpcs": ["@phpcs:wp-install", "phpcs -p --ignore=vendor --standard=.\\tests\\ucfsdes_wordpress_ruleset.xml"],
 	"phpcs-": "phpcs --ignore=vendor",
 	"phpcs:sum": "phpcs --report=summary --ignore=vendor .",
 	"phpcbf": ["phpcbf --no-patch --standard=.\\tests\\ucfsdes_wordpress_ruleset.xml", "@phpcs"],

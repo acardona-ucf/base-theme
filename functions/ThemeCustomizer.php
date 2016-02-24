@@ -58,6 +58,8 @@ function register_theme_customizer( $wp_customizer ) {
 	add_to_section_TitleAndTagline($wp_customizer);
 
 	add_section_social_options($wp_customizer);
+
+	add_section_footer_options( $wp_customizer );
 }
 add_action( 'customize_register', 'register_theme_customizer' );
 
@@ -126,6 +128,7 @@ function add_panel_DisplayOptions( $wp_customizer, $args = null ) {
 require_once('Classes_WP_Customize_Control.php');
 require_once('Class_SDES_Customizer_Helper.php');
 function add_section_ContactOptions( $wp_customizer, $args = null) {
+	// TODO: set defaults using SDES_Static::set_default_keyValue(). 
 	$args['panelId'] = (isset($args['panelId'])) ? $args['panelId'] : '';
 	$args['hours-transport'] = (isset($args['hours-transport'])) ? $args['hours-transport'] : 'refresh';
 	$args['phone-transport'] = (isset($args['phone-transport'])) ? $args['phone-transport'] : 'postMessage';
@@ -133,16 +136,37 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 
 	$args['sdes_rev_2015-email']['transport'] = 'refresh';
 	$args['sdes_rev_2015-email']['default'] = 'StudentDevelopmentEnrollmentServices@ucf.edu';
-
-
+	
 	$section = 'sdes_rev_2015-contact_options';
 	$wp_customizer->add_section(
 		$section,
 		array(
-			'title'    => 'Contact Box',
+			'title'    => 'Contact Information',
 			'priority' => 250,
 			'panel' => $args['panelId'],
 		)
+	);
+
+	// TODO: clean up initializing default args arrays.  These must be initialized if other fields are set to avoid an index error.
+	// e.g., `SDES_Static::set_default_args_arrays( $args, ['sdes_rev_2015-departmentName', 'sdes_rev_2015-buildingName', 'sdes_rev_2015-buildingNumber', 'sdes_rev_2015-roomNumber'] );`
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-departmentName', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-buildingName', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-buildingNumber', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-roomNumber', array() );
+
+	$departmentName_args = $args['sdes_rev_2015-departmentName'];
+	SDES_Static::set_default_keyValue($departmentName_args, 'default', get_bloginfo( 'name' ) );
+	$buildingName_args = $args['sdes_rev_2015-buildingName'];
+	$buildingNumber_args = $args['sdes_rev_2015-buildingNumber'];
+	$roomNumber_args = $args['sdes_rev_2015-roomNumber'];
+
+	// departmentName
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-departmentName',	// id
+		'Department Name',		// label
+		$section,				// section
+		$departmentName_args	// arguments array
 	);
 
 
@@ -223,12 +247,39 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 
 
 	// Email
-	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
 		$wp_customizer,			// WP_Customize_Manager
 		'sdes_rev_2015-email',	// id
 		'Email',				// label
 		$section,				// section
-		$args['sdes_rev_2015-email']			// arguments array
+		$args['sdes_rev_2015-email']	// arguments array
+	);
+
+	// buildingName
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,					// WP_Customize_Manager
+		'sdes_rev_2015-buildingName',	// id
+		'Building Name',				// label
+		$section,						// section
+		$buildingName_args				// arguments array
+	);
+
+	// buildingNumber
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,					// WP_Customize_Manager
+		'sdes_rev_2015-buildingNumber',	// id
+		'Building Number',				// label
+		$section,						// section
+		$buildingNumber_args			// arguments array
+	);
+
+	// roomNumber
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type
+		$wp_customizer,					// WP_Customize_Manager
+		'sdes_rev_2015-roomNumber',		// id
+		'Room Number',					// label
+		$section,						// section
+		$roomNumber_args				// arguments array
 	);
 }
 
@@ -310,6 +361,96 @@ function add_section_social_options( $wp_customizer, $args = null) {
 }
 
 
+function add_section_footer_options( $wp_customizer, $args = null) {
+	/* SECTION */
+	$section = 'sdes_rev_2015-footer_options';
+	$wp_customizer->add_section(
+		$section,
+		array(
+			'title'    => 'Footer',
+			'priority' => 350,
+			'panel' => $args['panelId'],
+		)
+	);
+
+	/* ARGS */
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-footer_header-left', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-footer_showLinks-left', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-footer_feed-left', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-footer_header-center', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-footer_showLinks-center', array() );
+	SDES_Static::set_default_keyValue( $args, 'sdes_rev_2015-footer_feed-center', array() );
+
+	$left_header_args = $args['sdes_rev_2015-footer_header-left'];
+	$left_showLinks_args = $args['sdes_rev_2015-footer_showLinks-left'];
+	$left_showLinks_args['control_type'] = 'checkbox';
+	$left_feed_args = $args['sdes_rev_2015-footer_feed-left'];
+	SDES_Static::set_default_keyValue($left_feed_args, 'sanitize_callback', 'esc_url');
+	SDES_Static::set_default_keyValue($left_feed_args, 'sanitize_js_callback', 'esc_url');
+
+	$center_header_args = $args['sdes_rev_2015-footer_header-center'];
+	$center_showLinks_args = $args['sdes_rev_2015-footer_showLinks-center'];
+	$center_showLinks_args['control_type'] = 'checkbox';
+	$center_feed_args = $args['sdes_rev_2015-footer_feed-center'];
+	SDES_Static::set_default_keyValue($center_feed_args, 'sanitize_callback', 'esc_url');
+	SDES_Static::set_default_keyValue($center_feed_args, 'sanitize_js_callback', 'esc_url');
+
+
+	/* FIELDS */
+	// Left Footer Header
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-footer_header-left', // id
+		'Left Footer Header', // label
+		$section,				// section
+		$left_header_args		// arguments array
+	);
+
+	// Left Footer - Feed
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-footer_feed-left', // id
+		'Left Feed URL (RSS)', // label
+		$section,				// section
+		$left_feed_args			// arguments array
+	);
+
+	// Left Footer - Show Links
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-footer_showLinks-left', // id
+		'(Left) Show menu instead of feed?', // label
+		$section,				// section
+		$left_showLinks_args	// arguments array
+	);
+
+	// Center Footer Header
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-footer_header-center', // id
+		'Center Footer Header', // label
+		$section,				// section
+		$center_header_args		// arguments array
+	);
+
+	// Center Footer - Feed
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-footer_feed-center', // id
+		'Center Feed URL (RSS)', // label
+		$section,				// section
+		$center_feed_args		// arguments array
+	);
+
+	// Center Footer - Show Links
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-footer_showLinks-center', // id
+		'(Center) Show links instead of feed?',  // label
+		$section,				// section
+		$center_showLinks_args			// arguments array
+	);
+}
 
 // Allow AJAX updates to theme from Theme Customizer interface by
 // using the Theme Customizer API in javascript.

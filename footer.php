@@ -34,6 +34,59 @@
 		</nav>
 	</div>
 
+<?php
+	require_once( 'functions/class-sdes-helper.php' );
+	require_once( 'functions/class-render-template.php' );
+	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
+	class Footer {
+		public static function get_header( $position = 'center', $ctx_header = null, $template_args = null) {
+			$default_header = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_header-{$position}", 'UCF Today News' );
+			SDES_Static::set_default_keyValue( $ctx_header, 'header', $default_header);
+			return Render_Template::footer_header( $ctx_header, $template_args );
+		}
+
+		public static function get_feed_links( $position = 'center', $ctx_links = null, $template_args = null) {
+			/* TODO: consider caching ['anchors'] with WP Transients, or a general php alternative
+			 * (libraries like C#'s memorycache, not servers like memcached, redis).
+			 * Maybe desarrolla2/cache, doctrine/cache, or something under cache/cache on Packagist.org
+			 */
+			$rss_url = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_feed-{$position}", 'http://today.ucf.edu/feed/' );
+			$default_anchors = SDES_Static::get_rss_links_and_titles( $rss_url );
+			SDES_Static::set_default_keyValue( $ctx_links, 'anchors', $default_anchors );
+			return Render_Template::footer_links( $ctx_links, $template_args );
+		}
+
+		public static function get_nav_menu( $position = 'left' ) {
+			return
+				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
+				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
+					'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages',
+					'links_cb' => ['Footer::get_feed_links', [$position, ['echo'=>false]] ],
+				) );
+		}
+
+		public static function get_static_content( $position = 'left' ) {
+			SDES_Static::set_default_keyValue( $args, 'echo', true );
+
+			$output = wp_kses(
+					get_option("sdes_rev_2015-footer_content-{$position}", ''),
+					wp_kses_allowed_html( 'post' ),
+					null);
+
+			if ( $args['echo'] ) { echo $output; }
+			else { return $output; }
+		}
+
+		public static function should_show_static_content( $position = 'center' ) {
+			$content = get_option("sdes_rev_2015-footer_content-{$position}", '');
+			return '' !== $content && ! ctype_space($content);
+		}		
+
+		public static function should_show_nav_menu( $position = 'center' ) {
+			return SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_showLinks-{$position}", false );
+		}
+	}
+?>
 	<!-- footers -->
 	<footer class="site-footer-container">
 
@@ -42,32 +95,41 @@
 			<div class="container"> 
 				<div class="row">
 					<div class="col-md-4">
-						<h2>Site Hosted by SDES</h2>
-						<ul>
-							<li><a href="http://www.sdes.ucf.edu/">Student Development and Enrollment Services</a></li>
-							<li><a href="http://www.sdes.ucf.edu/about">What is SDES? / Students, Parents, Faculty, Staff</a></li>
-							<li><a href="http://www.sdes.ucf.edu/departments">SDES Departments, Offices, and Services</a></li>
-							<li><a href="http://www.sdes.ucf.edu/events">Division Events and Calendar</a></li>
-							<li><a href="http://www.sdes.ucf.edu/contact">Contact SDES</a></li>
-							<li><a href="http://www.sdes.ucf.edu/staff">SDES Leadership Team</a></li>
-							<li><a href="http://creed.sdes.ucf.edu/">The UCF Creed</a></li>
-							<li><a href="http://it.sdes.ucf.edu/">SDES Information Technology</a></li>
-						</ul>
+						<?php
+							if ( Footer::should_show_static_content( 'left' ) ) {
+								Footer::get_static_content( 'left' );
+							} else {
+								Footer::get_header( 'left' );
+							 	if ( Footer::should_show_nav_menu( 'left' ) ) {
+									Footer::get_nav_menu( 'left' );
+								} else {
+									Footer::get_feed_links( 'left' );
+								}
+							}
+							?>
 					</div>
 					<div class="col-md-4">
-						<h2>UCF Today News</h2>
-						<ul>
-							<li><a href="#">UCFs First C-USA Athlete of the Year</a></li>
-							<li><a href="#">Tech Time Conference to Provide Computer Tips</a></li>
-							<li><a href="#">UCF Composer Partners with Innovative Arts Al&hellip;</a></li>
-							<li><a href="#">Meet Thomas Bryer: Teaching Students About Th&hellip;</a></li>
-							<li><a href="#">Magazine Names 5 UCF Leaders, 8 Alumni to Orl&hellip;</a></li>
-							<li><a href="#">Greek Students Achieve Record GPAs</a></li>
-							<li><a href="#">Workshop Focuses on Jail-to-Community Transition</a></li>
-							<li><a href="#">Jeanette Bolden: Gold Medalist and Hall of Fa&hellip;</a></li>
-						</ul>
+						<?php
+							if ( Footer::should_show_static_content( 'center' ) ) {
+									Footer::get_static_content( 'center' );
+							} else {
+								Footer::get_header( 'center' );
+								if ( Footer::should_show_nav_menu( 'center' ) ) {
+									Footer::get_nav_menu( 'center' );
+								} else {
+									Footer::get_feed_links( 'center' );
+								}
+							}
+						?>
 					</div>
 					<div class="col-md-4">
+					 <?php
+							if ( Footer::should_show_static_content( 'right' ) ) {
+								Footer::get_static_content( 'right' );
+							} else {
+								// TODO: refactor search form to match template-logic-layout separation implemented above.
+								// TODO: move contact info to function in Footer class
+					 ?>
 						<h2>Search</h2>
 						<form action="http://google.cc.ucf.edu/search">
 							<fieldset>
@@ -83,13 +145,21 @@
 								</div>
 							</fieldset>
 						</form>
-
-						<h2>Contact</h2>
-						<p>
-							Student Development and Enrollment Services<br />
-							Phone: 407-823-4625 &bull; Email: <a href="mailto:sdes@ucf.edu">sdes@ucf.edu</a><br />
-							Location: <a href="http://map.ucf.edu/?show=1">Millican Hall 282</a>
-						</p>
+						<?php
+							// TODO: should directory CMS feed be more granular?
+							require_once( 'functions/class-sdes-helper.php' );
+							$directory_cms_acronym = esc_attr( get_option( 'sdes_theme_settings_dir_acronym' ) );
+							$dept_feed = SDES_Helper::get_sdes_directory_department( $directory_cms_acronym );
+							
+							$ctx_contact['departmentName'] = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-departmentName', $dept_feed['name'] );
+							$ctx_contact['phone'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-phone', $dept_feed['phone'] );
+							$ctx_contact['email'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', $dept_feed['email'] );
+							$ctx_contact['buildingNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-buildingNumber', $dept_feed['location']['buildingNumber'] );
+							$ctx_contact['buildingName'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-buildingName', $dept_feed['location']['building'] );
+							$ctx_contact['roomNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-roomNumber', $dept_feed['location']['roomNumber'] );
+							Render_Template::footer_contact( $ctx_contact );
+						?>
+					 <?php } ?>
 					</div>
 				</div>
 			</div>
