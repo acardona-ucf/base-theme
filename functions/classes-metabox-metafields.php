@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Abstracted field class, all form fields should inherit from this.
+ * Abstracted Metafield class, all form Metafields should inherit from this.
  *
  * @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L124-L390
  * @package default
  * @author Jared Lang
  * */
-abstract class Field {
+abstract class MetaField {
 	protected function check_for_default() {
 		if ( ( $this->value === null || $this->value === '' ) && isset( $this->default ) ) {
 			$this->value = $this->default;
@@ -32,7 +32,7 @@ abstract class Field {
 	}
 
 	function input_html() {
-		return "Abstract Input Field, Override in Descendants";
+		return "Abstract Input MetaField, Override in Descendants";
 	}
 
 	function description_html() {
@@ -54,13 +54,13 @@ abstract class Field {
 }
 
 /**
- * Abstracted choices field.  Choices fields have an additional attribute named
+ * Abstracted choices Metafield.  Choices Metafields have an additional attribute named
  * choices which allow a selection of values to be chosen from.
  *
  * @package default
  * @author Jared Lang
  * */
-abstract class ChoicesField extends Field{
+abstract class ChoicesMetaField extends MetaField{
 	// Ensure 'default' value is added to choices if it isn't already
 	protected function add_default_to_choices() {
 		if ( isset( $this->default ) && !array_key_exists( $this->default, $this->choices ) ) {
@@ -76,12 +76,12 @@ abstract class ChoicesField extends Field{
 }
 
 /**
- * TextField class represents a simple text input
+ * TextMetaField class represents a simple text input
  *
  * @package default
  * @author Jared Lang
  * */
-class TextField extends Field{
+class TextMetaField extends MetaField{
 	protected $type_attr = 'text';
 	function input_html() {
 		ob_start();
@@ -93,23 +93,23 @@ class TextField extends Field{
 }
 
 /**
- * PasswordField can be used to accept sensitive information, not encrypted on
+ * PasswordMetaField can be used to accept sensitive information, not encrypted on
  * wordpress' end however.
  *
  * @package default
  * @author Jared Lang
  * */
-class PasswordField extends TextField{
+class PasswordMetaField extends TextMetaField{
 	protected $type_attr = 'password';
 }
 
 /**
- * TextareaField represents a textarea form element
+ * TextareaMetaField represents a textarea form element
  *
  * @package default
  * @author Jared Lang
  * */
-class TextareaField extends Field{
+class TextareaMetaField extends MetaField{
 	function input_html() {
 		ob_start();
 		?>
@@ -125,7 +125,7 @@ class TextareaField extends Field{
  * @package default
  * @author Jared Lang
  * */
-class SelectField extends ChoicesField{
+class SelectMetaField extends ChoicesMetaField{
 	function input_html() {
 		ob_start();
 		?>
@@ -145,7 +145,7 @@ class SelectField extends ChoicesField{
  * @package default
  * @author Jo Dickson
  * */
-class MultiselectField extends ChoicesField{
+class MultiselectMetaField extends ChoicesMetaField{
 	function input_html() {
 		ob_start();
 		?>
@@ -165,7 +165,7 @@ class MultiselectField extends ChoicesField{
  * @package default
  * @author Jared Lang
  * */
-class RadioField extends ChoicesField{
+class RadioMetaField extends ChoicesMetaField{
 	function input_html() {
 		ob_start();
 		?>
@@ -188,7 +188,7 @@ class RadioField extends ChoicesField{
  * @package default
  * @author Jared Lang
  * */
-class CheckboxField extends ChoicesField{
+class CheckboxMetaField extends ChoicesMetaField {
 	function input_html() {
 		ob_start();
 		?>
@@ -205,7 +205,7 @@ class CheckboxField extends ChoicesField{
 	}
 }
 
-class FileField extends Field {
+class FileMetaField extends MetaField {
 	function __construct( $attr ) {
 		parent::__construct( $attr );
 		$this->post_id = isset( $attr['post_id'] ) ? $attr['post_id'] : 0;

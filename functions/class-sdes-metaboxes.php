@@ -119,7 +119,7 @@ class SDES_Metaboxes {
 		<table class="form-table">
 		<?php
 		foreach ( $meta_box['fields'] as $field ) {
-			SDES_Metaboxes::display_meta_box_field( $post->ID, $field );
+			SDES_Metaboxes::display_metafield( $post->ID, $field );
 		}
 		?>
 		</table>
@@ -128,33 +128,33 @@ class SDES_Metaboxes {
 	}
 
 	/**
-	 * Displays meta box fields with current or default values.
+	 * Displays metafields with current or default values.
 	 * */
-	public static function display_meta_box_field( $post_id, $field ) {
+	public static function display_metafield( $post_id, $field ) {
 		$field_obj = null;
 		$field['value'] = get_post_meta( $post_id, $field['id'], true );
 		switch ( $field['type'] ) {
 		case 'text':
-			$field_obj = new TextField( $field );
+			$field_obj = new TextMetaField( $field );
 			break;
 		case 'textarea':
-			$field_obj = new TextareaField( $field );
+			$field_obj = new TextareaMetaField( $field );
 			break;
 		case 'select':
-			$field_obj = new SelectField( $field );
+			$field_obj = new SelectMetaField( $field );
 			break;
 		case 'multiselect':
-			$field_obj = new MultiselectField( $field );
+			$field_obj = new MultiselectMetaField( $field );
 			break;
 		case 'radio':
-			$field_obj = new RadioField( $field );
+			$field_obj = new RadioMetaField( $field );
 			break;
 		case 'checkbox':
-			$field_obj = new CheckboxField( $field );
+			$field_obj = new CheckboxMetaField( $field );
 			break;
 		case 'file':
 			$field['post_id'] = $post_id;
-			$field_obj = new FileField( $field );
+			$field_obj = new FileMetaField( $field );
 			break;
 		default:
 			break;
