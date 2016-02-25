@@ -36,15 +36,23 @@ class Render_Template
 		SDES_Static::set_default_keyValue( $args, 'echo', true );
 		SDES_Static::set_default_keyValue( $args, 'validate_with', 'wp_kses' );
 
+		$phone_block = ( '' !== $context['phone']) ? "Phone: {$context['phone']} &bull; " : '';
 		ob_start();
 		?>
 		<h2><?= $context['header'] ?></h2>
 		<p>
 			<?= $context['departmentName'] ?><br />
-			Phone: <?= $context['phone'] ?> &bull; Email: <a href="mailto:<?= $context['email'] ?>"><?= $context['email'] ?></a><br />
-			Location: <a href="http://map.ucf.edu/?show=<?= $context['buildingNumber'] ?>">
-				<?= $context['buildingName'] . ' ' . $context['roomNumber'] ?>
-			</a>
+			<?= $phone_block ?>Email: <a href="mailto:<?= $context['email'] ?>"><?= $context['email'] ?></a><br />
+			<?php if( '' !== $context['buildingNumber'] && '' !== $context['buildingName'] ) : ?>
+				Location: <a href="http://map.ucf.edu/?show=<?= $context['buildingNumber'] ?>">
+					<?= $context['buildingName'] . ' ' . $context['roomNumber'] ?>
+				</a>
+			<?php else: ?>
+				<a href="http://www.ucf.edu/phonebook/">UCF Phonebook</a> &bull;
+				<a href="http://events.ucf.edu/">UCF Events</a> &bull;
+				<a href="http://map.ucf.edu/">UCF Map</a> &bull;
+				<a href="http://ucf.custhelp.com/">Ask UCF</a>
+			<?php endif; ?>
 		</p>
 		<?php
 		if ( false === $args['echo'] ) {

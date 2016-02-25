@@ -149,7 +149,9 @@
 							// TODO: should directory CMS feed be more granular?
 							require_once( 'functions/class-sdes-helper.php' );
 							$directory_cms_acronym = esc_attr( get_option( 'sdes_theme_settings_dir_acronym' ) );
-							$dept_feed = SDES_Helper::get_sdes_directory_department( $directory_cms_acronym );
+							$dept_feed = SDES_Helper::get_sdes_directory_department( $directory_cms_acronym,
+								array( 'name' => get_bloginfo( 'name' ), 'email' => 'sdes@ucf.edu' )
+							);
 							
 							$ctx_contact['departmentName'] = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-departmentName', $dept_feed['name'] );
 							$ctx_contact['phone'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-phone', $dept_feed['phone'] );
