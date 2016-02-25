@@ -61,7 +61,10 @@
 				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
 				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
 					'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages',
-					'links_cb' => ['Footer::get_feed_links', [$position, ['echo'=>false]] ],
+					'links_cb' => array(
+							'Footer::get_feed_links', 
+							array($position, array('echo'=>false)) 
+						),
 				) );
 		}
 

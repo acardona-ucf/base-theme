@@ -60,10 +60,10 @@ class SDES_Static
 				= ( strlen( $item->title ) > $char_limit )
 					? substr( $item->title, 0, $char_limit ) . '&hellip;'
 					: (string) $item->title;
-			$output[] = [
+			$output[] = array(
 				'link' => (string) $item->link,
 				'title' => $title_truncated,
-			];
+			);
 		}
 		return $output;
 	}

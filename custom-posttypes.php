@@ -21,7 +21,7 @@ class Post extends CustomPostType {
 		$use_metabox    = True,  // Enable if you have custom fields to display in admin
 		$use_shortcode  = False, // Auto generate a shortcode for the post type
 								 // (see also objectsToHTML and toHTML methods)
-		$taxonomies     = ['post_tag', 'category'],
+		$taxonomies     = array('post_tag', 'category'),
 		$built_in       = True,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -30,12 +30,12 @@ class Post extends CustomPostType {
 	public function fields() {
 		$prefix = 'custom_'.$this->options('name').'_';
 		return array(
-			[
+			array(
 				'name' => 'Stylesheet',
 				'descr' => '',
 				'id' => $prefix.'stylesheet',
 				'type' => 'file',
-			],
+			),
 		);
 	}
 }
@@ -59,28 +59,28 @@ class Page extends CustomPostType {
 	public function fields() {
 		$prefix = $this->options('name').'_';
 		return array(
-			[
+			array(
 				'name'  => 'Stylesheet',
 				'descr' => '',
 				'id'    => $prefix.'stylesheet',
 				'type'  => 'file',
-			],
-			[
+			),
+			array(
 				'name'  => 'Sidecolumn',
 				'descr' => 'Show content in column to the right or left of the page (e.g., menuPanels).',
 				'id'    => $prefix.'sidecolumn',
 				'type'  => 'editor',
-				'args'  => ['tinymce'=>true,],
-			],
+				'args'  => array('tinymce'=>true,),
+			),
 		);
 	}
 }
 
 function register_custom_posttypes() {
-	$custom_posttypes = [
+	$custom_posttypes = array(
 		'Post',
 		'Page',
-		];
+		);
 	$class_instances = SDES_Static::instantiate_and_register_classes($custom_posttypes);
 	foreach ($class_instances as $registered_class) {
 		SDES_Metaboxes::$installed_custom_post_types[] = $registered_class['instance'];

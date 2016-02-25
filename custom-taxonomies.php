@@ -122,9 +122,9 @@ class OrganizationalGroups extends CustomTaxonomy
 
 
 function register_custom_taxonomies() {
-	$custom_taxonomies = [
+	$custom_taxonomies = array(
 		'OrganizationalGroups',
-		];
+		);
 	$class_instances = SDES_Static::instantiate_and_register_classes($custom_taxonomies);
 }
 add_action('init', 'register_custom_taxonomies');
