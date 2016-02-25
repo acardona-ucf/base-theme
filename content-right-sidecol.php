@@ -12,7 +12,7 @@ Template Name: Content Page Right Sidecolumn
 	<div class="col-sm-4">
 		<?php
 			$prefix = SDES_Static::get_post_type( get_the_ID() ).'_';
-			echo get_post_meta(get_the_ID(),  $prefix.'sidecolumn', true ); 
+			echo do_shortcode( get_post_meta(get_the_ID(),  $prefix.'sidecolumn', true ) ); 
 		?>
 	</div>
 <?php endwhile; else: ?>

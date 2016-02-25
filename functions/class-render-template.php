@@ -6,6 +6,7 @@
 
 require_once( 'class-sdes-static.php' );
 
+// TODO: rename class to Render_View to avoid confusion with WP Templates.
 /**
  * Container for HTML template functions.
  * This should only include static functions (i.e., the same parameters should always return the same output).
