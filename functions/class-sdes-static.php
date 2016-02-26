@@ -30,7 +30,7 @@ class SDES_Static
 	 */
 	public static function instantiate_and_register_classes( $classnames_to_register = null ) {
 		if ( null == $classnames_to_register ) return;
-		$get_class = function($classname){ return ['classname'=>$classname, 'instance'=>new $classname]; };
+		$get_class = function($classname){ return array('classname'=>$classname, 'instance'=>new $classname); };
 		$class_instances = array_map($get_class, $classnames_to_register);
 		foreach ($class_instances as $new_class) {
 			$new_class['instance']->register();
