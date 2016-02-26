@@ -39,9 +39,8 @@
 	require_once( 'functions/class-render-template.php' );
 	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
 	class Footer {
-		public static function get_header( $position = 'center', $ctx_header = null, $template_args = null) {
-			$default_header = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_header-{$position}", 'UCF Today News' );
-			SDES_Static::set_default_keyValue( $ctx_header, 'header', $default_header);
+		public static function get_header( $position = 'center', $default_header = 'UCF Today News', $template_args = null ) {
+			$ctx_header['header'] = SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_header-{$position}", $default_header );
 			return Render_Template::footer_header( $ctx_header, $template_args );
 		}
 
@@ -88,6 +87,10 @@
 		public static function should_show_nav_menu( $position = 'center' ) {
 			return SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_showLinks-{$position}", false );
 		}
+
+		public static function is_feed_set ( $position = 'left' ) {
+			return '' !== SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_feed-{$position}", '');
+		}
 	}
 ?>
 	<!-- footers -->
@@ -102,11 +105,24 @@
 							if ( Footer::should_show_static_content( 'left' ) ) {
 								Footer::get_static_content( 'left' );
 							} else {
-								Footer::get_header( 'left' );
+								Footer::get_header( 'left', 'Site Hosted by SDES' );
 							 	if ( Footer::should_show_nav_menu( 'left' ) ) {
 									Footer::get_nav_menu( 'left' );
-								} else {
+								} elseif ( Footer::is_feed_set( 'left' ) ) {
 									Footer::get_feed_links( 'left' );
+								} else {
+									?>
+									<ul>
+									<li><a href="http://www.sdes.ucf.edu/">SDES Home</a></li>
+									<li><a href="http://www.sdes.ucf.edu/about">What is SDES? / About</a></li>
+									<li><a href="http://www.sdes.ucf.edu/departments">SDES Departments</a></li>
+									<li><a href="http://www.sdes.ucf.edu/events">Division Calendar</a></li>
+									<li><a href="http://www.sdes.ucf.edu/contact">Contact Us</a></li>
+									<li><a href="http://www.sdes.ucf.edu/staff">SDES Leadership Team</a></li>
+									<li><a href="http://creed.sdes.ucf.edu/">The UCF Creed</a></li>
+									<li><a href="http://it.sdes.ucf.edu/">SDES Information Technology</a></li>
+									</ul>
+									<?php
 								}
 							}
 							?>
