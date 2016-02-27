@@ -93,6 +93,16 @@ abstract class CustomTaxonomy {
 			);
 		register_taxonomy($this->options('name'), $this->options('object_type'), $args);
 	}
+
+	/**
+	 * @param Array $custom_taxonomies Names of taxonomy classes to register.
+	 * @return  Array Array of instantiated taxonomy classes (array of arrays). Each item has the keys: 'classname', 'instance'.
+	 * @see SDES_Static::instantiate_and_register_classes()
+	 */
+	public static function Register_Taxonomies( $custom_taxonomies ) {
+		$taxonomy_instances = SDES_Static::instantiate_and_register_classes($custom_taxonomies);
+		return $taxonomy_instances;
+	}
 }
 
 
@@ -122,9 +132,8 @@ class OrganizationalGroups extends CustomTaxonomy
 
 
 function register_custom_taxonomies() {
-	$custom_taxonomies = array(
+	CustomTaxonomy::Register_Taxonomies( array(
 		'OrganizationalGroups',
-		);
-	$class_instances = SDES_Static::instantiate_and_register_classes($custom_taxonomies);
+	));
 }
 add_action('init', 'register_custom_taxonomies');

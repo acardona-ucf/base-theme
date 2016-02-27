@@ -1,6 +1,7 @@
 <?php
 
-require_once( 'class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Object;
 use Underscore\Types\Arrays;
@@ -10,6 +11,7 @@ use Underscore\Types\Arrays;
  *
  * @see SDES_Metaboxes::$installed_custom_post_types
  * @see SDES_Metaboxes::show_meta_boxes (calls SDES_Metaboxes::display_meta_box_field)
+ * @see SDES_Static::instantiate_and_register_classes()
  * Based on: https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/custom-post-types.php#L1-L242
  **/
 abstract class CustomPostType {
@@ -232,7 +234,26 @@ abstract class CustomPostType {
 		return $html;
 	}
 
-	public static function Register_Thumbnails( $instances ) {
+
+	/**
+	 * @param Array $custom_posttypes Names of custom post types classes to register.
+	 * @return  Array Array of instantiated posttype classes (array of arrays). Each item has the keys: 'classname', 'instance'.
+	 * @see SDES_Static::instantiate_and_register_classes()
+	 */
+	public static function Register_Posttypes( $custom_posttypes ) {
+		$posttype_instances = SDES_Static::instantiate_and_register_classes($custom_posttypes);
+		foreach ($posttype_instances as $registered_posttype) {
+			SDES_Metaboxes::$installed_custom_post_types[] = $registered_posttype['instance'];
+		}
+		CustomPostType::Register_Thumbnails_Support($posttype_instances);
+		return $posttype_instances;
+	}
+
+	/**
+	 * @param Array $instances Instantiated classes for Custom Post Types.
+	 * @return void
+	 */
+	public static function Register_Thumbnails_Support( $instances ) {
 		// if the key $instances[0]['instance'] exists.
 		if ( Arrays::has(Object::unpack($instances), 'instance') ) {
 			$instances = Arrays::pluck($instances, 'instance');

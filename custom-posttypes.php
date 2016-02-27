@@ -1,8 +1,7 @@
 <?php
 
-require_once( 'functions/class-custom-posttype.php' );
-require_once( 'functions/class-sdes-metaboxes.php' );
-require_once( 'functions/class-sdes-static.php' );
+require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/functions/class-custom-posttype.php' );
 
 class Post extends CustomPostType {
 	public
@@ -108,15 +107,10 @@ class Billboard extends CustomPostType {
 
 
 function register_custom_posttypes() {
-	$custom_posttypes = array(
+	CustomPostType::Register_Posttypes(array(
 		'Post',
 		'Page',
 		'Billboard',
-		);
-	$class_instances = SDES_Static::instantiate_and_register_classes($custom_posttypes);
-	foreach ($class_instances as $registered_class) {
-		SDES_Metaboxes::$installed_custom_post_types[] = $registered_class['instance'];
-	}
-	CustomPostType::Register_Thumbnails($class_instances);
+	));
 }
 add_action('init', 'register_custom_posttypes');
