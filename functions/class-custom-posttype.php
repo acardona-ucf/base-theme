@@ -165,6 +165,23 @@ abstract class CustomPostType {
 	}
 
 	/**
+	 * Show metaboxes that have the context 'after_title'.
+	 * @see CustomPostType::do_meta_boxes_after_title()
+	 */
+	public static function register_meta_boxes_after_title() {
+		add_action('edit_form_after_title', 'CustomPostType::do_meta_boxes_after_title');
+	}
+
+	/**
+	 * Callback function to print metaboxes used by add_action('edit_form_after_title').
+	 * @see CustomPostType::register_meta_boxes_after_title()
+	 */
+	public static function do_meta_boxes_after_title( $post ) {
+		//global $post, $wp_meta_boxes; // Get the globals.
+		do_meta_boxes( get_current_screen(), 'after_title', $post ); // Output meta boxes for the 'after_title' context.
+	}
+
+	/**
 	 * Registers the custom post type and any other ancillary actions that are
 	 * required for the post to function properly.
 	 * */
@@ -267,3 +284,5 @@ abstract class CustomPostType {
 		add_theme_support( 'post-thumbnails', $thumbnail_posttypes );
 	}
 }
+
+CustomPostType::register_meta_boxes_after_title();

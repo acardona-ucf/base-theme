@@ -103,6 +103,16 @@ class Billboard extends CustomPostType {
 		return array(
 			);
 	}
+
+	public function register_metaboxes() {
+		parent::register_metaboxes();
+
+		// Move and Rename the Featured Image Metabox.
+		remove_meta_box( 'postimagediv', $this->name, 'side' );
+		add_meta_box('postimagediv', __("{$this->singular_name} Image"),
+			'post_thumbnail_meta_box', $this->name, 'after_title', 'high');
+		CustomPostType::register_meta_boxes_after_title();
+	}
 }
 
 
