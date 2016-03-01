@@ -184,8 +184,10 @@ abstract class CustomPostType {
 	/**
 	 * Registers the custom post type and any other ancillary actions that are
 	 * required for the post to function properly.
+	 * @see http://codex.wordpress.org/Function_Reference/register_post_type
+	 * @param Array $args Override the registration args passed to register_post_type.
 	 * */
-	public function register() {
+	public function register( $args = array() ) {
 		$registration = array(
 			'labels'     => $this->labels(),
 			'supports'   => $this->supports(),
@@ -196,6 +198,7 @@ abstract class CustomPostType {
 		if ( $this->options( 'use_order' ) ) {
 			$registration = array_merge( $registration, array( 'hierarchical' => True, ) );
 		}
+		$registration = array_merge( $registration, $args );
 		register_post_type( $this->options( 'name' ), $registration );
 		if ( $this->options( 'use_shortcode' ) ) {
 			add_shortcode( $this->options( 'name' ).'-list', array( $this, 'shortcode' ) );
