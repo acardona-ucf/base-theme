@@ -115,12 +115,67 @@ class Billboard extends CustomPostType {
 	}
 }
 
+class Staff extends CustomPostType {
+	public
+		$name           = 'staff',
+		$plural_name    = 'Staff',
+		$singular_name  = 'Staff',
+		$add_new_item   = 'Add New Staff',
+		$edit_item      = 'Edit Staff',
+		$new_item       = 'New Staff',
+		$public         = True,  // I dunno...leave it true
+		$use_title      = True,  // Title field
+		$use_editor     = True,  // WYSIWYG editor, post content field
+		$use_revisions  = True,  // Revisions on post content and titles
+		$use_thumbnails = True,  // Featured images
+		$use_order      = True, // Wordpress built-in order meta data
+		$use_metabox    = True, // Enable if you have custom fields to display in admin
+		$use_shortcode  = True, // Auto generate a shortcode for the post type
+		                         // (see also objectsToHTML and toHTML methods)
+		$taxonomies     = array( 'post_tag', 'org_groups' ),
+		$built_in       = False,
+		// Optional default ordering for generic shortcode if not specified by user.
+		$default_orderby = null,
+		$default_order   = null;
+
+	public function register( $args = array() ) {
+		$default_args = array(
+				'menu_icon' => 'dashicons-groups',
+			);
+		parent::register( array_merge($default_args, $args) );
+	}
+
+	public function fields() {
+		$prefix = $this->options('name').'_';
+		return array(
+			array(
+				'name' => 'Position Title',
+				'descr' => '',
+				'id' => $prefix.'position_title',
+				'type' => 'text',
+			),
+			array(
+				'name' => 'Email',
+				'descr' => '',
+				'id' => $prefix.'email',
+				'type' => 'text',
+			),
+			array(
+				'name' => 'Phone',
+				'descr' => '',
+				'id' => $prefix.'phone',
+				'type' => 'text',
+			),
+		);
+	}
+}
 
 function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
 		'Post',
 		'Page',
 		'Billboard',
+		'Staff',
 	));
 }
 add_action('init', 'register_custom_posttypes');

@@ -85,53 +85,8 @@ class news_list {
     }
 }
 $news_list = new news_list();
-/* staff_list Post Type */
-class staff_list {
-    function staff_list() {
-        add_action('init',array($this,'create_post_type'));
-    }
-    function create_post_type() {
-        $labels = array(
-            'name' => 'staff_lists',
-            'singular_name' => 'staff_list',
-            'add_new' => 'Add New',
-            'all_items' => 'All Posts',
-            'add_new_item' => 'Add New Post',
-            'edit_item' => 'Edit Post',
-            'new_item' => 'New Post',
-            'view_item' => 'View Post',
-            'search_items' => 'Search Posts',
-            'not_found' =>  'No Posts found',
-            'not_found_in_trash' => 'No Posts found in trash',
-            'parent_item_colon' => 'Parent Post:',
-            'menu_name' => 'Staff'
-            );
-        $args = array(
-            'labels' => $labels,
-            'description' => "Description",
-            'public' => true,
-            'exclude_from_search' => true,
-            'publicly_queryable' => true,
-            'show_ui' => true,
-            'show_in_nav_menus' => true,
-            'show_in_menu' => true,
-            'show_in_admin_bar' => true,
-            'menu_icon' => 'dashicons-groups',
-            'capability_type' => 'post',
-            'hierarchical' => false,
-            'supports' => array('title','editor', 'thumbnail'),
-            'taxonomies' => array('org_groups'),
-            'has_archive' => true,
-            'rewrite' => array('slug' => 'stafflist'),
-            'query_var' => true,
-            'can_export' => true
-            );
-        register_post_type('staff_list',$args);
-    }
-}
-$staff_list = new staff_list();
-/* Adds feature image to News, Staff */
-add_theme_support( 'post-thumbnails', array('news_list', 'staff_list') );
+/* Adds feature image to News */
+add_theme_support( 'post-thumbnails', array('news_list',) );
 /* Add thumbnail column to admin page */
 if ( !function_exists('AddThumbColumn') && function_exists('add_theme_support') ) { 
     function AddThumbColumn($cols) { 
@@ -176,7 +131,6 @@ function get_custom_field( $value ) {
 /* Register the Custom Fields for Custom Post Types */
 function add_custom_meta_box() {
     add_meta_box( 'meta-box-for-details', __( 'Details', 'sdes' ), 'meta_box_output_for_news', 'news_list' , 'normal', 'high' );
-    add_meta_box( 'meta-box-for-details', __( 'Details', 'sdes' ), 'meta_box_output_for_staff', 'staff_list' , 'normal', 'high' );
 }
 add_action( 'add_meta_boxes', 'add_custom_meta_box' );                                     
 /* Output the Meta box for news */
@@ -244,54 +198,7 @@ function meta_box_news_save( $post_id ) {
 }
 add_action( 'save_post', 'meta_box_news_save' );
 /* Output the Meta box for news */
-function meta_box_output_for_staff($post) {
-    // create a nonce field
-    wp_nonce_field('my_staff_nonce', 'staff_nonce'); ?>  
-    
-    <div>
-        <label for="position_title">Position Title:</label><br>
-        <input style="width:95%;"  type="text" name="position_title" id="position_title" value="<?= get_custom_field('position_title'); ?>" >
-    </div>
 
-    <div style="float:left; width:49%">
-        <label for="staff_email">Email:</label><br>
-        <input style="width:95%;" type="text" name="staff_email" id="staff_email" value="<?= get_custom_field('staff_email'); ?>" >
-    </div>
-
-    <div style="float:left; width:49%">
-        <label for="staff_phone">Phone:</label><br>
-        <input style="width:95%;" type="text" name="staff_phone" id="staff_phone" value="<?= get_custom_field('staff_phone'); ?>" >
-    </div>
-
-    <br><br><br>
-    
-    <?php
-}
-
-/* Save the Meta box values for news */
-function meta_box_staff_save( $post_id ) {
-    // Stop the script when doing autosave
-    if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-
-    // Verify the nonce. If insn't there, stop the script
-    if( !isset( $_POST['staff_nonce'] ) || !wp_verify_nonce( $_POST['staff_nonce'], 'my_staff_nonce' ) ) return;
-
-    // Stop the script if the user does not have edit permissions
-    if( !current_user_can( 'edit_post', get_the_id() ) ) return;
-
-    // Save the position_title
-    if( isset( $_POST['position_title'] ) )
-        update_post_meta( $post_id, 'position_title', esc_attr( $_POST['position_title'] ) );
-
-    // Save the staff_email
-    if( isset( $_POST['staff_email'] ) )
-        update_post_meta( $post_id, 'staff_email', esc_attr( $_POST['staff_email'] ) );
-
-    // Save the staff_phone
-    if( isset( $_POST['staff_phone'] ) )
-        update_post_meta( $post_id, 'staff_phone', esc_attr( $_POST['staff_phone'] ) );
-}
-add_action( 'save_post', 'meta_box_staff_save' );
 // Replaces the excerpt "[Read more]" text by a link
 function new_excerpt_more($more) {
    global $post;
