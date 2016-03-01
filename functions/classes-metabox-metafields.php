@@ -93,6 +93,21 @@ class TextMetaField extends MetaField{
 }
 
 /**
+ * DatePickerMetaField class represents a text input for a date value.
+ * @todo Extract jQueryUI datepicker dependency or test that it is available and only called once per page.
+ * */
+class DatePickerMetaField extends MetaField {
+	protected $class_attr = 'date';
+	function input_html() {
+		ob_start();
+		?>
+		<input type="text" class="<?php echo $this->class_attr?>" id="<?php echo htmlentities( $this->id )?>" name="<?php echo htmlentities( $this->id )?>" value="<?php echo htmlentities( $this->value )?>">
+		<?php
+		return ob_get_clean();
+	}
+}
+
+/**
  * PasswordMetaField can be used to accept sensitive information, not encrypted on
  * wordpress' end however.
  *
