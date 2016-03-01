@@ -170,11 +170,73 @@ class Staff extends CustomPostType {
 	}
 }
 
+class News extends CustomPostType {
+	public
+		$name           = 'news',
+		$plural_name    = 'News',
+		$singular_name  = 'News',
+		$add_new_item   = 'Add New News',
+		$edit_item      = 'Edit News',
+		$new_item       = 'New News',
+		$public         = True,  // I dunno...leave it true
+		$use_title      = True,  // Title field
+		$use_editor     = True,  // WYSIWYG editor, post content field
+		$use_revisions  = True,  // Revisions on post content and titles
+		$use_thumbnails = True,  // Featured images
+		$use_order      = True, // Wordpress built-in order meta data
+		$use_metabox    = True, // Enable if you have custom fields to display in admin
+		$use_shortcode  = True, // Auto generate a shortcode for the post type
+		                         // (see also objectsToHTML and toHTML methods)
+		$taxonomies     = array( 'post_tag', 'categories' ),
+		$built_in       = False,
+		// Optional default ordering for generic shortcode if not specified by user.
+		$default_orderby = null,
+		$default_order   = null;
+
+	public function register( $args = array() ) {
+		$default_args = array(
+				'menu_icon' => 'dashicons-admin-site',
+			);
+		parent::register( array_merge($default_args, $args) );
+	}
+
+	public function fields() {
+		$prefix = $this->options('name').'_';
+		return array(
+			array(
+				'name' => 'Strapline',
+				'descr' => '',
+				'id' => $prefix.'strapline',
+				'type' => 'text',
+			),
+			array(
+				'name' => 'Link',
+				'descr' => '',
+				'id' => $prefix.'link',
+				'type' => 'text',
+			),
+			array(
+				'name' => 'Start Date',
+				'descr' => '',
+				'id' => $prefix.'start_date',
+				'type' => 'date',
+			),
+			array(
+				'name' => 'End Date',
+				'descr' => '',
+				'id' => $prefix.'end_date',
+				'type' => 'date',
+			),
+		);
+	}
+}
+
 function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
 		'Post',
 		'Page',
 		'Billboard',
+		'News',
 		'Staff',
 	));
 }

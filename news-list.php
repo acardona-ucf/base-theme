@@ -1,7 +1,7 @@
 <?php
 $noThumbnail = '<img src="https://assets.sdes.ucf.edu/images/blank.png" alt="thumb" class="img-responsive">';
 
-$post = array('post_type' => 'news_list');
+$post = array('post_type' => 'news');
 $loop = new WP_Query($post);
 ?>
 
