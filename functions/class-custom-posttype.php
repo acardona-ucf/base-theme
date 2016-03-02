@@ -1,6 +1,7 @@
 <?php
 
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Object;
@@ -279,7 +280,12 @@ abstract class CustomPostType {
 	public static function Register_Posttypes( $custom_posttypes ) {
 		$posttype_instances = SDES_Static::instantiate_and_register_classes($custom_posttypes);
 		foreach ($posttype_instances as $registered_posttype) {
-			SDES_Metaboxes::$installed_custom_post_types[] = $registered_posttype['instance'];
+			if (class_exists('SDES_Metaboxes') ) {
+				SDES_Metaboxes::$installed_custom_post_types[] = $registered_posttype['instance'];
+			}
+			if (class_exists('ShortcodeBase') ) {
+				ShortcodeBase::$installed_custom_post_types[] = $registered_posttype['instance'];
+			}
 		}
 		CustomPostType::Register_Thumbnails_Support($posttype_instances);
 		return $posttype_instances;
