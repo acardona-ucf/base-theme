@@ -219,7 +219,20 @@ abstract class CustomPostType {
 		}else {
 			$attr = $default;
 		}
-		return sc_object_list( $attr );
+		return SDES_Static::sc_object_list( $attr );
+	}
+
+	/**
+	 * Static method that tries to call the correct instance method of objectsToHTML.
+	 * @param string $classname Override the classname to instantiate the class.
+	 */
+	public static function tryObjectsToHTML( $objects, $css_classes, $classname = '' ) {
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$classname = ( '' === $classname ) ? $objects[0]->post_type : $classname;
+		if( class_exists($classname) ) {
+			$class = new $classname;
+			return $class->objectsToHTML( $objects, $css_classes );
+		} else { return ''; }
 	}
 
 	/**
@@ -227,17 +240,19 @@ abstract class CustomPostType {
 	 * If you want to override how a list of objects are outputted, override
 	 * this, if you just want to override how a single object is outputted, see
 	 * the toHTML method.
+	 * @param WP_Post $objects The post objects to display.
+	 * @param string $css_classes List of css classes for the objects container.
+	 * @see http://php.net/manual/en/language.oop5.late-static-bindings.php
 	 * */
 	public function objectsToHTML( $objects, $css_classes ) {
-		if ( count( $objects ) < 1 ) { return '';}
-		$class = get_custom_post_type( $objects[0]->post_type );
-		$class = new $class;
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$css_classes = ( $css_classes ) ? $css_classes : $this->name.'-list';
 		ob_start();
 		?>
-		<ul class="<?php if ( $css_classes ):?><?php echo $css_classes?><?php else:?><?php echo $class->options( 'name' )?>-list<?php endif;?>">
+		<ul class="<?= $css_classes ?>">
 			<?php foreach ( $objects as $o ):?>
 			<li>
-				<?php echo $class->toHTML( $o )?>
+				<?= static::toHTML( $o ) ?>
 			</li>
 			<?php endforeach;?>
 		</ul>
@@ -248,8 +263,9 @@ abstract class CustomPostType {
 
 	/**
 	 * Outputs this item in HTML.  Can be overridden for descendants.
+	 * @param WP_Post $object The post object to display.
 	 * */
-	public function toHTML( $object ) {
+	public static function toHTML( $object ) {
 		$html = '<a href="'.get_permalink( $object->ID ).'">'.$object->post_title.'</a>';
 		return $html;
 	}

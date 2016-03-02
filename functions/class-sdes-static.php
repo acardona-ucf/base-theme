@@ -295,4 +295,135 @@ class SDES_Static
 		}
 		return $nav_menu;
 	}
+
+
+	/**
+	* Fetches objects defined by arguments passed, outputs the objects according
+	* to the objectsToHTML method located on the object. Used by the auto
+	* generated shortcodes enabled on custom post types. See also:
+	*
+	* CustomPostType::objectsToHTML
+	* CustomPostType::toHTML
+	*
+	* @param array $attrs      Search params mapped to WP_Query args.
+	* @param array $options    Override values/behaviors of this function.
+	* @param string $classname Override the classname to instantiate the class.
+	* @return string
+	* @author Jared Lang
+	* @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L780-L903
+	**/
+	public static function sc_object_list($attrs, $options = array(), $classname = '') {
+		if (!is_array($attrs)){return '';}
+		
+		$default_options = array(
+			'default_content' => null,
+			'sort_func' => null,
+			'objects_only' => False
+		);
+		
+		extract(array_merge($default_options, $options));
+		
+		# set defaults and combine with passed arguments
+		$default_attrs = array(
+			'type'    => null,
+			'limit'   => -1,
+			'join'    => 'or',
+			'class'   => '',
+			'orderby' => 'menu_order title',
+			'order'   => 'ASC',
+			'offset'  => 0
+		);
+		$params = array_merge($default_attrs, $attrs);
+		$classname = ( '' === $classname ) ? $params['type'] : $classname;
+		
+		# verify options
+		if ($params['type'] == null){
+			return '<p class="error">No type defined for object list.</p>';
+		}
+		if (!is_numeric($params['limit'])){
+			return '<p class="error">Invalid limit argument, must be a number.</p>';
+		}
+		if (!in_array(strtoupper($params['join']), array('AND', 'OR'))){
+			return '<p class="error">Invalid join type, must be one of "and" or "or".</p>';
+		}
+		if ( !class_exists($classname) ){
+			return '<p class="error">Invalid post type or classname.</p>';
+		}
+		
+		$class = new $classname;
+		
+		# Use post type specified ordering?
+		if(!isset($attrs['orderby']) && !is_null($class->default_orderby)) {
+			$params['orderby'] = $class->orderby;
+		}
+		if(!isset($attrs['order']) && !is_null($class->default_order)) {
+			$params['order'] = $class->default_order;
+		}
+
+		# get taxonomies and translation
+		$translate = array(
+			'tags' => 'post_tag',
+			'categories' => 'category',
+			'org_groups' => 'org_groups'
+		);
+		$taxonomies = array_diff(array_keys($attrs), array_keys($default_attrs));
+		
+		# assemble taxonomy query
+		$tax_queries = array();
+		$tax_queries['relation'] = strtoupper($params['join']);
+		
+		foreach($taxonomies as $tax){
+			$terms = $params[$tax];
+			$terms = trim(preg_replace('/\s+/', ' ', $terms));
+			$terms = explode(' ', $terms);
+			
+			if (array_key_exists($tax, $translate)){
+				$tax = $translate[$tax];
+			}
+			
+			$tax_queries[] = array(
+				'taxonomy' => $tax,
+				'field' => 'slug',
+				'terms' => $terms,
+			);
+		}
+		
+		# perform query
+		$query_array = array(
+			'tax_query'      => $tax_queries,
+			'post_status'    => 'publish',
+			'post_type'      => $params['type'],
+			'posts_per_page' => $params['limit'],
+			'orderby'        => $params['orderby'],
+			'order'          => $params['order'],
+			'offset'         => $params['offset']
+		);
+		
+		$query = new WP_Query($query_array);
+		
+		global $post;
+		$objects = array();
+		while($query->have_posts()){
+			$query->the_post();
+			$objects[] = $post;
+		}
+		
+		# Custom sort if applicable
+		if ($sort_func !== null){
+			usort($objects, $sort_func);
+		}
+		
+		wp_reset_postdata();
+		
+		if($objects_only) {
+			return $objects;
+		}
+		
+		if (count($objects)){
+			$html = $class->objectsToHTML($objects, $params['class']);
+		}else{
+			$html = $default_content;
+		}
+		return $html;
+	}
 }
