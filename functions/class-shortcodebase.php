@@ -13,6 +13,7 @@ define('SHORTCODE_INTERFACE_PATH', get_stylesheet_directory().'/includes/shortco
  */
 class ShortcodeBase_Loader {
 	private static $isLoaded = false;
+	public static $enable_fontawesome = false;
 
 	public static function Load() {
 		if ( !self::$isLoaded ) {
@@ -27,12 +28,16 @@ class ShortcodeBase_Loader {
 		wp_enqueue_script( 'shortcode-script', SHORTCODE_JS_URI );
 	}
 
-	// TODO: add references to font-awesome.
 	// @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/functions/admin.php#L3-L11
 	public static function add_shortcode_interface() {
+		$js_id = "select-shortcode-form";
+		$icon_classes = (self::$enable_fontawesome) ? "fa fa-code" : "dashicons dashicons-editor-code";
+		$icon_styles  = (self::$enable_fontawesome) ? "" : "margin-top: 3px;";
 		ob_start();
 	  ?>
-		<a href="#TB_inline?width=600&height=700&inlineId=select-shortcode-form" class="thickbox button" id="add-shortcode" title="Add Shortcode"><span class="fa fa-code"></span> Add Shortcode</a>
+		<a href="#TB_inline?width=600&height=700&inlineId=<?= $js_id ?>" class="thickbox button" id="add-shortcode" title="Add Shortcode">
+			<span class="<?= $icon_classes ?>" style=" <?= $icon_styles ?>"></span> Add Shortcode
+		</a>
 	  <?php
 		echo ob_get_clean();
 	}
