@@ -7,10 +7,6 @@ global $shortcode_tags;
 	<div class="container">
 		<h2>Help</h2>
 		
-		<?php if ($updated):?>
-		<div class="updated fade"><p><strong><?=__( 'Options saved' ); ?></strong></p></div>
-		<?php endif; ?>
-		
 		<div class="sections">
 			<ul>
 				<li class="section"><a href="#posting">Posting</a></li>
