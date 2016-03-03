@@ -19,7 +19,10 @@ $loop = new WP_Query($post);
 			</div>
 			<?= get_custom_field('news_strapline') ? '<div class="news-strapline">'. get_custom_field( 'news_strapline' ) . '</div>' : false; ?>
 			<div class="datestamp">
-				Posted on <?= the_time('F j, Y'); ?> at <?= the_time('g:i a'); ?>
+				Posted on 
+				<a href="<?= the_permalink(); ?>">
+					<?= the_time('F j, Y'); ?> at <?= the_time('g:i a'); ?>
+				</a>
 			</div>
 			<div class="news-summary">
 				<p>

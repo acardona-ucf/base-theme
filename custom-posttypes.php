@@ -229,6 +229,72 @@ class News extends CustomPostType {
 			),
 		);
 	}
+
+	public function objectsToHTML( $objects, $css_classes ) {
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		$context['archiveUrl'] = '';
+		ob_start();
+		?>
+		<span class="<?= $css_classes ?>">
+			<?php foreach ( $objects as $o ):?>
+				<?= static::toHTML( $o ) ?>
+				<div class="hr-blank"></div>
+			<?php endforeach;?>
+			<div class="top-b"></div>
+			<div class="datestamp"><a href="<?= $context['archiveUrl'] ?>">»News Archive</a></div>
+		</span>
+		<?php
+			$html = ob_get_clean();
+		return $html;
+	}
+
+	public static function toHTML ( $post_object ){
+		$context['Post_ID'] = $post_object->ID;
+		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+		$context['thumbnail']
+			= has_post_thumbnail($post_object) 
+				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
+				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
+		$news_link = get_post_meta( $post_object->ID, 'news_link', true );
+		$context['permalink'] = get_permalink( $post_object );
+		$context['title_link'] = ( '' !== $news_link ) ? $news_link : $context['permalink'];
+		$context['title'] = get_the_title( $post_object );
+		$news_strapline = get_post_meta( $post_object->ID, 'news_strapline', true );
+		$context['news_strapline'] =('' !== $news_strapline ) ? '<div class="news-strapline">'.$news_strapline.'</div>' : '';
+		$context['month_year_day'] = get_the_date('F j, Y', $post_object);
+		$context['time'] = get_the_time('g:i a', $post_object);
+
+		$loop = new WP_Query( array('p'=>$post_object->ID, 'post_type'=> $post_object->post_type ) );
+		$loop->the_post();
+			$context['excerpt'] = get_the_content( "[Read More]" );
+		wp_reset_query();
+
+		ob_start();
+		?>
+		<div class="news">		
+			<?= $context['thumbnail'] ?>
+			<div class="news-content">
+				<div class="news-title">
+					<a href="<?= $context['title_link'] ?>"><?= $context['title'] ?></a>
+				</div> 
+				<?= $context['news_strapline'] ?>
+				<div class="datestamp">
+					Posted on 
+					<a href="<?= $context['permalink'] ?>">
+						<?= $context['month_year_day'] ?> at <?= $context['time'] ?>
+					</a>
+				</div>
+				<div class="news-summary">
+					<p>
+						<?= $context['excerpt'] ?>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
 }
 
 function register_custom_posttypes() {

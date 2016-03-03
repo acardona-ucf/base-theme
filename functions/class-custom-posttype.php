@@ -210,6 +210,8 @@ abstract class CustomPostType {
 	 * Shortcode for this custom post type.  Can be overridden for descendants.
 	 * Defaults to just outputting a list of objects outputted as defined by
 	 * toHTML method.
+	 * @see CustomPostType::objectsToHTML
+	 * @see CustomPostType::toHTML
 	 * */
 	public function shortcode( $attr ) {
 		$default = array(
@@ -244,6 +246,7 @@ abstract class CustomPostType {
 	 * @param WP_Post $objects The post objects to display.
 	 * @param string $css_classes List of css classes for the objects container.
 	 * @see http://php.net/manual/en/language.oop5.late-static-bindings.php
+	 * @see Always prefer `static::` over `self::` (in PHP 5.3+): http://stackoverflow.com/a/6807615
 	 * */
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
