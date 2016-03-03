@@ -5,9 +5,18 @@ require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/includes/shortcode-interface.php
  **/
  $shortcodes = array();
+ // Add shortcodes registered in ShortcodeBase.
  foreach (ShortcodeBase::$installed_shortcodes as $sc) {
- 	if( class_exists($sc) )
- 		$shortcodes[] = new $sc;
+ 	if( class_exists($sc) ) {
+ 		$instance = new $sc;
+ 		if( $instance instanceof IShortcodeUI) $shortcodes[] = new $instance;
+ 	}
+ }
+ // Add shortcodes for custom posttypes registered in ShortcodeBase.
+ foreach ( ShortcodeBase::$installed_custom_post_types as $sc_post ) {
+	if ( $sc_post->options('use_shortcode') ) {
+		$shortcodes[] = new Shortcode_CustomPostType_Wrapper($sc_post);
+ 	}
  }
 ?>
 <div id="select-shortcode-form" style="display:none">

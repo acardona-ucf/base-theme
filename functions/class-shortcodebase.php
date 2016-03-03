@@ -52,13 +52,18 @@ class ShortcodeBase_Loader {
 }
 ShortcodeBase_Loader::Load();
 
+interface IShortcodeUI {
+	public function get_option_markup();
+	public function get_description_markup();
+	public function get_form_markup();
+}
 
  /**
  * Base Shortcode class.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L2-L111
  **/
-abstract class ShortcodeBase {
-	public static $installed_custom_post_types = null;
+abstract class ShortcodeBase implements IShortcodeUI {
+	public static $installed_custom_post_types = array();
 	public static $installed_shortcodes = array();
 	public
 		$name        = 'Shortcode', // The name of the shortcode.
@@ -125,7 +130,7 @@ abstract class ShortcodeBase {
 	 * @author Jim Barnes
 	 * return string
 	 */
-	private function get_field_input( $field, $command ) {
+	protected function get_field_input( $field, $command ) {
 		$name      = isset( $field['name'] ) ? $field['name'] : '';
 		$id        = isset( $field['id'] ) ? $field['id'] : '';
 		$help_text = isset( $field['help_text'] ) ? $field['help_text'] : '';
@@ -176,4 +181,93 @@ abstract class ShortcodeBase {
 		}
 		return $shortcode_instances;
 	}
+}
+
+class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortcodeUI {
+	public
+		$name        = 'Shortcode CPT Wrapper', // The name of the shortcode.
+		$command     = 'shortcode-cpt-wrapper', // The command used to call the shortcode.
+		$description = 'Show list of cpt items.', // The description of the shortcode.
+		$params      = array(), // The parameters used by the shortcode.
+		$wysiwyg     = True; // Whether to add it to the shortcode Wysiwyg modal.
+
+	function __construct($cpt_instance) {
+		$this->name = $cpt_instance->options('singular_name').' List';
+		$this->command = $cpt_instance->options('name').'-list';
+		$this->description = 'Show list of '.$cpt_instance->options('plural_name').' items.';
+
+		// Add taxonomy params
+		if (count($cpt_instance->taxonomies) > 1) { 
+			$this->params[] = array(
+				'name' => 'limit (number)',
+				'id' => 'limit',
+				'help_text' => 'Only show items in the custom taxonomy '.$cpt_instance->options('name'),
+				'type' => 'number',
+				);
+			$this->params[] = array(
+				'name' => "join ('and', 'or')",
+				'id' => 'join',
+				'help_text' => 'Join multiple taxonomies.',
+				'type' => 'dropdown',
+				'choices' => array(
+					array('value'=>'or', 'name'=>''),
+					array('value'=>'and', 'name'=>'and'),
+					array('value'=>'or', 'name'=>'or'),
+					),
+				);
+		}
+		foreach ($cpt_instance->taxonomies as $tax) { 
+			$choices = array( array('value'=>'', 'name'=>'') );
+			$terms = get_terms($tax);
+			// if( 'staff' == $cpt_instance->options('name') && 'org_groups' == $tax ) wp_die(var_dump($terms));
+			foreach ($terms as $term) {
+				if( !is_wp_error($term) && !array_key_exists('invalid_taxonomy', $term) && !empty($term) ) {
+					// wp_die(var_dump($terms));
+					// var_dump($term);
+					$choices[] = array('value'=>$term->slug, 'name'=>$term->name);
+				}
+			}
+			// Friendlier text
+			switch ($tax) {
+				case 'post_tag':
+					$tax = 'tags';
+					break;
+				case 'category':
+					$tax = 'categories';
+					break;
+			}
+			// Add field params.
+			$this->params[] = array(
+				'name' => $tax,
+				'id' => $tax,
+				'help_text' => 'Only show items in the custom taxonomy '.$cpt_instance->options('name'),
+				'type' => 'dropdown',
+				'choices'=> $choices,
+				);
+		}
+	}
+
+	public function get_option_markup() {
+		return sprintf('<option value="%s">%s</option>', $this->command, $this->name);
+	}
+
+	public function get_description_markup() {
+		return sprintf('<li class="shortcode-%s">%s</li>', $this->command, $this->description);
+	}
+
+	public function get_form_markup() {
+		ob_start();
+	  ?>
+		<li class="shortcode-<?php echo $this->command; ?>">
+			<h3><?php echo $this->name; ?> Options</h3>
+			<?php
+				foreach($this->params as $param) {
+					echo $this->get_field_input( $param, $this->command );
+				}
+			?>
+		</li>
+	  <?php
+		return ob_get_clean();		
+	}
+
 }

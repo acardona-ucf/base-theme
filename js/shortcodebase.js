@@ -19,8 +19,8 @@ WebcomAdmin.shortcodeInterfaceTool = function($) {
 
     if (enclosingText) {
       text += enclosingText;
+      text += "[/" + shortcode + "]";
     }
-    text += "[/" + shortcode + "]";
 
     send_to_editor(text);
   };
