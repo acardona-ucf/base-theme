@@ -168,6 +168,84 @@ class Staff extends CustomPostType {
 			),
 		);
 	}
+
+	public function objectsToHTML( $objects, $css_classes ) {
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		$context['archiveUrl'] = '';
+		ob_start();
+		?>
+		<script type="text/javascript">
+			$(function(){
+				var collapsedSize = 60;
+				$(".staff-details").each(function() {
+					var h = this.scrollHeight;
+					var div = $(this);
+					if (h > 30) {
+						div.css("height", collapsedSize);
+						div.after("<a class=\"staff-more\" href=\"\">[Read More]</a>");
+						var link = div.next();
+						link.click(function(e) {
+							e.stopPropagation();
+							e.preventDefault();
+							if (link.text() != "[Collapse]") {
+								link.text("[Collapse]");
+								div.animate({ "height": h });
+							} else {
+								div.animate({ "height": collapsedSize });
+								link.text("[Read More]");
+							}
+						});
+					}
+				});
+			});
+		</script>
+		<span class="<?= $css_classes ?>">
+			<?php foreach ( $objects as $o ):?>
+				<?= static::toHTML( $o ) ?>
+				<div class="hr-blank"></div>
+			<?php endforeach;?>
+
+		</span>
+		<?php
+			$html = ob_get_clean();
+		return $html;
+	}
+
+	public static function toHTML ( $post_object ){
+		$context['Post_ID'] = $post_object->ID;
+		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+		$context['thumbnail']
+			= has_post_thumbnail($post_object) 
+				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
+				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
+		$context['title'] = get_the_title( $post_object );
+		$context['staff_position_title'] = get_post_meta( $post_object->ID, 'staff_position_title', true );
+		$context['staff_phone'] = get_post_meta( $post_object->ID, 'staff_phone', true );
+		$context['staff_email'] = get_post_meta( $post_object->ID, 'staff_email', true );
+
+		$loop = new WP_Query( array('p'=>$post_object->ID, 'post_type'=> $post_object->post_type ) );
+		$loop->the_post();
+			$context['content'] = get_the_content();
+		wp_reset_query();
+
+		ob_start();
+		?>
+			<div class="staff">
+				<?= $context['thumbnail'] ?>
+				<div class="staff-content">
+					<div class="staff-name"><?= $context['title'] ?></div>
+					<div class="staff-title"><?= $context['staff_position_title'] ?></div>
+					<div class="staff-phone"><?= $context['staff_phone'] ?></div>
+					<div class="staff-email">
+						<a href="mailto:<?= $context['staff_email'] ?>"><?= $context['staff_email'] ?></a>
+					</div>
+					<div class="staff-details"><?= $context['content'] ?></div>
+				</div>
+			</div>
+		<?php
+		return ob_get_clean();
+	}
 }
 
 class News extends CustomPostType {
