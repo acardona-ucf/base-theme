@@ -326,10 +326,10 @@ class ColumnSC extends ShortcodeBase {
     }
 }
 
-ShortcodeBase::$installed_shortcodes = array_merge(
-    ShortcodeBase::$installed_shortcodes,
-    array(
-        'RowSC',
-        'ColumnSC',
-        )
-    );
+function register_shortcodes() {
+    ShortcodeBase::Register_Shortcodes(array(
+            'RowSC',
+            'ColumnSC',
+        ));
+}
+add_action( 'init', 'register_shortcodes' );

@@ -161,4 +161,19 @@ abstract class ShortcodeBase {
 
 		return $retval;
 	}
+
+	public static function Register_Shortcodes( $shortcodes ) {
+		ShortcodeBase::$installed_shortcodes 
+			= array_merge(ShortcodeBase::$installed_shortcodes, $shortcodes);
+			
+		$shortcode_instances = array();
+		foreach ($shortcodes as $sc) {
+			if( class_exists($sc) ) {
+				$instance = new $sc;
+				$instance->register_shortcode();
+				$shortcode_instances[] = $instance;
+			}
+		}
+		return $shortcode_instances;
+	}
 }
