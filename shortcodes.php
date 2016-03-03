@@ -326,10 +326,119 @@ class ColumnSC extends ShortcodeBase {
     }
 }
 
+class EventsSC extends ShortcodeBase {
+    public
+        $name = 'Events', // The name of the shortcode.
+        $command = 'events', // The command used to call the shortcode.
+        $description = 'Show events calendar from a feed', // The description of the shortcode.
+        $callback    = 'callback',
+        $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
+        $params      = array(
+            array(
+                'name'      => 'Event Id',
+                'id'        => 'id',
+                'help_text' => 'The calendar_id of the events.ucf.edu calendar.',
+                'type'      => 'text'
+            ),
+            array(
+                'name'      => 'Limit',
+                'id'        => 'limit',
+                'help_text' => 'The calendar_id of the events.ucf.edu calendar.',
+                'type'      => 'text',
+                'default'   => 6,
+            ),
+        ); // The parameters used by the shortcode.
+
+    /**
+     * @see https://github.com/ucf-sdes-it/it-php-template/blob/e88a085401523f78b812ea8b4d9557ba30e40c9f/template_functions_generic.php#L241-L326
+     */
+    public static function callback($attr, $content='') {  //$id, $limit = 6, $header_text = "Upcoming Events"){
+        $attr = shortcode_atts( array(
+                'id' => 41, // SDES Events calendar.
+                'limit' => 6,
+                'header_text'    => 'Upcoming Events',
+            ), $attr
+        );
+        if($attr['id'] == null) return true;
+        
+        //open cURL instance for the UCF Event Calendar RSS feed
+        $ch = curl_init("http://events.ucf.edu/?calendar_id={$attr['id']}&upcoming=upcoming&format=rss");
+
+        //set cURL options
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);  
+        $rss = curl_exec($ch);
+        curl_close($ch);
+        $rss = @utf8_encode($rss);
+        //disable libxml errors and allow user to fetch error information as needed
+        libxml_use_internal_errors(true);
+        try{
+            $xml = new SimpleXMLElement($rss, LIBXML_NOCDATA);
+        } catch(Exception $e){ }
+        //if there are errors
+        if(libxml_get_errors()){
+            ob_start();
+            ?>
+            <li>Failed loading XML</li>
+            <?php foreach(libxml_get_errors() as $error) : ?>
+                <li><?= htmlentities($error->message) ?></li>
+            <?php endforeach;
+                return ob_get_clean();
+        }
+
+        //set limit if items returned are smaller than limit
+        $count = (count($xml->channel->item) > $attr['limit']) ? $attr['limit'] : count($xml->channel->item);
+          ob_start();
+          ?>
+            <div class="panel panel-warning">
+                <div class="panel-heading"><?= $attr['header_text'] ?></div>
+                <ul class="list-group ucf-events">
+                <?php
+                    //check for items
+                    if(count($xml->channel->item) == 0) : ?>
+                        <li class="list-group-item">Sorry, no events could be found.</li>
+                    <?php
+                    else :
+                        //loop through until limit
+                        for($i = 0; $i < $count; $i++){
+                            //prepare xml output to html
+                            $title = htmlentities($xml->channel->item[$i]->title);
+                            $title = (strlen($title) > 50) ? substr($title, 0, 45) : $title;
+                            $loc = htmlentities($xml->channel->item[$i]->children('ucfevent', true)->location->children('ucfevent', true)->name);
+                            $map = htmlentities($xml->channel->item[$i]->children('ucfevent', true)->location->children('ucfevent', true)->mapurl);
+                            $context['month'] = date('M', strtotime($xml->channel->item[$i]->children('ucfevent', true)->startdate));
+                            $context['day'] = date('j', strtotime($xml->channel->item[$i]->children('ucfevent', true)->startdate));
+                            $context['link'] = htmlentities($xml->channel->item[$i]->link);
+
+                        ?>    
+                        <li class="list-group-item">
+                                <div class="date">
+                                    <span class="month"><?= $context['month'] ?></span>
+                                    <span class="day"><?= $context['day'] ?></span>
+                                </div>
+                                <a class="title" href="<?= $context['link'] ?>"><?= $title ?></a>
+                                <a href="<?= $context['link'] ?>"><?= $loc ?></a>
+                                <div class="end"></div>
+                            </li>
+                        <?php } 
+                    endif;
+                    ?>
+                </ul>
+                <div class="panel-footer">
+                        <a href="http://events.ucf.edu/?calendar_id=<?= $attr['id'] ?>&amp;upcoming=upcoming">&raquo;More Events</a>
+                </div>
+            </div>
+        <?php
+            return ob_get_clean();
+    }
+}
+
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
             'RowSC',
             'ColumnSC',
+            'EventsSC',
         ));
 }
 add_action( 'init', 'register_shortcodes' );
