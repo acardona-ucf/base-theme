@@ -155,7 +155,7 @@ class RowSC extends ShortcodeBase {
 
         public static function callback( $attr, $content='' ) {
             $attr = shortcode_atts( array(
-                    'container' => False,
+                    'container' => 'false',
                     'class'     => '',
                     'style'    => ''
                 ), $attr
@@ -163,13 +163,13 @@ class RowSC extends ShortcodeBase {
 
             ob_start();
           ?>
-            <?php if ( $attr['container'] ) : ?>
+            <?php if ( 'true' == $attr['container'] ) : ?>
             <div class="container">
             <?php endif; ?>
                 <div class="row <?php echo $attr['class'] ? $attr['class'] : ''; ?>"<?php echo $attr['style'] ? ' style="' . $attr['style'] . '"' : '';?>>
                     <?php echo apply_filters( 'the_content', $content); ?>
                 </div>
-            <?php if ( $attr['container'] ) : ?>
+            <?php if ( 'true' == $attr['container'] ) : ?>
             </div>
             <?php endif; ?>
           <?php
