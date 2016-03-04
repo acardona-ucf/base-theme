@@ -1,6 +1,8 @@
 <?php
 
 require_once('functions/class-sdes-static.php');
+require_once( get_stylesheet_directory().'/vendor/autoload.php' );
+use Underscore\Types\Arrays;
 
 /**
  * [menuPanel] - Return an in-line menu panel (DIV.panel) using a user-configured Menu.
@@ -17,7 +19,8 @@ class MenuPanelSC extends ShortcodeBase {
         $name = 'Menu Panel',
         $command = 'menuPanel',
         $description = 'Show panelled menu, usually in sidecolumns.',
-        $callback    = 'sc_menuPanel',
+        $callback    = 'callback',
+        $render      = 'render',
         $closing_tag = False,
         $wysiwyg     = True,
         $params      = array(
@@ -42,7 +45,26 @@ class MenuPanelSC extends ShortcodeBase {
             ),
         ); // The parameters used by the shortcode.
 
-    public static function sc_menuPanel($attrs, $content=null)
+    function __construct() {
+        $menus = wp_get_nav_menus();
+        $choices = array();
+        foreach ($menus as $menu) {
+            if ( !is_wp_error($menu) && !array_key_exists('invalid_taxonomy', $menu) && !empty($menu) ) {
+                $choices[] = array('value'=>$menu->slug, 'name'=>$menu->name);
+            }
+        }
+        $new_name_param = Arrays::from( $this->params )
+         ->find( function($x) { return 'name' == $x['id']; } )
+         ->set('type', 'dropdown')
+         ->set('choices', $choices)
+         ->obtain();
+        $other_params = Arrays::from( $this->params )
+             ->filter(function($x) { return 'name' != $x['id']; } )
+             ->obtain();
+        $this->params = array_merge( array( $new_name_param ), $other_params );
+    }
+
+    public static function callback( $attrs, $content=null )
     {
         $attrs = shortcode_atts( array(
                 'name' => 'Pages',
@@ -50,12 +72,6 @@ class MenuPanelSC extends ShortcodeBase {
                 'max-width' => '697px',
             ), $attrs
         );
-
-        // Sanitize input
-        $attrs['name'] = esc_attr($attrs['name']);
-        $attrs['heading'] = esc_html($attrs['heading']);
-        $attrs['max-width'] = esc_attr($attrs['max-width']);
-
         // Check for errors
         if( !is_nav_menu($attrs['name']) ) {
             $error = sprintf('Could not find a nav menu named "%1$s"', $attrs['name']);
@@ -67,18 +83,21 @@ class MenuPanelSC extends ShortcodeBase {
             $error = sprintf($format_error, $error);
             return $error;
         }
+        // Sanitize input and set context for view
+        $context['heading'] = esc_html( $attrs['heading'] );
+        $context['menu_items'] = wp_get_nav_menu_items( esc_attr( $attrs['name'] ) );
+        $context['max-width'] = esc_attr( $attrs['max-width'] );
+        return static::render($context);
+    }
 
-        // Set context for view
-        $context['heading'] = $attrs['heading'];
-        $context['menu_items'] = wp_get_nav_menu_items( $attrs['name'] );
-        $context['max-width'] = $attrs['max-width'];
-        /**
-         * Render HTML for a "menuPanel" shortcode with a given context.
-         * Context variables:
-         * heading    => The panel-heading.
-         * menu_items => An array of WP_Post objects representing the items in the menu.
-         * max-width  => Value for the css attribute "max-width" on the container div.
-         */
+    /**
+     * Render HTML for a "menuPanel" shortcode with a given context.
+     * Context variables:
+     * heading    => The panel-heading.
+     * menu_items => An array of WP_Post objects representing the items in the menu.
+     * max-width  => Value for the css attribute "max-width" on the container div.
+     */
+    public static function render( $context ){
         ob_start();
         ?>
         <div class="panel panel-warning menuPanel" style="max-width: <?=$context['max-width']?>;">
