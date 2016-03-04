@@ -169,10 +169,25 @@ abstract class ShortcodeBase implements IShortcodeUI {
 		return $retval;
 	}
 
+	public static function callback($attr, $content='') {
+		$attr = shortcode_atts( array(
+				'text' => '',
+			), $attr
+		);
+		$ctxt['upper_first'] = ucfirst($attr['text']);
+		$ctxt['lower_first'] = lcfirst($attr['text']);
+		ob_start();
+		?>
+			<div>Uppercase: <?= $ctxt['upper_first'] ?></div>
+			<div>Lowercase: <?= $ctxt['lower_first'] ?></div>
+		<?php
+		return ob_get_clean();
+	}
+
 	public static function Register_Shortcodes( $shortcodes ) {
 		ShortcodeBase::$installed_shortcodes 
 			= array_merge(ShortcodeBase::$installed_shortcodes, $shortcodes);
-			
+
 		$shortcode_instances = array();
 		foreach ($shortcodes as $sc) {
 			if( class_exists($sc) ) {
