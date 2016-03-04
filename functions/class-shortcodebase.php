@@ -71,6 +71,7 @@ abstract class ShortcodeBase implements IShortcodeUI {
 		$description = 'This is the description of the shortcode.', // The description of the shortcode.
 		$params      = array(), // The parameters used by the shortcode.
 		$callback    = 'callback',
+		$render      = 'render',
 		$closing_tag = True,
 		$wysiwyg     = True; // Whether to add it to the shortcode Wysiwyg modal.
 
@@ -169,17 +170,23 @@ abstract class ShortcodeBase implements IShortcodeUI {
 		return $retval;
 	}
 
-	public static function callback($attr, $content='') {
-		$attr = shortcode_atts( array(
+	public static function callback( $attrs, $content='' ) {
+		$attrs = shortcode_atts( array(
 				'text' => '',
-			), $attr
+			), $attrs
 		);
-		$ctxt['upper_first'] = ucfirst($attr['text']);
-		$ctxt['lower_first'] = lcfirst($attr['text']);
+
+		$ctxt = array();
+		foreach ($attrs as $attr) {
+			$ctx[] = esc_attr( $attr );
+		}
+		return static::render($ctxt);
+	}
+
+	public static function render( $context ) {
 		ob_start();
 		?>
-			<div>Uppercase: <?= $ctxt['upper_first'] ?></div>
-			<div>Lowercase: <?= $ctxt['lower_first'] ?></div>
+			<div>Text: <?= $context['text'] ?></div>
 		<?php
 		return ob_get_clean();
 	}

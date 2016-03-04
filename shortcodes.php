@@ -176,6 +176,7 @@ class RowSC extends ShortcodeBase {
         $name        = 'Row',
         $command     = 'row',
         $description = 'Wraps content in a bootstrap row.',
+        $render      = False,
         $params      = array(
             array(
                 'name'      => 'Add Container',
@@ -231,6 +232,7 @@ class ColumnSC extends ShortcodeBase {
         $name        = 'Column',
         $command     = 'column',
         $description = 'Wraps content in a bootstrap column',
+        $render      = 'render',
         $params      = array(
             array(
                 'name'      => 'Large Size',
@@ -360,12 +362,17 @@ class ColumnSC extends ShortcodeBase {
             }
         }
 
-        $cls_str = implode( ' ', $classes );
+        $ctxt['cls_str'] = esc_attr( implode( ' ', $classes ) );
+        $ctxt['style'] = esc_attr( $attr['style'] );
+        $ctxt['content'] = apply_filters( 'the_content', $content );
+        return static::render( $ctxt );
+    }
 
+    public static function render ( $ctxt ) {
         ob_start();
       ?>
-        <div class="<?php echo $cls_str; ?>"<?php echo $attr['style'] ? ' style="'.$attr['style'].'"' : ''; ?>>
-            <?php echo apply_filters( 'the_content', $content ); ?>
+        <div class="<?= $ctxt['cls_str'] ?>" style="<?= $ctxt['style'] ?>">
+            <?= $ctxt['content'] ?>
         </div>
       <?php
         return ob_get_clean();
@@ -378,6 +385,7 @@ class EventsSC extends ShortcodeBase {
         $command = 'events', // The command used to call the shortcode.
         $description = 'Show events calendar from a feed', // The description of the shortcode.
         $callback    = 'callback',
+        $render      = False,
         $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
         $params      = array(
             array(
@@ -483,9 +491,10 @@ class EventsSC extends ShortcodeBase {
 class SocialButtonSC extends ShortcodeBase {
     public
         $name = 'Social Button', // The name of the shortcode.
-        $command = 'social-button', // The command used to call the shortcode.
+        $command = 'socialButton', // The command used to call the shortcode.
         $description = 'Show a button for a social network.', // The description of the shortcode.
         $callback    = 'callback',
+        $render      = 'render',
         $closing_tag = False,
         $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
         $params      = array(
@@ -519,7 +528,7 @@ class SocialButtonSC extends ShortcodeBase {
                 'class' => 'col-sm-6 text-center',
             ), $attr
         );
-        $ctx['container_classes'] = esc_attr( $attr['class'] );
+        $ctxt['container_classes'] = esc_attr( $attr['class'] );
         switch ($attr['network']) {
             case 'facebook':
             case 'twitter':
@@ -530,9 +539,20 @@ class SocialButtonSC extends ShortcodeBase {
                 break;
         }
         if ( '' == $ctxt['url'] ) return '';
+        return static::render( $ctxt );
+    }
+
+    /**
+     * Render HTML for a "socialButton" shortcode with a given context.
+     * Context variables:
+     * container_classes    => List of css classes for the cotainer div..
+     * url  => The URL of the social network being linked.
+     * image  => The button image.
+     */
+    public static function render ( $ctxt ) {
         ob_start();
         ?>
-            <div class="<?= $ctx['container_classes'] ?>">
+            <div class="<?= $ctxt['container_classes'] ?>">
                 <a href="<?= $ctxt['url'] ?>">
                     <img src="<?= $ctxt['image'] ?>" class="clean" alt="button">
                 </a>
