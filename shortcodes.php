@@ -434,11 +434,74 @@ class EventsSC extends ShortcodeBase {
     }
 }
 
+class SocialButtonSC extends ShortcodeBase {
+    public
+        $name = 'Social Button', // The name of the shortcode.
+        $command = 'social-button', // The command used to call the shortcode.
+        $description = 'Show a button for a social network.', // The description of the shortcode.
+        $callback    = 'callback',
+        $closing_tag = False,
+        $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
+        $params      = array(
+            array(
+                'name'      => 'Network',
+                'id'        => 'network',
+                'help_text' => 'The social network to show.',
+                'type'      => 'dropdown',
+                'choices' => array(
+                    array('value'=>'facebook', 'name'=>'facebook'),
+                    array('value'=>'twitter', 'name'=>'twitter'),
+                    array('value'=>'youtube', 'name'=>'youtube'),
+                    )
+            ),
+            array(
+                'name'      => 'Class',
+                'id'        => 'class',
+                'help_text' => 'The wrapper classes.',
+                'type'      => 'text',
+                'default' => 'col-sm-6 text-center',
+            ),
+        ); // The parameters used by the shortcode.
+
+    /**
+     * @see hhttps://github.com/ucf-sdes-it/it-php-template/blob/615ecbcfa0eccffd0e8b5f71501b1b7e78cd5cf7/template_data.php#L1723-L1740
+     * @see https://shs.sdes.ucf.edu/home.php
+     */
+    public static function callback($attr, $content='') {
+        $attr = shortcode_atts( array(
+                'network' => '',
+                'class' => 'col-sm-6 text-center',
+            ), $attr
+        );
+        $ctx['container_classes'] = esc_attr( $attr['class'] );
+        switch ($attr['network']) {
+            case 'facebook':
+            case 'twitter':
+            case 'youtube':
+            default:
+                $ctxt['url'] = esc_attr( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') );
+                $ctxt['image'] = esc_attr( "https://assets.sdes.ucf.edu/images/{$attr['network']}.gif" );
+                break;
+        }
+        if ( '' == $ctxt['url'] ) return '';
+        ob_start();
+        ?>
+            <div class="<?= $ctx['container_classes'] ?>">
+                <a href="<?= $ctxt['url'] ?>">
+                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="button">
+                </a>
+            </div>
+        <?php
+        return ob_get_clean();
+    }
+}
+
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
             'RowSC',
             'ColumnSC',
             'EventsSC',
+            'SocialButtonSC',
         ));
 }
 add_action( 'init', 'register_shortcodes' );
