@@ -71,6 +71,7 @@ abstract class ShortcodeBase implements IShortcodeUI {
 		$description = 'This is the description of the shortcode.', // The description of the shortcode.
 		$params      = array(), // The parameters used by the shortcode.
 		$callback    = 'callback',
+		$closing_tag = True,
 		$wysiwyg     = True; // Whether to add it to the shortcode Wysiwyg modal.
 
 	/*
@@ -90,7 +91,8 @@ abstract class ShortcodeBase implements IShortcodeUI {
 	 * @return string
 	 */
 	public function get_option_markup() {
-		return sprintf('<option value="%s">%s</option>', $this->command, $this->name);
+		return sprintf('<option value="%s" data-showClosingTag="%b">%s</option>',
+			$this->command, $this->closing_tag, $this->name);
 	}
 
 	/*
@@ -189,6 +191,7 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 		$command     = 'shortcode-cpt-wrapper', // The command used to call the shortcode.
 		$description = 'Show list of cpt items.', // The description of the shortcode.
 		$params      = array(), // The parameters used by the shortcode.
+		$closing_tag = False,
 		$wysiwyg     = True; // Whether to add it to the shortcode Wysiwyg modal.
 
 	function __construct($cpt_instance) {
@@ -248,7 +251,8 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 	}
 
 	public function get_option_markup() {
-		return sprintf('<option value="%s">%s</option>', $this->command, $this->name);
+		return sprintf('<option value="%s" data-showClosingTag="%b">%s</option>',
+			$this->command, $this->closing_tag, $this->name);
 	}
 
 	public function get_description_markup() {

@@ -8,7 +8,7 @@ WebcomAdmin.shortcodeInterfaceTool = function($) {
   $cls.shortcodeEditors      = $cls.shortcodeForm.find('#shortcode-editors');
   $cls.shortcodeDescriptions = $cls.shortcodeForm.find('#shortcode-descriptions');
 
-  $cls.shortcodeInsert = function(shortcode, parameters, enclosingText) {
+  $cls.shortcodeInsert = function(shortcode, parameters, enclosingText, showClosingTag) {
     var text = '[' + shortcode;
     if (parameters) {
       for (var key in parameters) {
@@ -19,6 +19,8 @@ WebcomAdmin.shortcodeInterfaceTool = function($) {
 
     if (enclosingText) {
       text += enclosingText;
+    }
+    if (showClosingTag == "1") {
       text += "[/" + shortcode + "]";
     }
 
@@ -32,13 +34,9 @@ WebcomAdmin.shortcodeInterfaceTool = function($) {
     var editor = $cls.shortcodeEditors.find('li.shortcode-' + $cls.shortcodeSelected),
         dummyText = $selected.attr('data-enclosing') || null,
         highlightedWysiwigText = tinymce.activeEditor ? tinymce.activeEditor.selection.getContent() : null,
-        enclosingText = null;
+        enclosingText = (highlightedWysiwigText) ? highlightedWysiwigText : dummyText,
+        showClosingTag = $selected.attr('data-showclosingtag') || "1";
 
-    if (dummyText && highlightedWysiwigText) {
-      enclosingText = highlightedWysiwigText;
-    } else {
-      enclosingText = dummyText;
-    }
 
     var parameters = {};
 
@@ -59,7 +57,7 @@ WebcomAdmin.shortcodeInterfaceTool = function($) {
       });
     }
 
-    $cls.shortcodeInsert($selected.val(), parameters, enclosingText);
+    $cls.shortcodeInsert($selected.val(), parameters, enclosingText, showClosingTag);
   };
 
   $cls.shortcodeSelectAction = function() {
