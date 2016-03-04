@@ -12,65 +12,92 @@ require_once('functions/class-sdes-static.php');
  * Example:
  * [menuPanel name="Other Resources" heading="An Alternate heading"]
  */
-function sc_menuPanel($attrs, $content=null)
-{
-    // Default attributes
-    SDES_Static::set_default_keyValue($attrs, 'name', 'Pages');
-    SDES_Static::set_default_keyValue($attrs, 'heading', $attrs['name']);
-    SDES_Static::set_default_keyValue($attrs, 'max-width', '697px');
-    // Sanitize input
-    $attrs['name'] = esc_attr($attrs['name']);
-    $attrs['heading'] = esc_html($attrs['heading']);
-    $attrs['max-width'] = esc_attr($attrs['max-width']);
-    // Check for errors
-    if( !is_nav_menu($attrs['name']) ) {
-        $error = sprintf('Could not find a nav menu named "%1$s"', $attrs['name']);
+class MenuPanelSC extends ShortcodeBase {
+    public
+        $name = 'Menu Panel',
+        $command = 'menuPanel',
+        $description = 'Show panelled menu, usually in sidecolumns.',
+        $callback    = 'sc_menuPanel',
+        $closing_tag = False,
+        $wysiwyg     = True,
+        $params      = array(
+            array(
+                'name'      => 'Menu Name',
+                'id'        => 'name',
+                'help_text' => 'The menu to display.',
+                'type'      => 'text',
+            ),
+            array(
+                'name'      => 'Heading',
+                'id'        => 'heading',
+                'help_text' => 'A heading to display (optional).',
+                'type'      => 'text',
+            ),
+            array(
+                'name'      => 'Max Width',
+                'id'        => 'max-width',
+                'help_text' => 'The maximum width of the menuPanel.',
+                'type'      => 'text',
+                'default'   => '697px',
+            ),
+        ); // The parameters used by the shortcode.
 
-        // Output as HTML comment when not logged in or can't edit.
-        $format_error = 
-         (SDES_Static::Is_UserLoggedIn_Can('edit_posts'))
-          ? '<p class="bg-danger text-danger">Admin Alert: %1$s</p>'
-          : '<!-- %1$s -->';
-        $error = sprintf($format_error, $error);
-        return $error;
-    }
+    public static function sc_menuPanel($attrs, $content=null)
+    {
+        $attrs = shortcode_atts( array(
+                'name' => 'Pages',
+                'heading' => $attrs['name'],
+                'max-width' => '697px',
+            ), $attrs
+        );
 
-    // Set context for view
-    $context['heading'] = $attrs['heading'];
-    $context['menu_items'] = wp_get_nav_menu_items( $attrs['name'] );
-    $context['max-width'] = $attrs['max-width'];
+        // Sanitize input
+        $attrs['name'] = esc_attr($attrs['name']);
+        $attrs['heading'] = esc_html($attrs['heading']);
+        $attrs['max-width'] = esc_attr($attrs['max-width']);
 
-    // Render HTML
-    return render_sc_menuPanel($context);
-}
-add_shortcode('menuPanel', 'sc_menuPanel');
-/**
- * Render HTML for a "menuPanel" shortcode with a given context.
- * Context variables:
- * heading    => The panel-heading.
- * menu_items => An array of WP_Post objects representing the items in the menu.
- * max-width  => Value for the css attribute "max-width" on the container div.
- */
-function render_sc_menuPanel($context)
-{
-    ob_start();
-    ?>
-    <div class="panel panel-warning menuPanel" style="max-width: <?=$context['max-width']?>;">
-        <div class="panel-heading"><?=$context['heading']?></div>
-        <div class="list-group">
-            <?php
-            foreach ( (array) $context['menu_items'] as $key => $menu_item ) {
-                $title = $menu_item->title;
-                $url = $menu_item->url;
-                $class_names = SDES_Static::Get_ClassNames($menu_item, 'nav_menu_css_class');
-                //TODO: Automatically add .external if url is external (check with regex?)
-            ?>
-                <a href="<?=$url?>" class="list-group-item <?=$class_names?>"><?=$title?></a>
-            <?php  } ?>
+        // Check for errors
+        if( !is_nav_menu($attrs['name']) ) {
+            $error = sprintf('Could not find a nav menu named "%1$s"', $attrs['name']);
+            // Output as HTML comment when not logged in or can't edit.
+            $format_error = 
+             (SDES_Static::Is_UserLoggedIn_Can('edit_posts'))
+              ? '<p class="bg-danger text-danger">Admin Alert: %1$s</p>'
+              : '<!-- %1$s -->';
+            $error = sprintf($format_error, $error);
+            return $error;
+        }
+
+        // Set context for view
+        $context['heading'] = $attrs['heading'];
+        $context['menu_items'] = wp_get_nav_menu_items( $attrs['name'] );
+        $context['max-width'] = $attrs['max-width'];
+        /**
+         * Render HTML for a "menuPanel" shortcode with a given context.
+         * Context variables:
+         * heading    => The panel-heading.
+         * menu_items => An array of WP_Post objects representing the items in the menu.
+         * max-width  => Value for the css attribute "max-width" on the container div.
+         */
+        ob_start();
+        ?>
+        <div class="panel panel-warning menuPanel" style="max-width: <?=$context['max-width']?>;">
+            <div class="panel-heading"><?=$context['heading']?></div>
+            <div class="list-group">
+                <?php
+                foreach ( (array) $context['menu_items'] as $key => $menu_item ) {
+                    $title = $menu_item->title;
+                    $url = $menu_item->url;
+                    $class_names = SDES_Static::Get_ClassNames($menu_item, 'nav_menu_css_class');
+                    //TODO: Automatically add .external if url is external (check with regex?)
+                ?>
+                    <a href="<?=$url?>" class="list-group-item <?=$class_names?>"><?=$title?></a>
+                <?php  } ?>
+            </div>
         </div>
-    </div>
-    <?php
-    return ob_get_clean();
+        <?php
+        return ob_get_clean();
+    }
 }
 
 
@@ -500,6 +527,7 @@ function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
             'RowSC',
             'ColumnSC',
+            'MenuPanelSC',
             'EventsSC',
             'SocialButtonSC',
         ));
