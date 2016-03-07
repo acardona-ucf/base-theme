@@ -330,6 +330,7 @@ class SDES_Static
 			'join'    => 'or',
 			'class'   => '',
 			'orderby' => 'menu_order title',
+			'meta_key' => null,
 			'order'   => 'ASC',
 			'offset'  => 0,
 			'meta_query' => array(),

@@ -323,10 +323,14 @@ class News extends CustomPostType {
 	}
 
 	public function shortcode( $attr ) {
+		$prefix = $this->options('name').'_';
 		$default_attrs = array(
 			'type' => $this->options( 'name' ),
 			'starttime' => null,
 			'endtime'   => date('Y-m-d H:i:s'),
+			'orderby' => 'meta_value_datetime',
+			'meta_key' => $prefix.'start_date',
+			'order' => 'ASC',
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
@@ -334,19 +338,24 @@ class News extends CustomPostType {
 			$attr = $default_attrs;
 		}
 
-		$prefix = $this->options('name').'_';
 		$attr['meta_query'] = array(
 				'relation' => 'AND',
 				array(
-						'key' => esc_sql( $prefix.'start_date' ),
-						'value' => esc_sql( $attr['starttime'] ),
-						'compare' => '>=',
+					'key' => esc_sql( $prefix.'start_date' ),
+					'value' => array(
+						esc_sql( $attr['starttime'] ),
+						esc_sql( $attr['endtime'] ),
 					),
+					'compare' => 'BETWEEN',
+				),
 				array(
-						'key' => esc_sql( $prefix.'end_date' ),
-						'value' => esc_sql( $attr['endtime'] ),
-						'compare' => '>=',
+					'key' => esc_sql( $prefix.'end_date' ),
+					'value' => array(
+						esc_sql( $attr['starttime'] ),
+						esc_sql( $attr['endtime'] ),
 					),
+					'compare' => 'BETWEEN',
+				),
 			);
 		// Unset keys to prevent treating them as taxonomies in sc_object_list.
 		unset( $attr['starttime'] );
