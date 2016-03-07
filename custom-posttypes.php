@@ -272,16 +272,16 @@ class News extends CustomPostType {
 		$default_order   = null,
 		$sc_interface_fields = array(
 			array(
-				'name' => 'Start Date',
-				'id' => 'startdate',
-				'help_text' => 'Show articles with a "Start Date" on or after this day.',
-				'type' => 'date',
+				'name' => 'Start Time',
+				'id' => 'starttime',
+				'help_text' => 'Show articles with a "Start Time" on or after this time.',
+				'type' => 'datetime-local',
 			),
 			array(
-				'name' => 'End Date',
-				'id' => 'enddate',
-				'help_text' => 'Show articles with an "End Date" on or before this day (defaults to today).',
-				'type' => 'date',
+				'name' => 'End Time',
+				'id' => 'endtime',
+				'help_text' => 'Show articles with an "End Time" on or before this day (defaults to now).',
+				'type' => 'datetime-local',
 			),
 		);
 
@@ -325,8 +325,8 @@ class News extends CustomPostType {
 	public function shortcode( $attr ) {
 		$default_attrs = array(
 			'type' => $this->options( 'name' ),
-			'startdate' => null,
-			'enddate'   => date('Y-m-d'),
+			'starttime' => null,
+			'endtime'   => date('Y-m-d H:i:s'),
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
@@ -339,18 +339,18 @@ class News extends CustomPostType {
 				'relation' => 'AND',
 				array(
 						'key' => esc_sql( $prefix.'start_date' ),
-						'value' => esc_sql( $attr['startdate'] ),
+						'value' => esc_sql( $attr['starttime'] ),
 						'compare' => '>=',
 					),
 				array(
 						'key' => esc_sql( $prefix.'end_date' ),
-						'value' => esc_sql( $attr['enddate'] ),
+						'value' => esc_sql( $attr['endtime'] ),
 						'compare' => '>=',
 					),
 			);
 		// Unset keys to prevent treating them as taxonomies in sc_object_list.
-		unset( $attr['startdate'] );
-		unset( $attr['enddate'] );
+		unset( $attr['starttime'] );
+		unset( $attr['endtime'] );
 		
 		return SDES_Static::sc_object_list( $attr );
 	}

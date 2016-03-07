@@ -49,6 +49,9 @@ WebcomAdmin.shortcodeInterfaceTool = function($) {
           case 'SELECT':
             if ($formElement.prop('type') === 'checkbox') {
               parameters[$formElement.attr('data-parameter')] = String($formElement.prop('checked'));
+            } else if ($formElement.prop('type') === 'datetime-local') {
+              // Convert datetime from ISO8601 to MySQL datetime for consumption by WordPress.
+              parameters[$formElement.attr('data-parameter')] = $formElement.val().replace('T', ' ');
             } else {
               parameters[$formElement.attr('data-parameter')] = $formElement.val();
             }

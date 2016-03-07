@@ -148,6 +148,14 @@ abstract class ShortcodeBase implements IShortcodeUI {
 		switch( $type ) {
 			case 'text':
 			case 'date':
+			case 'datetime':
+			case 'datetime-local':
+			case 'time':
+			case 'month':
+			case 'week':
+			case 'range':
+			case 'search':
+			case 'tel':
 			case 'email':
 			case 'url':
 			case 'number':
