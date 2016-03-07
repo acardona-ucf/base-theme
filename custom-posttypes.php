@@ -269,7 +269,21 @@ class News extends CustomPostType {
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
-		$default_order   = null;
+		$default_order   = null,
+		$sc_interface_fields = array(
+			array(
+				'name' => 'Start Date',
+				'id' => 'startdate',
+				'help_text' => 'Show articles with a "Start Date" on or after this day.',
+				'type' => 'date',
+			),
+			array(
+				'name' => 'End Date',
+				'id' => 'enddate',
+				'help_text' => 'Show articles with an "End Date" on or before this day (defaults to today).',
+				'type' => 'date',
+			),
+		);
 
 	public function register( $args = array() ) {
 		$default_args = array(
