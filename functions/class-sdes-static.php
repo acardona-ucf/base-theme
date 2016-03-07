@@ -337,13 +337,13 @@ class SDES_Static
 		);
 		$params = array_merge($default_attrs, $attrs);
 		$classname = ( '' === $classname ) ? $params['type'] : $classname;
+
+		$params['limit']  = intval( $params['limit'] );
+		$params['offset'] = intval( $params['offset'] );
 		
 		# verify options
 		if ($params['type'] == null){
 			return '<p class="error">No type defined for object list.</p>';
-		}
-		if (!is_numeric($params['limit'])){
-			return '<p class="error">Invalid limit argument, must be a number.</p>';
 		}
 		if (!in_array(strtoupper($params['join']), array('AND', 'OR'))){
 			return '<p class="error">Invalid join type, must be one of "and" or "or".</p>';
@@ -378,15 +378,23 @@ class SDES_Static
 			$terms = $params[$tax];
 			$terms = trim(preg_replace('/\s+/', ' ', $terms));
 			$terms = explode(' ', $terms);
-			
+			if ( '' == $terms[0] ) { continue; } // Skip empty taxonomies.
+
 			if (array_key_exists($tax, $translate)){
 				$tax = $translate[$tax];
 			}
 			
+			foreach ($terms as $idx => $term) {
+				if ( in_array(strtolower($term), array("none", "null", "empty") ) ) {
+					unset( $terms[$idx] );
+					$terms[] = '';
+				}
+			}
+
 			$tax_queries[] = array(
 				'taxonomy' => $tax,
 				'field' => 'slug',
-				'terms' => $terms,
+				'terms' => array_unique( $terms ),
 			);
 		}
 		

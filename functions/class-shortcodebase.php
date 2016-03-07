@@ -241,6 +241,7 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 				'name' => 'limit (number)',
 				'id' => 'limit',
 				'help_text' => 'Only show items in the custom taxonomy '.$cpt_instance->options('name'),
+				'default' => -1,
 				'type' => 'number',
 				);
 			$this->params[] = array(
