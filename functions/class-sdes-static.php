@@ -331,7 +331,8 @@ class SDES_Static
 			'class'   => '',
 			'orderby' => 'menu_order title',
 			'order'   => 'ASC',
-			'offset'  => 0
+			'offset'  => 0,
+			'meta_query' => array(),
 		);
 		$params = array_merge($default_attrs, $attrs);
 		$classname = ( '' === $classname ) ? $params['type'] : $classname;
@@ -396,7 +397,8 @@ class SDES_Static
 			'posts_per_page' => $params['limit'],
 			'orderby'        => $params['orderby'],
 			'order'          => $params['order'],
-			'offset'         => $params['offset']
+			'offset'         => $params['offset'],
+			'meta_query'     => $params['meta_query'],
 		);
 		
 		$query = new WP_Query($query_array);

@@ -308,6 +308,39 @@ class News extends CustomPostType {
 		);
 	}
 
+	public function shortcode( $attr ) {
+		$default_attrs = array(
+			'type' => $this->options( 'name' ),
+			'startdate' => null,
+			'enddate'   => date('Y-m-d'),
+		);
+		if ( is_array( $attr ) ) {
+			$attr = array_merge( $default_attrs, $attr );
+		}else {
+			$attr = $default_attrs;
+		}
+
+		$prefix = $this->options('name').'_';
+		$attr['meta_query'] = array(
+				'relation' => 'AND',
+				array(
+						'key' => esc_sql( $prefix.'start_date' ),
+						'value' => esc_sql( $attr['startdate'] ),
+						'compare' => '>=',
+					),
+				array(
+						'key' => esc_sql( $prefix.'end_date' ),
+						'value' => esc_sql( $attr['enddate'] ),
+						'compare' => '>=',
+					),
+			);
+		// Unset keys to prevent treating them as taxonomies in sc_object_list.
+		unset( $attr['startdate'] );
+		unset( $attr['enddate'] );
+		
+		return SDES_Static::sc_object_list( $attr );
+	}
+
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
 		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';

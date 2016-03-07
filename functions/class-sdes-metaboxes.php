@@ -133,7 +133,7 @@ class SDES_Metaboxes {
 					jQuery(document).ready(function(){
 						jQuery('.date').datepicker({
 							minDate: '0d',
-							dateFormat : 'mm-dd-yy'
+							dateFormat : 'yy-mm-dd'
 						});
 					});
 				</script>
