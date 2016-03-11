@@ -81,12 +81,38 @@
 		  <?php
 			/* If using the WP Nivo Plugin, use the following code instead: */
 			// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
-			$post = array( 'post_type' => 'billboard' );
-			$billboards = new WP_Query( $post );
+			$query_args = array( 'post_type' => 'billboard',
+				'orderby' => 'meta_value_datetime',
+				'meta_key' => 'billboard_start_date',
+				'order' => 'ASC',
+				'meta_query' => array(
+						'relation' => 'AND',
+						array(
+							'key' => 'billboard_start_date',
+							'value' => date('Y-m-d H:i:s'),
+							'compare' => '<=',
+						),
+						array(
+							'key' => 'billboard_end_date',
+							'value' => date('Y-m-d H:i:s'),
+							'compare' => '>=',
+						),
+					),
+			 );
+			$billboards = new WP_Query( $query_args );
+			// TODO: don't show nivoslider directionNav if only 1 Billboard slide. 
 			while ( $billboards->have_posts() ) : $billboards->the_post();
-				if ( has_post_thumbnail() ) :
+				if ( has_post_thumbnail() ) {
+					$billboard_url = get_metadata('billboard_url', true);
+					if( $billboard_url ) :
+				?>
+					<a href="<?= $billboard_url ?>" class="nivo-imageLink">
+						<?= the_post_thumbnail( 'post-thumbnail', array('title'=>'#nivo-caption-'.get_the_id(),) ); ?>
+					</a>
+				<? else:
 					the_post_thumbnail( 'post-thumbnail', array('title'=>'#nivo-caption-'.get_the_id(),) );
-				endif;
+				   endif;
+				}
 			endwhile;
 			wp_reset_query();
 			?>

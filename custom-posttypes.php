@@ -89,7 +89,7 @@ class Billboard extends CustomPostType {
 		$use_revisions  = True,  // Revisions on post content and titles
 		$use_thumbnails = True,  // Featured images
 		$use_order      = False, // Wordpress built-in order meta data
-		$use_metabox    = False, // Enable if you have custom fields to display in admin
+		$use_metabox    = True,  // Enable if you have custom fields to display in admin
 		$use_shortcode  = False, // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
@@ -101,7 +101,25 @@ class Billboard extends CustomPostType {
 	public function fields() {
 		$prefix = $this->options('name').'_';
 		return array(
-			);
+			array(
+				'name' => 'URL',
+				'descr' => '',
+				'id' => $prefix.'url',
+				'type' => 'text',
+			),
+			array(
+				'name' => 'Start Date',
+				'descr' => '',
+				'id' => $prefix.'start_date',
+				'type' => 'date',
+			),
+			array(
+				'name' => 'End Date',
+				'descr' => '',
+				'id' => $prefix.'end_date',
+				'type' => 'date',
+			),
+		);
 	}
 
 	public function register_metaboxes() {
