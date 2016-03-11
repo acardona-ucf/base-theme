@@ -240,7 +240,7 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 			$this->params[] = array(
 				'name' => 'limit (number)',
 				'id' => 'limit',
-				'help_text' => 'Only show items in the custom taxonomy '.$cpt_instance->options('name'),
+				'help_text' => 'Only show this many items (defaults to "-1", no limit).',
 				'default' => -1,
 				'type' => 'number',
 				);
@@ -280,7 +280,7 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 			$this->params[] = array(
 				'name' => $tax,
 				'id' => $tax,
-				'help_text' => 'Only show items in the custom taxonomy '.$cpt_instance->options('name'),
+				'help_text' => 'Only show items in the custom taxonomy "'.$cpt_instance->options('name').'".',
 				'type' => 'dropdown',
 				'choices'=> $choices,
 				);
