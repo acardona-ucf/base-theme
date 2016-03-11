@@ -272,16 +272,14 @@ class News extends CustomPostType {
 		$default_order   = null,
 		$sc_interface_fields = array(
 			array(
-				'name' => 'Start Time',
-				'id' => 'starttime',
-				'help_text' => 'Show articles with a "Start Time" on or after this time.',
-				'type' => 'datetime-local',
-			),
-			array(
-				'name' => 'End Time',
-				'id' => 'endtime',
-				'help_text' => 'Show articles with an "End Time" on or before this day (defaults to now).',
-				'type' => 'datetime-local',
+				'name' => 'Show Archives',
+				'id' => 'show-archives',
+				'help_text' => 'Choose to whether to show News articles that are archived.',
+				'type' => 'dropdown',
+				'choices' => array(
+					array('value'=>'false', 'name'=>'Show current news.'),
+					array('value'=>'true', 'name'=>'Show archived news.'),
+					)
 			),
 		);
 
@@ -326,8 +324,7 @@ class News extends CustomPostType {
 		$prefix = $this->options('name').'_';
 		$default_attrs = array(
 			'type' => $this->options( 'name' ),
-			'starttime' => null,
-			'endtime'   => date('Y-m-d H:i:s'),
+			'show-archives' => false,
 			'orderby' => 'meta_value_datetime',
 			'meta_key' => $prefix.'start_date',
 			'order' => 'ASC',
@@ -338,29 +335,41 @@ class News extends CustomPostType {
 			$attr = $default_attrs;
 		}
 
-		$attr['meta_query'] = array(
+		// TODO: consider using boolval after PHP 5.5.0.
+		$attr['show-archives'] = filter_var( $attr['show-archives'], FILTER_VALIDATE_BOOLEAN);
+
+		$current_datetime = date('Y-m-d H:i:s'); // Calculate NOW as MySQL datetime format.
+		if ( $attr['show-archives'] ) {
+			// Show where EndDate <= NOW
+			$attr['meta_query'] = array(
+				'relation' => 'AND',
+				array(
+					'key' => esc_sql( $prefix.'end_date' ),
+					'value' => $current_datetime,
+					'compare' => '<=',
+				)
+			);
+		} else {
+			// Show where StartDate is before now (StartDate <= NOW)
+			// AND EndDate is after now (EndDate >= NOW)
+			$attr['meta_query'] = array(
 				'relation' => 'AND',
 				array(
 					'key' => esc_sql( $prefix.'start_date' ),
-					'value' => array(
-						esc_sql( $attr['starttime'] ),
-						esc_sql( $attr['endtime'] ),
-					),
-					'compare' => 'BETWEEN',
+					'value' => $current_datetime,
+					'compare' => '<=',
 				),
 				array(
 					'key' => esc_sql( $prefix.'end_date' ),
-					'value' => array(
-						esc_sql( $attr['starttime'] ),
-						esc_sql( $attr['endtime'] ),
-					),
-					'compare' => 'BETWEEN',
-				),
+					'value' => $current_datetime,
+					'compare' => '>=',
+				)
 			);
+		}
+
 		// Unset keys to prevent treating them as taxonomies in sc_object_list.
-		unset( $attr['starttime'] );
-		unset( $attr['endtime'] );
-		
+		unset( $attr['show-archives'] );
+
 		return SDES_Static::sc_object_list( $attr );
 	}
 
