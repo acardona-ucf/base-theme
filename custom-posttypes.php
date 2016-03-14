@@ -75,6 +75,159 @@ class Page extends CustomPostType {
 	}
 }
 
+class Alert extends CustomPostType {
+	public
+		$name           = 'alert',
+		$plural_name    = 'Alerts',
+		$singular_name  = 'Alert',
+		$add_new_item   = 'Add New Alert',
+		$edit_item      = 'Edit Alert',
+		$new_item       = 'New Alert',
+		$public         = True,  // I dunno...leave it true
+		$use_title      = True,  // Title field
+		$use_editor     = True,  // WYSIWYG editor, post content field
+		$use_revisions  = True,  // Revisions on post content and titles
+		$use_thumbnails = True,  // Featured images
+		$use_order      = False, // Wordpress built-in order meta data
+		$use_metabox    = True,  // Enable if you have custom fields to display in admin
+		$use_shortcode  = True,  // Auto generate a shortcode for the post type
+		                         // (see also objectsToHTML and toHTML methods)
+		$taxonomies     = array( 'post_tag' ),
+		$built_in       = False,
+		// Optional default ordering for generic shortcode if not specified by user.
+		$default_orderby = null,
+		$default_order   = null;
+
+	public function fields() {
+		$prefix = $this->options('name').'_';
+		return array(
+			array(
+				'name' => 'Unplanned Alert',
+				'descr' => 'If checked, show the alert as red instead of yellow.',
+				'id' => $prefix.'is_unplanned',
+				'type' => 'checkbox_list',
+				'default' => array( 'Unplanned alert.' => $prefix.'is_unplanned' ),
+				// 'choices' => array(
+				// 		'Unplanned alert.' => $prefix.'is_unplanned',
+				// 		// 'Text for another checkbox_list item.' => 'value_for_input_tag'
+				// 	)
+			),
+			// array(  // TODO: Allow alerts to be restricted to certain pages.
+			// 	'name' => 'Sitewide Alert',
+			// 	'descr' => 'Show alert across the entire site.',
+			// 	'id' => $prefix.'is_sitewide',
+			// 	'type' => 'checkbox_list',
+			// 	'default' => array( 'Sitewide alert.' => $prefix.'is_sitewide' ),
+			// ),
+			array(
+				'name' => 'Start Date',
+				'descr' => 'The first day the alert should appear.',
+				'id' => $prefix.'start_date',
+				'type' => 'date',
+			),
+			array(
+				'name' => 'End Date',
+				'descr' => 'The last day the alert should appear.',
+				'id' => $prefix.'end_date',
+				'type' => 'date',
+			),
+			array(
+				'name' => 'URL',
+				'descr' => 'Add a link for this alert.',
+				'id' => $prefix.'url',
+				'type' => 'text',
+			),
+		);
+	}
+
+	public function shortcode( $attr ) {
+		$prefix = $this->options('name').'_';
+		$default_attrs = array(
+			'type' => $this->options( 'name' ),
+			'orderby' => 'meta_value_datetime',
+			'meta_key' => $prefix.'start_date',
+			'order' => 'ASC',
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => $prefix.'start_date',
+					'value' => date('Y-m-d H:i:s'),
+					'compare' => '<=',
+				),
+				array(
+					'key' => $prefix.'end_date',
+					'value' => date('Y-m-d H:i:s'),
+					'compare' => '>=',
+				),
+			),
+		);
+		if ( is_array( $attr ) ) {
+			$attr = array_merge( $default_attrs, $attr );
+		}else {
+			$attr = $default_attrs;
+		}
+		return SDES_Static::sc_object_list( $attr );
+	}
+
+	protected static function get_render_context( $alert ) {
+		$alert_css_classes = 
+			get_post_meta($alert->ID, 'alert_is_unplanned', true)
+			? 'alert-danger' : 'alert-warning';
+		$alert_url = esc_attr( get_post_meta($alert, 'alert_url', true) );
+		$alert_message = $alert->post_content;
+		$alert_message = 
+			(true !== $alert_url )
+			? sprintf( '<a href="%1$s" class="external">%2$s</a>', $alert_url, $alert_message)
+			: $alert_message;
+		return array(
+			'alert_css_classes' => $alert_css_classes,
+			'post_title' => $alert->post_title,
+			'alert_message' => $alert_message,
+		);
+	}
+
+	public function objectsToHTML( $objects, $css_classes ) {
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+
+		foreach ($objects as $alert) {
+			$context['alerts'][] = static::get_render_context( $alert );
+		}
+		return static::render_objects_to_html( $context );
+	}
+
+	protected static function render_objects_to_html( $context ){
+		ob_start();
+		?>
+			<span class="<?= $context['css_classes'] ?>">
+				<?php foreach ( $context['alerts'] as $alert ):
+					echo static::render_to_html( $alert );
+				endforeach; ?>
+			</span>
+		<?php
+		return ob_get_clean();
+	}
+
+	public static function toHTML ( $post_object ) {
+		$alert_context = static::get_render_context( $post_object );
+		return static::render_to_html( $alert_context );
+	}
+
+	protected static function render_to_html( $alert ) {
+		ob_start();
+		?>
+		<div class="alert <?= $alert['alert_css_classes'] ?>">
+			<p>
+				<strong><?= $alert['post_title'] ?></strong>
+				<?= $alert['alert_message'] ?>
+			</p>
+		</div>
+		<div class="clearfix"></div>
+		<?php
+		return ob_get_clean();
+	}
+}
+
 class Billboard extends CustomPostType {
 	public
 		$name           = 'billboard',
@@ -540,6 +693,7 @@ function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
 		'Post',
 		'Page',
+		'Alert',
 		'Billboard',
 		'News',
 		'Staff',

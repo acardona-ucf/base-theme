@@ -87,6 +87,7 @@ abstract class CustomPostType {
 	/**
 	 * Additional fields on a custom post type may be defined by overriding this
 	 * method on an descendant object.
+	 * @see SDES_Metaboxes::display_metafield() for field types.
 	 * */
 	public function fields() {
 		return array();
