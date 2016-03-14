@@ -18,17 +18,6 @@
 	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/nivoslider/jquery.nivo.slider.pack.js"></script>
 	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.min.js"></script>
-	<script type="text/javascript">
-		$(window).load(function() {
-			$('#slider').nivoSlider({
-				slices: 10,
-				pauseTime: 5000,
-				controlNav: false,
-				captionOpacity: 0.7
-			});
-		});
-
-	</script>
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -75,62 +64,10 @@
 		</div>
 	</nav>
 
-	<!-- nivo slider -->
-	<div class="container site-billboard theme-default">
-		<div id="slider" class="nivoSlider">
-		  <?php
-			/* If using the WP Nivo Plugin, use the following code instead: */
-			// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
-			$query_args = array( 'post_type' => 'billboard',
-				'orderby' => 'meta_value_datetime',
-				'meta_key' => 'billboard_start_date',
-				'order' => 'ASC',
-				'meta_query' => array(
-						'relation' => 'AND',
-						array(
-							'key' => 'billboard_start_date',
-							'value' => date('Y-m-d H:i:s'),
-							'compare' => '<=',
-						),
-						array(
-							'key' => 'billboard_end_date',
-							'value' => date('Y-m-d H:i:s'),
-							'compare' => '>=',
-						),
-					),
-			 );
-			$billboards = new WP_Query( $query_args );
-			// TODO: don't show nivoslider directionNav if only 1 Billboard slide. 
-			while ( $billboards->have_posts() ) : $billboards->the_post();
-				if ( has_post_thumbnail() ) {
-					$billboard_url = get_metadata('billboard_url', true);
-					if( $billboard_url ) :
-				?>
-					<a href="<?= $billboard_url ?>" class="nivo-imageLink">
-						<?= the_post_thumbnail( 'post-thumbnail', array('title'=>'#nivo-caption-'.get_the_id(),) ); ?>
-					</a>
-				<? else:
-					the_post_thumbnail( 'post-thumbnail', array('title'=>'#nivo-caption-'.get_the_id(),) );
-				   endif;
-				}
-			endwhile;
-			wp_reset_query();
-			?>
-		</div>
-		  <?php 
-			while ( $billboards->have_posts() ) : $billboards->the_post();
-				if ( has_post_thumbnail() ) :
-		  ?>
-					<div id="nivo-caption-<?= the_id(); ?>" class="nivo-html-caption">
-						<?= the_content(); ?>
-					</div>
-		  <?php
-				endif;
-			endwhile;
-			wp_reset_query();
-		  ?>
-	</div>
+	<?php
+		/* If using the WP Nivo Plugin, use the following code instead: */
+		// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
+		echo do_shortcode( "[billboard-list]" ); ?>
 
 	<!-- content area -->
-	<div class="container site-content">		
-		<?php !is_page('Home') ? the_title( '<h1 class="page-header">', '</h1>' ) : false ?>
+	<div class="container site-content">

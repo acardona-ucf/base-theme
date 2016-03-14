@@ -90,7 +90,7 @@ class Billboard extends CustomPostType {
 		$use_thumbnails = True,  // Featured images
 		$use_order      = False, // Wordpress built-in order meta data
 		$use_metabox    = True,  // Enable if you have custom fields to display in admin
-		$use_shortcode  = False, // Auto generate a shortcode for the post type
+		$use_shortcode  = True,  // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
 		$built_in       = False,
@@ -103,19 +103,19 @@ class Billboard extends CustomPostType {
 		return array(
 			array(
 				'name' => 'URL',
-				'descr' => '',
+				'descr' => 'Add a link for this billboard.',
 				'id' => $prefix.'url',
 				'type' => 'text',
 			),
 			array(
 				'name' => 'Start Date',
-				'descr' => '',
+				'descr' => 'The billboard will be shown starting on this date.',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
 			),
 			array(
 				'name' => 'End Date',
-				'descr' => '',
+				'descr' => 'Stop showing the billboard after this date.',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
 			),
@@ -130,6 +130,84 @@ class Billboard extends CustomPostType {
 		add_meta_box('postimagediv', __("{$this->singular_name} Image"),
 			'post_thumbnail_meta_box', $this->name, 'after_title', 'high');
 		CustomPostType::register_meta_boxes_after_title();
+	}
+
+	public function shortcode( $attr ) {
+		$prefix = $this->options('name').'_';
+		$default_attrs = array(
+			'type' => $this->options( 'name' ),
+			'orderby' => 'meta_value_datetime',
+			'meta_key' => $prefix.'start_date',
+			'order' => 'ASC',
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => $prefix.'start_date',
+					'value' => date('Y-m-d H:i:s'),
+					'compare' => '<=',
+				),
+				array(
+					'key' => $prefix.'end_date',
+					'value' => date('Y-m-d H:i:s'),
+					'compare' => '>=',
+				),
+			),
+		);
+		if ( is_array( $attr ) ) {
+			$attr = array_merge( $default_attrs, $attr );
+		}else {
+			$attr = $default_attrs;
+		}
+		return SDES_Static::sc_object_list( $attr );
+	}
+
+	public function objectsToHTML( $objects, $css_classes ) {
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$context['objects'] = $objects;
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		return static::render_objects_to_html( $context );
+	}
+
+	protected static function render_objects_to_html( $context ){
+		// TODO: don't show nivoslider directionNav if only 1 Billboard slide.
+		ob_start();
+		?>
+		<!-- nivo slider -->
+		<script type="text/javascript">
+			$(window).load(function() {
+				$('#slider-sc').nivoSlider({
+					slices: 10,
+					pauseTime: 5000,
+					controlNav: false,
+					captionOpacity: 0.7
+				});
+			});
+		</script>
+		<div class="container site-billboard theme-default">
+			<div id="slider-sc" class="nivoSlider">
+			<?php foreach ( $context['objects'] as $o ):
+				if ( has_post_thumbnail( $o ) ) :
+					$billboard_url = get_post_meta($o, 'billboard_url', true);
+					if( $billboard_url ) : ?>
+						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
+							<?= get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
+						</a>
+				<? else:
+						echo get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) );
+				   endif;
+				endif;
+			endforeach; ?>
+			</div>
+			<?php foreach ( $context['objects'] as $o ):
+				if ( has_post_thumbnail( $o ) ) : ?>
+					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
+						<?= $o->post_content ?>
+					</div>
+		  		<?php endif;
+			endforeach; ?>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 }
 
