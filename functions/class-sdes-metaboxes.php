@@ -167,7 +167,8 @@ class SDES_Metaboxes {
 			$field_obj = new RadioMetaField( $field );
 			break;
 		case 'checkbox':
-			$field_obj = new CheckboxMetaField( $field );
+		case 'checkbox_list':
+			$field_obj = new CheckboxListMetaField( $field );
 			break;
 		case 'file':
 			$field['post_id'] = $post_id;

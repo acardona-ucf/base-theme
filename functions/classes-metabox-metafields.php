@@ -63,13 +63,23 @@ abstract class MetaField {
 abstract class ChoicesMetaField extends MetaField{
 	// Ensure 'default' value is added to choices if it isn't already
 	protected function add_default_to_choices() {
-		if ( isset( $this->default ) && !array_key_exists( $this->default, $this->choices ) ) {
-			$this->choices = array( $this->default => '' ) + $this->choices;
+		if ( isset( $this->default ) ) {
+			if( !is_array( $this->default ) && !array_key_exists( $this->default, $this->choices ) ) {
+				// Exclude arrays of defaults used by CheckboxListMetaField.
+				$this->choices = array( $this->default => '' ) + $this->choices;
+			} else {
+				// Add an array of defaults if they aren't present.
+				foreach ($this->default as $key => $value) {
+					if( !array_key_exists( $key, $this->choices ) ) {
+						$this->choices = array($key => $value) + $this->choices;
+					}
+				}
+			}
 		}
 	}
 
 	function __construct( $attr ) {
-		$this->choices = @$attr['choices'];
+		$this->choices = @$attr['choices'] ?: array();  // Shorthand ternary operator requires PHP 5.3+.
 		parent::__construct( $attr );
 		$this->add_default_to_choices();
 	}
@@ -203,7 +213,7 @@ class RadioMetaField extends ChoicesMetaField{
  * @package default
  * @author Jared Lang
  * */
-class CheckboxMetaField extends ChoicesMetaField {
+class CheckboxListMetaField extends ChoicesMetaField {
 	function input_html() {
 		ob_start();
 		?>
