@@ -2,6 +2,7 @@
 /*
 Template Name: Content Full Width
 */
+require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
 ?>
 <?php get_header('content'); ?>
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
@@ -25,6 +26,8 @@ Template Name: Content Full Width
 	<div class="col-sm-12">
 		<?php the_content(); ?>
 	</div>
-<?php endwhile; else: ?>
-<?php endif; ?>
-<?php get_footer(); ?>
+<?php endwhile;
+else: 
+	SDES_Helper::Get_No_Posts_Message();
+endif;
+get_footer();
