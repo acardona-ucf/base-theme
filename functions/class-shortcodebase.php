@@ -220,9 +220,17 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 		$name        = 'Shortcode CPT Wrapper', // The name of the shortcode.
 		$command     = 'shortcode-cpt-wrapper', // The command used to call the shortcode.
 		$description = 'Show list of cpt items.', // The description of the shortcode.
-		$params      = array(), // The parameters used by the shortcode.
 		$closing_tag = False,
-		$wysiwyg     = True; // Whether to add it to the shortcode Wysiwyg modal.
+		$wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
+		$params      = array( // The parameters used by the shortcode.
+			array(
+				'name' => 'limit (number)',
+				'id' => 'limit',
+				'help_text' => 'Only show this many items (defaults to "-1", no limit).',
+				'default' => -1,
+				'type' => 'number',
+			),
+		); 
 
 	function __construct($cpt_instance) {
 		$this->name = $cpt_instance->options('singular_name').' List';
@@ -237,13 +245,6 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 
 		// Add taxonomy params
 		if (count($cpt_instance->taxonomies) > 1) { 
-			$this->params[] = array(
-				'name' => 'limit (number)',
-				'id' => 'limit',
-				'help_text' => 'Only show this many items (defaults to "-1", no limit).',
-				'default' => -1,
-				'type' => 'number',
-				);
 			$this->params[] = array(
 				'name' => "join ('and', 'or')",
 				'id' => 'join',
