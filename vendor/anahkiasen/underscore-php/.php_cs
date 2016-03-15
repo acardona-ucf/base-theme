@@ -4,11 +4,11 @@ use Symfony\CS\Finder\DefaultFinder;
 use Symfony\CS\Fixer\Contrib\HeaderCommentFixer;
 use Symfony\CS\FixerInterface;
 
-$finder = DefaultFinder::create()->in(['config', 'src', 'tests']);
+$finder = DefaultFinder::create()->in(array('config', 'src', 'tests');
 
 return Config::create()
              ->level(FixerInterface::SYMFONY_LEVEL)
-             ->fixers([
+             ->fixers(array(
                  '-yoda_conditions',
                  'ereg_to_preg',
                  'multiline_spaces_before_semicolon',
@@ -19,6 +19,6 @@ return Config::create()
                  'short_array_syntax',
                  'strict',
                  'strict_param',
-             ])
+             )
              ->setUsingCache(true)
              ->finder($finder);
