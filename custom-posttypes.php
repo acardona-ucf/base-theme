@@ -96,7 +96,8 @@ class Alert extends CustomPostType {
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
-		$default_order   = null;
+		$default_order   = null,
+		$sc_interface_fields = false;
 
 	public function fields() {
 		$prefix = $this->options('name').'_';
@@ -169,20 +170,33 @@ class Alert extends CustomPostType {
 		return SDES_Static::sc_object_list( $attr );
 	}
 
-	protected static function get_render_context( $alert ) {
+	private static function get_render_metadata( $alert ) {
+		$metadata_fields = array();
+		$metadata_fields['alert_is_unplanned'] = get_post_meta($alert->ID, 'alert_is_unplanned', true);
+		$metadata_fields['alert_url'] = esc_attr( get_post_meta($alert, 'alert_url', true) );
+		return $metadata_fields;
+	}
+
+	/**
+	 * Generate a render context given a WP_Post object and an array of its metadata fields.
+	 * Expected fields:
+	 * $alert - post_content, post_title
+	 * $metadata_fields - alert_is_unplanned, alert_url
+	 */
+	public static function get_render_context( $alert, $metadata_fields ) {
 		$alert_css_classes = 
-			get_post_meta($alert->ID, 'alert_is_unplanned', true)
+			( $metadata_fields['alert_is_unplanned'] )
 			? 'alert-danger' : 'alert-warning';
-		$alert_url = esc_attr( get_post_meta($alert, 'alert_url', true) );
+		$alert_url = $metadata_fields['alert_url'];
 		$alert_message = $alert->post_content;
 		$alert_message = 
-			(true !== $alert_url )
+			(true !== $alert_url && '' != $alert_url )
 			? sprintf( '<a href="%1$s" class="external">%2$s</a>', $alert_url, $alert_message)
 			: $alert_message;
 		return array(
-			'alert_css_classes' => $alert_css_classes,
-			'post_title' => $alert->post_title,
-			'alert_message' => $alert_message,
+			'css_classes' => $alert_css_classes,
+			'title' => $alert->post_title,
+			'message' => $alert_message,
 		);
 	}
 
@@ -191,7 +205,8 @@ class Alert extends CustomPostType {
 		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
 
 		foreach ($objects as $alert) {
-			$context['alerts'][] = static::get_render_context( $alert );
+			$metadata_fields = static::get_render_metadata( $alert );
+			$context['alert_contexts'][] = static::get_render_context( $alert, $metadata_fields );
 		}
 		return static::render_objects_to_html( $context );
 	}
@@ -200,7 +215,7 @@ class Alert extends CustomPostType {
 		ob_start();
 		?>
 			<span class="<?= $context['css_classes'] ?>">
-				<?php foreach ( $context['alerts'] as $alert ):
+				<?php foreach ( $context['alert_contexts'] as $alert ):
 					echo static::render_to_html( $alert );
 				endforeach; ?>
 			</span>
@@ -209,17 +224,18 @@ class Alert extends CustomPostType {
 	}
 
 	public static function toHTML ( $post_object ) {
-		$alert_context = static::get_render_context( $post_object );
+		$metadata_fields = static::get_render_metadata( $post_object );
+		$alert_context = static::get_render_context( $post_object, $metadata_fields );
 		return static::render_to_html( $alert_context );
 	}
 
-	protected static function render_to_html( $alert ) {
+	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
-		<div class="alert <?= $alert['alert_css_classes'] ?>">
+		<div class="alert <?= $context['css_classes'] ?>">
 			<p>
-				<strong><?= $alert['post_title'] ?></strong>
-				<?= $alert['alert_message'] ?>
+				<strong><?= $context['title'] ?></strong>
+				<?= $context['message'] ?>
 			</p>
 		</div>
 		<div class="clearfix"></div>

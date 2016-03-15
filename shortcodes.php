@@ -562,10 +562,85 @@ class SocialButtonSC extends ShortcodeBase {
     }
 }
 
+require_once( get_stylesheet_directory().'/custom-posttypes.php' );
+/**
+ * Extending Alert to add ContextToHTML, assuming responsiblity for sanitizing inputs.
+ */
+class AlertWrapper extends Alert {
+    public static function ContextToHTML ( $alert_context ) {
+        return static::render_to_html( $alert_context );
+    }
+}
+class AlertSC extends ShortcodeBase {
+    public
+        $name = 'Alert (Ad hoc)', // The name of the shortcode.
+        $command = 'alert', // The command used to call the shortcode.
+        $description = 'Show an alert on a single page.', // The description of the shortcode.
+        $callback    = 'callback',
+        $render      = 'render',
+        $closing_tag = False,
+        $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
+        $params      = array(
+            array(
+                'name'      => 'Is Unplanned',
+                'id'        => 'is_unplanned',
+                'help_text' => 'Show the alert as red instead of yellow.',
+                'type'      => 'checkbox',
+                'default'   => true,
+            ),
+            array(
+                'name'      => 'Title',
+                'id'        => 'title',
+                'help_text' => 'A title for the alert (shown in bold).',
+                'type'      => 'text',
+                'default'   => 'ALERT',
+            ),
+            array(
+                'name'      => 'Message',
+                'id'        => 'message',
+                'help_text' => 'Message text for the alert.',
+                'type'      => 'text',
+                'default'   => 'Alert',
+            ),
+            array(
+                'name'      => 'URL',
+                'id'        => 'url',
+                'help_text' => 'Make the alert a link.',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+        ); // The parameters used by the shortcode.
+
+
+    public static function callback($attr, $content='') {
+        $attr = shortcode_atts( array(
+                'title' => 'ALERT',
+                'message' => 'Alert',
+                'is_unplanned' => true,
+                'url' => null,
+            ), $attr
+        );
+        // TODO: consider using boolval after PHP 5.5.0.
+        $attr['is_unplanned'] = filter_var( $attr['is_unplanned'], FILTER_VALIDATE_BOOLEAN);
+
+        // Create and sanitize mocks for WP_Post and metadata using the shortcode attributes.
+        $alert = new StdClass;
+        $alert->post_title = esc_attr( $attr['title'] );
+        $alert->post_content = esc_attr( $attr['message'] );
+        $metadata_fields = array(
+               'alert_is_unplanned' => $attr['is_unplanned'],
+               'alert_url' => esc_attr( $attr['url'] ),
+            );
+        $ctxt = AlertWrapper::get_render_context( $alert, $metadata_fields );
+        return AlertWrapper::ContextToHTML( $ctxt );
+    }
+}
+
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
             'RowSC',
             'ColumnSC',
+            'AlertSC',
             'MenuPanelSC',
             'EventsSC',
             'SocialButtonSC',
