@@ -37,7 +37,7 @@ abstract class CustomPostType {
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null,
-		$sc_interface_fields = null;
+		$sc_interface_fields = null; // Fields for shortcodebase interface (false hides from list, null shows only the default fields).
 
 	/**
 	 * Wrapper for get_posts function, that predefines post_type for this

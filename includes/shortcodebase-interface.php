@@ -14,7 +14,7 @@ require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
  }
  // Add shortcodes for custom posttypes registered in ShortcodeBase.
  foreach ( ShortcodeBase::$installed_custom_post_types as $sc_post ) {
-	if ( $sc_post->options('use_shortcode') ) {
+	if ( false !== $sc_post->options('sc_interface_fields') && $sc_post->options('use_shortcode') ) {
 		$shortcodes[] = new Shortcode_CustomPostType_Wrapper($sc_post);
  	}
  }
