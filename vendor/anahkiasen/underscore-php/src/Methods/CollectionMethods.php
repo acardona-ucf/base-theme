@@ -152,7 +152,7 @@ abstract class CollectionMethods
         if (!$comparisonOp) {
             $comparisonOp = is_array($value) ? 'contains' : 'eq';
         }
-        $ops = [
+        $ops = array(
             'eq' => function ($item, $prop, $value) {
                 return $item[$prop] === $value;
             },
@@ -183,7 +183,7 @@ abstract class CollectionMethods
             'older' => function ($item, $prop, $value) {
                 return strtotime($item[$prop]) < strtotime($value);
             },
-        ];
+        );
         $result = array_values(array_filter((array) $collection, function ($item) use (
             $property,
             $value,

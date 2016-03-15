@@ -359,7 +359,7 @@ class StringsMethods
     public static function toggle($string, $first, $second, $loose = false)
     {
         // If the string given match none of the other two, and we're in strict mode, return it
-        if (!$loose and !in_array($string, [$first, $second], true)) {
+        if (!$loose and !in_array($string, array($first, $second), true)) {
             return $string;
         }
 

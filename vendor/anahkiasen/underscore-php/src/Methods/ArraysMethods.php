@@ -459,7 +459,7 @@ class ArraysMethods extends CollectionMethods
     /**
      * Invoke a function on all of an array's values.
      */
-    public static function invoke($array, $callable, $arguments = [])
+    public static function invoke($array, $callable, $arguments = array())
     {
         // If one argument given for each iteration, create an array for it
         if (!is_array($arguments)) {
