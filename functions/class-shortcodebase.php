@@ -171,7 +171,9 @@ abstract class ShortcodeBase implements IShortcodeUI {
 				$retval .= '</select>';
 				break;
 			case 'checkbox':
-				$retval = '<input id="'.$command.'-'.$id.'" type="checkbox" name="' . $command . '-' . $id . '" data-parameter="' . $id . '"><label for="'.$command.'-'.$id.'">'.$name.'</label>';
+				$checked = ( filter_var( $default, FILTER_VALIDATE_BOOLEAN) ) ? 'checked' : '';
+				$retval .= '<input id="'.$command.'-'.$id.'" type="checkbox" name="' . $command . '-' . $id . '" data-parameter="' . $id . '"'. $checked .'>';
+				$retval .= '<label for="'.$command.'-'.$id.'">'.$name.'</label>';
 				break;
 		}
 
