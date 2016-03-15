@@ -18,17 +18,6 @@
 	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/nivoslider/jquery.nivo.slider.pack.js"></script>
 	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.min.js"></script>
-	<script type="text/javascript">
-		$(window).load(function() {
-			$('#slider').nivoSlider({
-				slices: 10,
-				pauseTime: 5000,
-				controlNav: false,
-				captionOpacity: 0.7
-			});
-		});
-
-	</script>
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -75,22 +64,15 @@
 		</div>
 	</nav>
 
-	<!-- nivo slider -->
-	<div class="container site-billboard theme-default">
-		<div id="slider" class="nivoSlider">
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard2.jpg" alt="" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard3.jpg" alt="" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard4.jpg" alt="" title="#htmlcaption" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard5.jpg" alt="" >
-			<img src="<?php bloginfo('template_url'); ?>/images/billboard6.jpg" alt="" >
-		</div>
-		<div id="htmlcaption" class="nivo-html-caption">
-			<p>
-				<strong>This</strong> is an example of a <em>HTML</em> caption with <a href="#">a link</a>.
-			</p>
-		</div>
-	</div>
+	<?php
+		/* If using the WP Nivo Plugin, use the following code instead: */
+		// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
+		echo do_shortcode( "[billboard-list]" ); ?>
 
 	<!-- content area -->
-	<div class="container site-content">		
-		<?php !is_page('Home') ? the_title( '<h1 class="page-header">', '</h1>' ) : false ?>	
+	<div class="container site-content">
+		<?php
+		if ( 'alert' !== get_query_var('post_type') ) {
+			// TODO: Allow alerts to be restricted to certain pages.
+			echo do_shortcode( "[alert-list]" );
+		}

@@ -2,6 +2,8 @@
 
 require_once( 'classes-metabox-metafields.php' );
 require_once( 'class-sdes-static.php' );
+require_once( get_stylesheet_directory().'/vendor/autoload.php' );
+use Underscore\Types\Arrays;
 
 /**
  * POST DATA HANDLERS and META BOX FUNCTIONS
@@ -117,13 +119,25 @@ class SDES_Metaboxes {
 	?>
 		<input type="hidden" name="meta_box_nonce" value="<?php echo wp_create_nonce( basename( __FILE__ ) ); ?>">
 		<table class="form-table">
-		<?php
-		foreach ( $meta_box['fields'] as $field ) {
-			SDES_Metaboxes::display_metafield( $post->ID, $field );
-		}
-		?>
+		  <?php
+			foreach ( $meta_box['fields'] as $field ) {
+				SDES_Metaboxes::display_metafield( $post->ID, $field );
+			}
+		  ?>
 		</table>
-	<?php
+		  <?php
+			$hasDateField = Arrays::matchesAny( $meta_box['fields'],
+				function($x) { return ('date' === $x['type']); } );
+			if ( $hasDateField ) : ?>
+				<script>
+					jQuery(document).ready(function(){
+						jQuery('.date').datepicker({
+							minDate: '0d',
+							dateFormat : 'yy-mm-dd'
+						});
+					});
+				</script>
+	  	<?php endif;
 		echo ob_get_clean();
 	}
 
@@ -136,6 +150,9 @@ class SDES_Metaboxes {
 		switch ( $field['type'] ) {
 		case 'text':
 			$field_obj = new TextMetaField( $field );
+			break;
+		case 'date':
+			$field_obj = new DatePickerMetaField( $field );
 			break;
 		case 'textarea':
 			$field_obj = new TextareaMetaField( $field );
@@ -150,7 +167,8 @@ class SDES_Metaboxes {
 			$field_obj = new RadioMetaField( $field );
 			break;
 		case 'checkbox':
-			$field_obj = new CheckboxMetaField( $field );
+		case 'checkbox_list':
+			$field_obj = new CheckboxListMetaField( $field );
 			break;
 		case 'file':
 			$field['post_id'] = $post_id;

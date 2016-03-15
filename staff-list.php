@@ -1,7 +1,7 @@
 <?php
 $noThumbnail = '<img src="https://assets.sdes.ucf.edu/images/blank.png" alt="thumb" class="img-responsive">';
 
-$post = array( 'post_type' => 'staff_list');
+$post = array( 'post_type' => 'staff' );
 $loop = new WP_Query( $post );
 ?>
 
@@ -40,7 +40,7 @@ $loop = new WP_Query( $post );
 					<?= the_title(); ?>
 				</div>
 				<div class="staff-title">
-					<?= get_custom_field('position_title')? get_custom_field('position_title') : false ?>
+					<?= get_custom_field('staff_position_title')? get_custom_field('staff_position_title') : false ?>
 				</div>
 				<div class="staff-phone"><?= get_custom_field('staff_phone')? get_custom_field('staff_phone') : false ?></div>
 				<div class="staff-email">

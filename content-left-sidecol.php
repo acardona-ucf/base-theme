@@ -2,6 +2,7 @@
 /*
 Template Name: Content Page Left Sidecolumn
 */
+require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
 ?>
 
 <?php get_header('content'); ?>
@@ -22,8 +23,8 @@ Template Name: Content Page Left Sidecolumn
 	
 	
 
-<?php endwhile; else: ?>
-
-<?php endif; ?>
-
-<?php get_footer(); ?>
+<?php endwhile;
+else: 
+	SDES_Helper::Get_No_Posts_Message();
+endif;
+get_footer();

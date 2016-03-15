@@ -63,13 +63,23 @@ abstract class MetaField {
 abstract class ChoicesMetaField extends MetaField{
 	// Ensure 'default' value is added to choices if it isn't already
 	protected function add_default_to_choices() {
-		if ( isset( $this->default ) && !array_key_exists( $this->default, $this->choices ) ) {
-			$this->choices = array( $this->default => '' ) + $this->choices;
+		if ( isset( $this->default ) ) {
+			if( !is_array( $this->default ) && !array_key_exists( $this->default, $this->choices ) ) {
+				// Exclude arrays of defaults used by CheckboxListMetaField.
+				$this->choices = array( $this->default => '' ) + $this->choices;
+			} else {
+				// Add an array of defaults if they aren't present.
+				foreach ($this->default as $key => $value) {
+					if( !array_key_exists( $key, $this->choices ) ) {
+						$this->choices = array($key => $value) + $this->choices;
+					}
+				}
+			}
 		}
 	}
 
 	function __construct( $attr ) {
-		$this->choices = @$attr['choices'];
+		$this->choices = @$attr['choices'] ?: array();  // Shorthand ternary operator requires PHP 5.3+.
 		parent::__construct( $attr );
 		$this->add_default_to_choices();
 	}
@@ -87,6 +97,21 @@ class TextMetaField extends MetaField{
 		ob_start();
 		?>
 		<input type="<?php echo $this->type_attr?>" id="<?php echo htmlentities( $this->id )?>" name="<?php echo htmlentities( $this->id )?>" value="<?php echo htmlentities( $this->value )?>">
+		<?php
+		return ob_get_clean();
+	}
+}
+
+/**
+ * DatePickerMetaField class represents a text input for a date value.
+ * @todo Extract jQueryUI datepicker dependency or test that it is available and only called once per page.
+ * */
+class DatePickerMetaField extends MetaField {
+	protected $class_attr = 'date';
+	function input_html() {
+		ob_start();
+		?>
+		<input type="text" class="<?php echo $this->class_attr?>" id="<?php echo htmlentities( $this->id )?>" name="<?php echo htmlentities( $this->id )?>" value="<?php echo htmlentities( $this->value )?>">
 		<?php
 		return ob_get_clean();
 	}
@@ -188,7 +213,7 @@ class RadioMetaField extends ChoicesMetaField{
  * @package default
  * @author Jared Lang
  * */
-class CheckboxMetaField extends ChoicesMetaField {
+class CheckboxListMetaField extends ChoicesMetaField {
 	function input_html() {
 		ob_start();
 		?>

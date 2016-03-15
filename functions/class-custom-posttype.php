@@ -1,12 +1,18 @@
 <?php
 
-require_once( 'class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
+require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
+require_once( get_stylesheet_directory().'/vendor/autoload.php' );
+use Underscore\Types\Object;
+use Underscore\Types\Arrays;
 
 /**
  * Abstract class for defining custom post types.
  *
  * @see SDES_Metaboxes::$installed_custom_post_types
  * @see SDES_Metaboxes::show_meta_boxes (calls SDES_Metaboxes::display_meta_box_field)
+ * @see SDES_Static::instantiate_and_register_classes()
  * Based on: https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/custom-post-types.php#L1-L242
  **/
 abstract class CustomPostType {
@@ -30,7 +36,8 @@ abstract class CustomPostType {
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
-		$default_order   = null;
+		$default_order   = null,
+		$sc_interface_fields = null; // Fields for shortcodebase interface (false hides from list, null shows only the default fields).
 
 	/**
 	 * Wrapper for get_posts function, that predefines post_type for this
@@ -80,6 +87,7 @@ abstract class CustomPostType {
 	/**
 	 * Additional fields on a custom post type may be defined by overriding this
 	 * method on an descendant object.
+	 * @see SDES_Metaboxes::display_metafield() for field types.
 	 * */
 	public function fields() {
 		return array();
@@ -160,10 +168,29 @@ abstract class CustomPostType {
 	}
 
 	/**
+	 * Show metaboxes that have the context 'after_title'.
+	 * @see CustomPostType::do_meta_boxes_after_title()
+	 */
+	public static function register_meta_boxes_after_title() {
+		add_action('edit_form_after_title', 'CustomPostType::do_meta_boxes_after_title');
+	}
+
+	/**
+	 * Callback function to print metaboxes used by add_action('edit_form_after_title').
+	 * @see CustomPostType::register_meta_boxes_after_title()
+	 */
+	public static function do_meta_boxes_after_title( $post ) {
+		//global $post, $wp_meta_boxes; // Get the globals.
+		do_meta_boxes( get_current_screen(), 'after_title', $post ); // Output meta boxes for the 'after_title' context.
+	}
+
+	/**
 	 * Registers the custom post type and any other ancillary actions that are
 	 * required for the post to function properly.
+	 * @see http://codex.wordpress.org/Function_Reference/register_post_type
+	 * @param Array $args Override the registration args passed to register_post_type.
 	 * */
-	public function register() {
+	public function register( $args = array() ) {
 		$registration = array(
 			'labels'     => $this->labels(),
 			'supports'   => $this->supports(),
@@ -174,6 +201,7 @@ abstract class CustomPostType {
 		if ( $this->options( 'use_order' ) ) {
 			$registration = array_merge( $registration, array( 'hierarchical' => True, ) );
 		}
+		$registration = array_merge( $registration, $args );
 		register_post_type( $this->options( 'name' ), $registration );
 		if ( $this->options( 'use_shortcode' ) ) {
 			add_shortcode( $this->options( 'name' ).'-list', array( $this, 'shortcode' ) );
@@ -184,6 +212,8 @@ abstract class CustomPostType {
 	 * Shortcode for this custom post type.  Can be overridden for descendants.
 	 * Defaults to just outputting a list of objects outputted as defined by
 	 * toHTML method.
+	 * @see CustomPostType::objectsToHTML
+	 * @see CustomPostType::toHTML
 	 * */
 	public function shortcode( $attr ) {
 		$default = array(
@@ -194,7 +224,20 @@ abstract class CustomPostType {
 		}else {
 			$attr = $default;
 		}
-		return sc_object_list( $attr );
+		return SDES_Static::sc_object_list( $attr );
+	}
+
+	/**
+	 * Static method that tries to call the correct instance method of objectsToHTML.
+	 * @param string $classname Override the classname to instantiate the class.
+	 */
+	public static function tryObjectsToHTML( $objects, $css_classes, $classname = '' ) {
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$classname = ( '' === $classname ) ? $objects[0]->post_type : $classname;
+		if( class_exists($classname) ) {
+			$class = new $classname;
+			return $class->objectsToHTML( $objects, $css_classes );
+		} else { return ''; }
 	}
 
 	/**
@@ -202,17 +245,20 @@ abstract class CustomPostType {
 	 * If you want to override how a list of objects are outputted, override
 	 * this, if you just want to override how a single object is outputted, see
 	 * the toHTML method.
+	 * @param WP_Post $objects The post objects to display.
+	 * @param string $css_classes List of css classes for the objects container.
+	 * @see http://php.net/manual/en/language.oop5.late-static-bindings.php
+	 * @see Always prefer `static::` over `self::` (in PHP 5.3+): http://stackoverflow.com/a/6807615
 	 * */
 	public function objectsToHTML( $objects, $css_classes ) {
-		if ( count( $objects ) < 1 ) { return '';}
-		$class = get_custom_post_type( $objects[0]->post_type );
-		$class = new $class;
+		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
+		$css_classes = ( $css_classes ) ? $css_classes : $this->name.'-list';
 		ob_start();
 		?>
-		<ul class="<?php if ( $css_classes ):?><?php echo $css_classes?><?php else:?><?php echo $class->options( 'name' )?>-list<?php endif;?>">
+		<ul class="<?= $css_classes ?>">
 			<?php foreach ( $objects as $o ):?>
 			<li>
-				<?php echo $class->toHTML( $o )?>
+				<?= static::toHTML( $o ) ?>
 			</li>
 			<?php endforeach;?>
 		</ul>
@@ -223,9 +269,50 @@ abstract class CustomPostType {
 
 	/**
 	 * Outputs this item in HTML.  Can be overridden for descendants.
+	 * @param WP_Post $object The post object to display.
 	 * */
-	public function toHTML( $object ) {
+	public static function toHTML( $object ) {
 		$html = '<a href="'.get_permalink( $object->ID ).'">'.$object->post_title.'</a>';
 		return $html;
 	}
+
+
+	/**
+	 * @param Array $custom_posttypes Names of custom post types classes to register.
+	 * @return  Array Array of instantiated posttype classes (array of arrays). Each item has the keys: 'classname', 'instance'.
+	 * @see SDES_Static::instantiate_and_register_classes()
+	 */
+	public static function Register_Posttypes( $custom_posttypes ) {
+		$posttype_instances = SDES_Static::instantiate_and_register_classes($custom_posttypes);
+		foreach ($posttype_instances as $registered_posttype) {
+			if (class_exists('SDES_Metaboxes') ) {
+				SDES_Metaboxes::$installed_custom_post_types[] = $registered_posttype['instance'];
+			}
+			if (class_exists('ShortcodeBase') ) {
+				ShortcodeBase::$installed_custom_post_types[] = $registered_posttype['instance'];
+			}
+		}
+		CustomPostType::Register_Thumbnails_Support($posttype_instances);
+		return $posttype_instances;
+	}
+
+	/**
+	 * @param Array $instances Instantiated classes for Custom Post Types.
+	 * @return void
+	 */
+	public static function Register_Thumbnails_Support( $instances ) {
+		// if the key $instances[0]['instance'] exists.
+		if ( Arrays::has(Object::unpack($instances), 'instance') ) {
+			$instances = Arrays::pluck($instances, 'instance');
+		}
+
+		$thumbnail_posttypes
+		  = Arrays::from($instances)
+			->filter( function($x) { return true === $x->use_thumbnails; })
+			->pluck( 'name' )
+			->obtain();
+		add_theme_support( 'post-thumbnails', $thumbnail_posttypes );
+	}
 }
+
+CustomPostType::register_meta_boxes_after_title();
