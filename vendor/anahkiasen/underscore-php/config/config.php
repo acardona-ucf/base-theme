@@ -1,6 +1,6 @@
 <?php
 
-return [
+return array(
 
     // The alias Underscore will be mapped to
     'alias' => 'Underscore',
@@ -13,4 +13,4 @@ return [
         'sortBy' => 'sort',
     ),
 
-];
+);
