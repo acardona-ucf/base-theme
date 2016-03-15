@@ -97,7 +97,10 @@ Related to: Lint programs (syntax checkers)
 
 ## Documentation - phpDocumentor
 Tooling to extract and format documentation from specially-formatted code comments (docblocks).
-phpDocument - popular php documentation program that uses xDoc style formatting. This can be downloaded as a PHP archive (.PHAR file) from http://phpdoc.org/phpDocumentor.phar
+phpDocument - popular php documentation program that uses xDoc style formatting.
+This can be downloaded as a PHP archive (.PHAR file) from http://phpdoc.org/phpDocumentor.phar or installed systemwide using: `composer global require phpdocumentor/phpdocumentor=2.8.*`.
+NOTE: PHPDocumentor requires [GraphViz](http://graphviz.org/Download..php) to be installed on your system: http://graphviz.org/Download_windows.php (tested with graphviz-2.38.msi on Windows 8).
+Make sure to add `C:\Program Files (x86)\Graphviz2.38\bin` to your PATH. An update adding phpdoc to VCCW is currently pending.dot
 Similar to: javadoc, jsdoc
 
 
