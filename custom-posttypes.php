@@ -3,6 +3,9 @@
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
 require_once( get_stylesheet_directory().'/functions/class-custom-posttype.php' );
 
+/**
+ * The built-in post_type named 'Post'.
+ */
 class Post extends CustomPostType {
 	public
 		$name           = 'post',
@@ -39,6 +42,9 @@ class Post extends CustomPostType {
 	}
 }
 
+/**
+ * The built-in post_type named 'Page'.
+ */
 class Page extends CustomPostType {
 	public
 		$name           = 'page',
@@ -75,6 +81,9 @@ class Page extends CustomPostType {
 	}
 }
 
+/**
+ * An alert bar displayed at the top of a page.
+ */
 class Alert extends CustomPostType {
 	public
 		$name           = 'alert',
@@ -244,6 +253,9 @@ class Alert extends CustomPostType {
 	}
 }
 
+/**
+ * A single billboard slide to be displayed in a carousel, such as the NivoSlider jQuery plugin.
+ */
 class Billboard extends CustomPostType {
 	public
 		$name           = 'billboard',
@@ -361,7 +373,7 @@ class Billboard extends CustomPostType {
 						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
 							<?= get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
 						</a>
-				<? else:
+				<?php else:
 						echo get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) );
 				   endif;
 				endif;
@@ -380,6 +392,9 @@ class Billboard extends CustomPostType {
 	}
 }
 
+/**
+ * An employee associated with this site.
+ */
 class Staff extends CustomPostType {
 	public
 		$name           = 'staff',
@@ -513,6 +528,9 @@ class Staff extends CustomPostType {
 	}
 }
 
+/**
+ * A single news article.
+ */
 class News extends CustomPostType {
 	public
 		$name           = 'news',

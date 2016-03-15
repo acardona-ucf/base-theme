@@ -217,6 +217,10 @@ abstract class ShortcodeBase implements IShortcodeUI {
 	}
 }
 
+/**
+ * Generate shortcodes for classes that extend CustomPostType.
+ * @see CustomPostType::$sc_interface_fields
+ */
 class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortcodeUI {
 	public
 		$name        = 'Shortcode CPT Wrapper', // The name of the shortcode.

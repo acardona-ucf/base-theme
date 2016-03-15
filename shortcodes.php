@@ -169,6 +169,7 @@ function render_sc_myShortcode($context)
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 
 /**
+ * [row] - Wrap HTML in a Boostrap CSS row.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L454-L504
  */
 class RowSC extends ShortcodeBase {
@@ -225,6 +226,7 @@ class RowSC extends ShortcodeBase {
 }
 
 /**
+ * [column] - Wrap HTML in a Boostrap CSS column.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L506-L650
  */
 class ColumnSC extends ShortcodeBase {
@@ -379,6 +381,9 @@ class ColumnSC extends ShortcodeBase {
     }
 }
 
+/**
+ * [events] - Show an events calendar from events.ucf.edu
+ */
 class EventsSC extends ShortcodeBase {
     public
         $name = 'Events', // The name of the shortcode.
@@ -488,6 +493,9 @@ class EventsSC extends ShortcodeBase {
     }
 }
 
+/**
+ * [socialButton] - Show a button for social network, based on the URL set in the Theme Customizer.
+ */
 class SocialButtonSC extends ShortcodeBase {
     public
         $name = 'Social Button', // The name of the shortcode.
@@ -564,6 +572,7 @@ class SocialButtonSC extends ShortcodeBase {
 
 require_once( get_stylesheet_directory().'/custom-posttypes.php' );
 /**
+ * Use code from the Alert class in a shortcode.
  * Extending Alert to add ContextToHTML, assuming responsiblity for sanitizing inputs.
  */
 class AlertWrapper extends Alert {
@@ -571,6 +580,9 @@ class AlertWrapper extends Alert {
         return static::render_to_html( $alert_context );
     }
 }
+/**
+ * [alert] - Show a single, ad-hoc alert directly in a page's content.
+ */
 class AlertSC extends ShortcodeBase {
     public
         $name = 'Alert (Ad hoc)', // The name of the shortcode.
