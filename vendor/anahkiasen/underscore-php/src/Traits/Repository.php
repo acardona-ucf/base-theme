@@ -25,7 +25,7 @@ abstract class Repository
      *
      * @type array
      */
-    protected static $macros = [];
+    protected static $macros = array();
 
     /**
      * The method used to convert new subjects.

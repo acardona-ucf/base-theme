@@ -11,21 +11,21 @@ class FunctionsMethods
      *
      * @type array
      */
-    public static $canBeCalledTimes = [];
+    public static $canBeCalledTimes = array();
 
     /**
      * An array of cached function results.
      *
      * @type array
      */
-    public static $cached = [];
+    public static $cached = array();
 
     /**
      * An array tracking the last time a function was called.
      *
      * @type array
      */
-    public static $throttle = [];
+    public static $throttle = array();
 
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////// LIMITERS ////////////////////////////
@@ -185,7 +185,7 @@ class FunctionsMethods
         $boundArgs = array_slice(func_get_args(), 1);
 
         return function () use ($boundArgs, $func) {
-            $args = [];
+            $args = array();
             $calledArgs = func_get_args();
             $position = 0;
 

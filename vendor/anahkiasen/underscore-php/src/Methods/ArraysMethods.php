@@ -46,7 +46,7 @@ class ArraysMethods extends CollectionMethods
     {
         $times = abs($times);
         if ($times === 0) {
-            return [];
+            return array();
         }
 
         return array_fill(0, $times, $data);
@@ -433,7 +433,7 @@ class ArraysMethods extends CollectionMethods
             return $array;
         }
 
-        $_flattened = [];
+        $_flattened = array();
 
         // Rewrite keys
         foreach ($array as $key => $value) {
@@ -444,7 +444,7 @@ class ArraysMethods extends CollectionMethods
         }
 
         // Flatten
-        $flattened = [];
+        $flattened = array();
         foreach ($_flattened as $key => $value) {
             if (is_array($value)) {
                 $flattened = array_merge($flattened, $value);
@@ -479,7 +479,7 @@ class ArraysMethods extends CollectionMethods
      */
     public static function reject($array, Closure $closure)
     {
-        $filtered = [];
+        $filtered = array();
 
         foreach ($array as $key => $value) {
             if (!$closure($value, $key)) {

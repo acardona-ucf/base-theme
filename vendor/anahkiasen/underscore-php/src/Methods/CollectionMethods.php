@@ -278,13 +278,13 @@ abstract class CollectionMethods
     public static function group($collection, $grouper)
     {
         $collection = (array) $collection;
-        $result = [];
+        $result = array();
 
         // Iterate over values, group by property/results from closure
         foreach ($collection as $key => $value) {
             $key = is_callable($grouper) ? $grouper($value, $key) : ArraysMethods::get($value, $grouper);
             if (!isset($result[$key])) {
-                $result[$key] = [];
+                $result[$key] = array();
             }
 
             // Add to results
@@ -317,13 +317,13 @@ abstract class CollectionMethods
             // If we're dealing with an object
             if (is_object($collection)) {
                 if (!isset($collection->$key) or !is_array($collection->$key)) {
-                    $collection->$key = [];
+                    $collection->$key = array();
                 }
                 $collection = &$collection->$key;
                 // If we're dealing with an array
             } else {
                 if (!isset($collection[$key]) or !is_array($collection[$key])) {
-                    $collection[$key] = [];
+                    $collection[$key] = array();
                 }
                 $collection = &$collection[$key];
             }

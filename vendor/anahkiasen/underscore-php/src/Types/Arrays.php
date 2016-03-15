@@ -25,6 +25,6 @@ class Arrays extends Repository
      */
     protected function getDefault()
     {
-        return [];
+        return array();
     }
 }

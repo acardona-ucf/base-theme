@@ -85,7 +85,7 @@ class Parse
         }
 
         // Parse the columns in each row
-        $array = [];
+        $array = array();
         foreach ($data as $row => $columns) {
             foreach ($columns as $columnNumber => $column) {
                 $array[$row][$headers[$columnNumber]] = $column;
@@ -106,7 +106,7 @@ class Parse
      */
     public static function toCSV($data, $delimiter = ';', $exportHeaders = false)
     {
-        $csv = [];
+        $csv = array();
 
         // Convert objects to arrays
         if (is_object($data)) {
