@@ -19,7 +19,7 @@ class Dispatch
      *
      * @type array
      */
-    protected static $classmap = [
+    protected static $classmap = array(
         'array' => 'Arrays',
         'double' => 'Number',
         'closure' => 'Functions',
@@ -29,7 +29,7 @@ class Dispatch
         'object' => 'Object',
         'real' => 'Number',
         'string' => 'Strings',
-    ];
+    );
 
     /**
      * Compute the right class to call according to something's type.

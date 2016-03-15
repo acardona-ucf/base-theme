@@ -11,7 +11,7 @@ class Method
      *
      * @type array
      */
-    public static $defer = [
+    public static $defer = array(
         'trim',
         'count',
         'round',
@@ -24,7 +24,7 @@ class Method
         'ucwords',
         'strtolower',
         'strtoupper',
-    ];
+    );
 
     /**
      * A list of methods where the subject
@@ -32,9 +32,9 @@ class Method
      *
      * @type array
      */
-    protected static $subjectless = [
+    protected static $subjectless = array(
         'fill',
-    ];
+    );
 
     /**
      * A list of methods that are allowed
@@ -42,7 +42,7 @@ class Method
      *
      * @type array
      */
-    protected static $breakers = [
+    protected static $breakers = array(
         'get',
         'sum',
         'count',
@@ -51,17 +51,17 @@ class Method
         'fromXML',
         'fromCSV',
         'toCSV',
-    ];
+    );
 
     /**
      * Unchainable methods.
      *
      * @type array
      */
-    protected static $unchainable = [
+    protected static $unchainable = array(
         'Arrays::range',
         'Arrays::repeat',
-    ];
+    );
 
     /**
      * A cache for better findInClasses performances.
@@ -166,7 +166,7 @@ class Method
      */
     public static function findInClasses($originalClass, $method)
     {
-        $classes = ['Arrays', 'Collection', 'Functions', 'Number', 'Object', 'Strings'];
+        $classes = array('Arrays', 'Collection', 'Functions', 'Number', 'Object', 'Strings');
         foreach ($classes as $class) {
             if (method_exists('\Underscore\Methods\\'.$class.'Methods', $method)) {
                 return '\Underscore\Types\\'.$class;

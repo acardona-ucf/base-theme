@@ -60,7 +60,7 @@ class StringsMethods
                 throw new RuntimeException('Unable to generate random string.');
             }
 
-            return substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $length);
+            return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $length);
         }
 
         return static::quickRandom($length);
@@ -234,7 +234,7 @@ class StringsMethods
         $sliceTo = static::sliceTo($string, $slice);
         $sliceFrom = static::sliceFrom($string, $slice);
 
-        return [$sliceTo, $sliceFrom];
+        return array($sliceTo, $sliceFrom);
     }
 
     /**
