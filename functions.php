@@ -98,6 +98,8 @@ add_filter('excerpt_more', 'new_excerpt_more');
 
 require_once('functions/class-sdes-static.php');
 /* Reads in and displays department information */
+// TODO: refactor out `get_department_info('menu')` and `get_department_info('ACRONYMN')` functionality.
+// TODO: refactor HTML to use "View-and-Context" pattern instead of stringbuilding pattern.
 function get_department_info($action = NULL) {
     $json = file_get_contents('http://directory.sdes.ucf.edu/feed'); 
     $decodejson = json_decode($json);        
