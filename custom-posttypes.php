@@ -157,6 +157,7 @@ class Alert extends CustomPostType {
 			'orderby' => 'meta_value_datetime',
 			'meta_key' => $prefix.'start_date',
 			'order' => 'ASC',
+			//'show_all'=> false,
 			'meta_query' => array(
 				'relation' => 'AND',
 				array(

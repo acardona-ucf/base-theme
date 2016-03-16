@@ -1,4 +1,3 @@
-</div>
 <!-- repeated navigation, social media -->
 	<div class="container site-content-end">
 		<nav class="navbar navbar-default site-nav-repeated">

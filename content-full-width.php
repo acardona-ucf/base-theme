@@ -3,8 +3,14 @@
 Template Name: Content Full Width
 */
 require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
+
+get_header();
 ?>
-<?php get_header('content'); ?>
+<!-- content area -->
+<div class="container site-content" id="content">
+	<?= get_template_part( 'includes/template', 'alert' ); ?>
+
+
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 	<div class="page-header">
 		<?php 
@@ -29,5 +35,8 @@ require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
 <?php endwhile;
 else: 
 	SDES_Helper::Get_No_Posts_Message();
-endif;
+endif; ?>
+
+</div> <!-- /DIV.container.site-content -->
+<?php
 get_footer();
