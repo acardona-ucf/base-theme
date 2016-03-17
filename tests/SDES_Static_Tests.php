@@ -334,7 +334,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         $esc_attr = function($a){ return $a; }; // Bypass sanitize function for testing
         $get_query_var_preview = function(){ return false; };
         $expected = 
-        '<ul id="" class="menu"><li><a href="Home">Home</a></li><li><a class="text-danger adminmsg" style="color: red !important;" href="/wp-admin/nav-menus.php?action=locations#locations-main-menu">Admin Alert: Missing "main-menu" menu location.</a></li></ul>';
+        '<ul id="" class="menu"><li><a href="Home">Home</a></li><li><a class="text-danger adminmsg adminmsg-menu" style="color: red !important;" data-control-name="nav_menu_locations[main-menu]" href="/wp-admin/nav-menus.php?action=locations#locations-main-menu">Admin Alert: Missing "main-menu" menu location.</a></li></ul>';
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
