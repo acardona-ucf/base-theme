@@ -312,6 +312,14 @@ abstract class CustomPostType {
 			->pluck( 'name' )
 			->obtain();
 		add_theme_support( 'post-thumbnails', $thumbnail_posttypes );
+
+		define('SCALE', false);
+		define('CROP', true);
+		// For cropping behavior see `add_image_size`, e.g.: https://core.trac.wordpress.org/browser/tags/4.4.2/src/wp-includes/media.php#L228
+		set_post_thumbnail_size( 125, 125, CROP );
+		// $crop_from = array( 'top', 'left');
+		// set_post_thumbnail_size( 125, 125, $crop_from );
+
 	}
 }
 

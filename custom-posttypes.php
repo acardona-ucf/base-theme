@@ -365,6 +365,7 @@ class Billboard extends CustomPostType {
 
 	protected static function render_objects_to_html( $context ){
 		// TODO: don't show nivoslider directionNav if only 1 Billboard slide.
+		$billboard_size = array(1140,318);
 		ob_start();
 		?>
 		<!-- nivo slider -->
@@ -385,10 +386,10 @@ class Billboard extends CustomPostType {
 					$billboard_url = get_post_meta($o, 'billboard_url', true);
 					if( $billboard_url ) : ?>
 						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
-							<?= get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
+							<?= get_the_post_thumbnail( $o, $billboard_size, array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
 						</a>
 				<?php else:
-						echo get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) );
+						echo get_the_post_thumbnail( $o, $billboard_size, array('title'=>'#nivo-caption-'.$o->ID,) );
 				   endif;
 				endif;
 			endforeach; ?>
@@ -511,17 +512,13 @@ class Staff extends CustomPostType {
 		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
 		$context['thumbnail']
 			= has_post_thumbnail($post_object) 
-				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
+				? get_the_post_thumbnail($post_object, 'post-thumbnail', array('class' => 'img-responsive'))
 				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
 		$context['title'] = get_the_title( $post_object );
 		$context['staff_position_title'] = get_post_meta( $post_object->ID, 'staff_position_title', true );
 		$context['staff_phone'] = get_post_meta( $post_object->ID, 'staff_phone', true );
 		$context['staff_email'] = get_post_meta( $post_object->ID, 'staff_email', true );
-
-		$loop = new WP_Query( array('p'=>$post_object->ID, 'post_type'=> $post_object->post_type ) );
-		$loop->the_post();
-			$context['content'] = get_the_content();
-		wp_reset_query();
+		$context['content'] = $post_object->post_content;
 
 		ob_start();
 		?>
