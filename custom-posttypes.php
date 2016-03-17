@@ -146,6 +146,7 @@ class Alert extends CustomPostType {
 				'descr' => 'Add a link for this alert.',
 				'id' => $prefix.'url',
 				'type' => 'text',
+				'default' => 'http://',
 			),
 		);
 	}
@@ -211,6 +212,8 @@ class Alert extends CustomPostType {
 			( $metadata_fields['alert_is_unplanned'] )
 			? 'alert-danger' : 'alert-warning';
 		$alert_url = $metadata_fields['alert_url'];
+		$alert_url = SDES_Static::url_ensure_prefix( $alert_url );
+		if( false == strrpos($alert_url, '//') ) { $alert_url = 'http://'.$alert_url; }
 		$alert_message = $alert->post_content;
 		$alert_message = 
 			(true !== $alert_url && '' != $alert_url )
@@ -301,6 +304,7 @@ class Billboard extends CustomPostType {
 				'descr' => 'Add a link for this billboard.',
 				'id' => $prefix.'url',
 				'type' => 'text',
+				'default' => 'http://',
 			),
 			array(
 				'name' => 'Start Date',
@@ -384,6 +388,8 @@ class Billboard extends CustomPostType {
 			<?php foreach ( $context['objects'] as $o ):
 				if ( has_post_thumbnail( $o ) ) :
 					$billboard_url = get_post_meta($o, 'billboard_url', true);
+					$billboard_url = SDES_Static::url_ensure_prefix( $billboard_url );
+					if( false == strrpos($billboard_url, '//') ) { $billboard_url = 'http://'. $billboard_url; }
 					if( $billboard_url ) : ?>
 						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
 							<?= get_the_post_thumbnail( $o, $billboard_size, array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
@@ -598,6 +604,7 @@ class News extends CustomPostType {
 				'descr' => '',
 				'id' => $prefix.'link',
 				'type' => 'text',
+				'default' => 'http://',
 			),
 			array(
 				'name' => 'Start Date',

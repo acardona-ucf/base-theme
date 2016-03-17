@@ -106,7 +106,7 @@ class MenuPanelSC extends ShortcodeBase {
                 <?php
                 foreach ( (array) $context['menu_items'] as $key => $menu_item ) {
                     $title = $menu_item->title;
-                    $url = $menu_item->url;
+                    $url = SDES_Static::url_ensure_prefix( $menu_item->url );
                     $class_names = SDES_Static::Get_ClassNames($menu_item, 'nav_menu_css_class');
                     //TODO: Automatically add .external if url is external (check with regex?)
                 ?>
@@ -542,7 +542,9 @@ class SocialButtonSC extends ShortcodeBase {
             case 'twitter':
             case 'youtube':
             default:
-                $ctxt['url'] = esc_attr( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') );
+                $ctxt['url'] = esc_attr(
+                    SDES_Static::url_ensure_prefix(
+                        SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') ) );
                 $ctxt['image'] = esc_attr( "https://assets.sdes.ucf.edu/images/{$attr['network']}.gif" );
                 break;
         }
@@ -641,7 +643,7 @@ class AlertSC extends ShortcodeBase {
         $alert->post_content = esc_attr( $attr['message'] );
         $metadata_fields = array(
                'alert_is_unplanned' => $attr['is_unplanned'],
-               'alert_url' => esc_attr( $attr['url'] ),
+               'alert_url' => esc_attr( SDES_Static::url_ensure_prefix($attr['url']) ),
             );
         $ctxt = AlertWrapper::get_render_context( $alert, $metadata_fields );
         return AlertWrapper::ContextToHTML( $ctxt );

@@ -99,6 +99,17 @@ class SDES_Static
 	}
 
 
+	/**
+	 * Add a protocol to a URL if it does not exist.
+	 * @param string $url The url variable to adjust.
+	 * @param string $protocol The protocol to prepend to the url. (defaults to http://).
+	 */
+	public static function url_ensure_prefix( $url, $protocol="http" ) {
+		if( false === strrpos($url, "//") ) {
+			$url = $protocol . '://' . $url;
+		}
+		return $url;
+	}
 
 	/**
 	 * *********************

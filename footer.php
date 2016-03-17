@@ -1,3 +1,4 @@
+</div>
 <!-- repeated navigation, social media -->
 	<div class="container site-content-end">
 		<nav class="navbar navbar-default site-nav-repeated">
@@ -8,9 +9,9 @@
 				
 				<p class="nav navbar-text navbar-right icons">
 				<?php
-					$url_facebook = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-facebook', '');
-					$url_twitter = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-twitter', '');
-					$url_youtube = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-youtube', '');
+					$url_facebook = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-facebook', '') );
+					$url_twitter = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-twitter', '') );
+					$url_youtube = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-youtube', '') );
 					if( '' != $url_facebook) { 
 					?>
 					<a href="<?= $url_facebook ?>">
@@ -49,6 +50,7 @@
 			 * Maybe desarrolla2/cache, doctrine/cache, or something under cache/cache on Packagist.org
 			 */
 			$rss_url = SDES_Static::get_theme_mod_defaultIfEmpty("sdes_rev_2015-footer_feed-{$position}", 'http://today.ucf.edu/feed/' );
+			$rss_url = SDES_Static::url_ensure_prefix( $rss_url );
 			$default_anchors = SDES_Static::get_rss_links_and_titles( $rss_url );
 			SDES_Static::set_default_keyValue( $ctx_links, 'anchors', $default_anchors );
 			return Render_Template::footer_links( $ctx_links, $template_args );

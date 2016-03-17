@@ -289,7 +289,7 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 function add_to_section_TitleAndTagline( $wp_customizer, $args = null) {
 	$section = 'title_tagline';
 
-	$taglineURL_args = $args['sdes_rev_2015-taglineURL'];
+	$taglineURL_args = SDES_Static::url_ensure_prefix( $args['sdes_rev_2015-taglineURL'] );
 	SDES_Static::set_default_keyValue($taglineURL_args, 'transport', 'postMessage');
 	SDES_Static::set_default_keyValue($taglineURL_args, 'default', 'http://www.sdes.ucf.edu/');
 	SDES_Static::set_default_keyValue($taglineURL_args, 'sanitize_callback', 'esc_url');

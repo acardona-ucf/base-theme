@@ -114,7 +114,35 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         $result = SDES_Static::sanitize_telephone_407($toSanitize);
     }
 
+    public function test_url_ensure_prefix__DomainNoProtocol__ReturnsPrefixURL(){
+        // Arrange
+        $string_with_url = 'www.sdes.ucf.edu';
+        $expected = 'http://www.sdes.ucf.edu';
+        // Act
+        $result = SDES_Static::url_ensure_prefix( $string_with_url );
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
 
+    public function test_url_ensure_prefix__DomainNeturalProtocol__ReturnsSameURL(){
+        // Arrange
+        $string_with_url = '//www.sdes.ucf.edu';
+        $expected = '//www.sdes.ucf.edu';
+        // Act
+        $result = SDES_Static::url_ensure_prefix( $string_with_url );
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function test_url_ensure_prefix__DomainSpecifyProtocol__ReturnsPrefixURL(){
+        // Arrange
+        $string_with_url = 'www.sdes.ucf.edu';
+        $expected = 'ftp://www.sdes.ucf.edu';
+        // Act
+        $result = SDES_Static::url_ensure_prefix( $string_with_url, 'ftp' );
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
 
     ///////////  SDES_Static::get_theme_mod_defaultIfEmpty()  ////////////////////
     public function test_get_theme_mod_defaultIfEmpty__LookupYieldsNull__ReturnsDefault()
