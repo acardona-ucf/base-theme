@@ -387,23 +387,27 @@ class Billboard extends CustomPostType {
 			<div id="slider-sc" class="nivoSlider">
 			<?php foreach ( $context['objects'] as $o ):
 				if ( has_post_thumbnail( $o ) ) :
+					$alt_text = get_post_meta(get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true);
 					$billboard_url = get_post_meta($o, 'billboard_url', true);
-					$billboard_url = SDES_Static::url_ensure_prefix( $billboard_url );
-					if( false == strrpos($billboard_url, '//') ) { $billboard_url = 'http://'. $billboard_url; }
-					if( $billboard_url ) : ?>
+					if( $billboard_url ) :
+						$billboard_url = SDES_Static::url_ensure_prefix( $billboard_url );
+					?>
 						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
-							<?= get_the_post_thumbnail( $o, $billboard_size, array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
+					<?php endif;
+							echo get_the_post_thumbnail( $o, $billboard_size, 
+									array('title'=>'#nivo-caption-'.$o->ID, 'alt' => $alt_text ) );
+					if( $billboard_url ) : ?>
 						</a>
-				<?php else:
-						echo get_the_post_thumbnail( $o, $billboard_size, array('title'=>'#nivo-caption-'.$o->ID,) );
-				   endif;
+					<?php endif;
 				endif;
 			endforeach; ?>
 			</div>
 			<?php foreach ( $context['objects'] as $o ):
 				if ( has_post_thumbnail( $o ) ) : ?>
 					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
-						<?= $o->post_content ?>
+						<div class="nivo-padding"></div>
+						<div class="nivo-title"><?= $o->post_title ?></div>
+						<div class="nivo-strapline"><?= $o->post_content ?></div>
 					</div>
 		  		<?php endif;
 			endforeach; ?>
