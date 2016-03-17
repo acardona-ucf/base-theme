@@ -21,6 +21,7 @@ if (have_posts()) :
 	while (have_posts()) : the_post(); 
 
 		global $post;
+		//var_dump(get_post_meta($post->ID));
 		echo Alert::toHTML( $post );
 
 	endwhile;

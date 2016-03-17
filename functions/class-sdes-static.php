@@ -340,7 +340,7 @@ class SDES_Static
 
 		$params['limit']  = intval( $params['limit'] );
 		$params['offset'] = intval( $params['offset'] );
-		
+
 		# verify options
 		if ($params['type'] == null){
 			return '<p class="error">No type defined for object list.</p>';
@@ -411,7 +411,7 @@ class SDES_Static
 		);
 		
 		$query = new WP_Query($query_array);
-		
+
 		global $post;
 		$objects = array();
 		while($query->have_posts()){
@@ -433,6 +433,9 @@ class SDES_Static
 		if (count($objects)){
 			$html = $class->objectsToHTML($objects, $params['class']);
 		}else{
+			if( isset($tax_queries['terms']) ) {
+				$default_content .= "<!-- No results were returned for: " . $tax_queries['taxonomy'] . ". Does this attribute need to be unset()? -->";
+			}
 			$html = $default_content;
 		}
 		return $html;

@@ -116,19 +116,19 @@ class Alert extends CustomPostType {
 				'descr' => 'If checked, show the alert as red instead of yellow.',
 				'id' => $prefix.'is_unplanned',
 				'type' => 'checkbox_list',
-				'default' => array( 'Unplanned alert.' => $prefix.'is_unplanned' ),
-				// 'choices' => array(
-				// 		'Unplanned alert.' => $prefix.'is_unplanned',
-				// 		// 'Text for another checkbox_list item.' => 'value_for_input_tag'
-				// 	)
+				'choices' => array(
+					'Unplanned alert.' => $prefix.'is_unplanned' 
+				),
 			),
-			// array(  // TODO: Allow alerts to be restricted to certain pages.
-			// 	'name' => 'Sitewide Alert',
-			// 	'descr' => 'Show alert across the entire site.',
-			// 	'id' => $prefix.'is_sitewide',
-			// 	'type' => 'checkbox_list',
-			// 	'default' => array( 'Sitewide alert.' => $prefix.'is_sitewide' ),
-			// ),
+			array(
+				'name' => 'Sitewide Alert',
+				'descr' => 'Show alert across the entire site.',
+				'id' => $prefix.'is_sitewide',
+				'type' => 'checkbox_list',
+				'choices' => array(
+					'Sitewide alert.' => $prefix.'is_sitewide'
+				),
+			),
 			array(
 				'name' => 'Start Date',
 				'descr' => 'The first day the alert should appear.',
@@ -157,26 +157,39 @@ class Alert extends CustomPostType {
 			'orderby' => 'meta_value_datetime',
 			'meta_key' => $prefix.'start_date',
 			'order' => 'ASC',
-			//'show_all'=> false,
 			'meta_query' => array(
 				'relation' => 'AND',
 				array(
 					'key' => $prefix.'start_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date('Y-m-d', time()),
 					'compare' => '<=',
 				),
 				array(
 					'key' => $prefix.'end_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date('Y-m-d', strtotime('+1 day')),
 					'compare' => '>=',
 				),
 			),
+			'show_all'=> false,
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
 		}else {
 			$attr = $default_attrs;
 		}
+		$attr['show_all'] = filter_var( $attr['show_all'], FILTER_VALIDATE_BOOLEAN);
+		if ( ! $attr['show_all'] ) {
+			array_push( $attr['meta_query'],
+				array(
+					'key' => $prefix.'is_sitewide',
+					// Remember that Checkbox list values are serialized.
+					// See: https://wordpress.org/support/topic/meta_query-doesnt-find-value-if-custom-field-value-is-serialized#post-2106580
+					'value' => serialize(strval($prefix.'is_sitewide')),
+					'compare' => 'LIKE', )
+			);
+		}
+		// Unset custom attributes.
+		unset( $attr['show_all'] );
 		return SDES_Static::sc_object_list( $attr );
 	}
 

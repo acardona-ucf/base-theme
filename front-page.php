@@ -20,8 +20,7 @@ $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'))
 ?>
 <!-- content area -->
 <div class="container site-content" id="content">
-	<?php get_template_part( 'includes/template', 'alert' );
-	//echo do_shortcode( '[alert-list show_all="true"]' ); ?>
+	<?= do_shortcode( '[alert-list show_all="true"]' ); ?>
 
 
 <div class="row">
