@@ -252,18 +252,27 @@ abstract class CustomPostType {
 	 * */
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
-		$css_classes = ( $css_classes ) ? $css_classes : $this->name.'-list';
+		$context['objects'] = $objects;
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		return static::render_objects_to_html( $context );
+	}
+
+	/**
+	 * Render HTML for a collection of objects.
+	 * @param Array $context An array of sanitized variables to display with this view.
+	 */
+	protected static function render_objects_to_html( $context ){
 		ob_start();
 		?>
-		<ul class="<?= $css_classes ?>">
-			<?php foreach ( $objects as $o ):?>
+		<ul class="<?= $context['css_classes'] ?>">
+			<?php foreach ( $context['objects'] as $o ):?>
 			<li>
 				<?= static::toHTML( $o ) ?>
 			</li>
 			<?php endforeach;?>
 		</ul>
 		<?php
-			$html = ob_get_clean();
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -272,7 +281,21 @@ abstract class CustomPostType {
 	 * @param WP_Post $object The post object to display.
 	 * */
 	public static function toHTML( $object ) {
-		$html = '<a href="'.get_permalink( $object->ID ).'">'.$object->post_title.'</a>';
+		$context['permalink'] = get_permalink( $object->ID );
+		$context['title'] = $object->post_title;
+		return static::render_to_html( $context );
+	}
+
+	/**
+	 * Render HTML for a single object.
+	 * @param Array $context An array of sanitized variables to display with this view.
+	 */
+	protected static function render_to_html( $context ) {
+		ob_start();
+		?>
+			<a href="<?= $context['permalink'] ?>"><?= $context['post_title'] ?></a>
+		<?php
+		$html = ob_get_clean();
 		return $html;
 	}
 

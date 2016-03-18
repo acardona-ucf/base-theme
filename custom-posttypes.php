@@ -194,6 +194,11 @@ class Alert extends CustomPostType {
 		return SDES_Static::sc_object_list( $attr );
 	}
 
+	/**
+	 * Return an array of only the metadata fields used to create a render context.
+	 * @param WP_Post $alert The alert whose metadata should be retrieved.
+	 * @return Array The fields to pass into get_render_context.
+	 */
 	private static function get_render_metadata( $alert ) {
 		$metadata_fields = array();
 		$metadata_fields['alert_is_unplanned'] = get_post_meta($alert->ID, 'alert_is_unplanned', true);
@@ -202,10 +207,12 @@ class Alert extends CustomPostType {
 	}
 
 	/**
-	 * Generate a render context given a WP_Post object and an array of its metadata fields.
+	 * Generate a render context for an alert, given its WP_Post object and an array of its metadata fields.
 	 * Expected fields:
 	 * $alert - post_content, post_title
 	 * $metadata_fields - alert_is_unplanned, alert_url
+	 * @param WP_Post $alert The post object to be displayed.
+	 * @param Array $metadata_fields The metadata fields associated with this alert.
 	 */
 	public static function get_render_context( $alert, $metadata_fields ) {
 		$alert_css_classes = 
@@ -237,6 +244,9 @@ class Alert extends CustomPostType {
 		return static::render_objects_to_html( $context );
 	}
 
+	/**
+	 * Render HTML for a collection of alerts.
+	 */
 	protected static function render_objects_to_html( $context ){
 		ob_start();
 		?>
@@ -246,7 +256,8 @@ class Alert extends CustomPostType {
 				endforeach; ?>
 			</span>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 
 	public static function toHTML ( $post_object ) {
@@ -255,6 +266,9 @@ class Alert extends CustomPostType {
 		return static::render_to_html( $alert_context );
 	}
 
+	/**
+	 * Render HTML for a single alert.
+	 */
 	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
@@ -266,7 +280,8 @@ class Alert extends CustomPostType {
 		</div>
 		<div class="clearfix"></div>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 }
 
@@ -441,7 +456,16 @@ class Staff extends CustomPostType {
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
-		$default_order   = null;
+		$default_order   = null,
+		$sc_interface_fields = array(
+			array(
+				'name' => 'Header',
+				'id' => 'header',
+				'help_text' => 'Show a header for above the staff list.',
+				'type' => 'text',
+				'default' => 'Staff List'
+			),
+		);
 
 	public function register( $args = array() ) {
 		$default_args = array(
@@ -474,46 +498,76 @@ class Staff extends CustomPostType {
 		);
 	}
 
+	public function shortcode( $attr ) {
+		$prefix = $this->options('name').'_';
+		$default_attrs = array(
+			'type' => $this->options( 'name' ),
+			'header' => $this->options( 'plural_name' ) . ' List',
+			'css_classes' => '',
+		);
+		if ( is_array( $attr ) ) {
+			$attr = array_merge( $default_attrs, $attr );
+		}else {
+			$attr = $default_attrs;
+		}
+
+		$context['header'] = $attr['header'];
+		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
+		unset( $attr['header'] );
+		unset( $attr['css_classes'] );
+		$objects = SDES_Static::sc_object_list( $attr, array('objects_only'=>true,) );
+
+		$context['objects'] = $objects;
+		return static::render_objects_to_html( $context );
+	}
+
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
-		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
 		$context['archiveUrl'] = '';
+		$context['objects'] = $objects;
+		return static::render_objects_to_html( $context );
+	}
+
+	protected static function render_objects_to_html( $context ) {
 		ob_start();
 		?>
-		<script type="text/javascript">
-			$(function(){
-				var collapsedSize = 60;
-				$(".staff-details").each(function() {
-					var h = this.scrollHeight;
-					var div = $(this);
-					if (h > 30) {
-						div.css("height", collapsedSize);
-						div.after("<a class=\"staff-more\" href=\"\">[Read More]</a>");
-						var link = div.next();
-						link.click(function(e) {
-							e.stopPropagation();
-							e.preventDefault();
-							if (link.text() != "[Collapse]") {
-								link.text("[Collapse]");
-								div.animate({ "height": h });
-							} else {
-								div.animate({ "height": collapsedSize });
-								link.text("[Read More]");
-							}
-						});
-					}
+			<script type="text/javascript">
+				$(function(){
+					var collapsedSize = 60;
+					$(".staff-details").each(function() {
+						var h = this.scrollHeight;
+						var div = $(this);
+						if (h > 30) {
+							div.css("height", collapsedSize);
+							div.after("<a class=\"staff-more\" href=\"\">[Read More]</a>");
+							var link = div.next();
+							link.click(function(e) {
+								e.stopPropagation();
+								e.preventDefault();
+								if (link.text() != "[Collapse]") {
+									link.text("[Collapse]");
+									div.animate({ "height": h });
+								} else {
+									div.animate({ "height": collapsedSize });
+									link.text("[Read More]");
+								}
+							});
+						}
+					});
 				});
-			});
-		</script>
-		<span class="<?= $css_classes ?>">
-			<?php foreach ( $objects as $o ):?>
-				<?= static::toHTML( $o ) ?>
-				<div class="hr-blank"></div>
-			<?php endforeach;?>
-
-		</span>
+			</script>
+			<?php if ( $context['header'] ) : ?>
+				<h2><?= $context['header'] ?></h2>
+			<?php endif; ?>
+			<span class="<?= $context['css_classes'] ?>">
+				<?php foreach ( $context['objects'] as $o ):?>
+					<?= static::toHTML( $o ) ?>
+					<div class="hr-blank"></div>
+				<?php endforeach;?>
+			</span>
 		<?php
-			$html = ob_get_clean();
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -529,7 +583,10 @@ class Staff extends CustomPostType {
 		$context['staff_phone'] = get_post_meta( $post_object->ID, 'staff_phone', true );
 		$context['staff_email'] = get_post_meta( $post_object->ID, 'staff_email', true );
 		$context['content'] = $post_object->post_content;
+		return static::render_to_html( $context );
+	}
 
+	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
 			<div class="staff">
@@ -545,7 +602,8 @@ class Staff extends CustomPostType {
 				</div>
 			</div>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 }
 
@@ -633,6 +691,8 @@ class News extends CustomPostType {
 			'orderby' => 'meta_value_datetime',
 			'meta_key' => $prefix.'start_date',
 			'order' => 'ASC',
+			'header' => 'News & Announcements',
+			'css_classes' => '',
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
@@ -672,20 +732,33 @@ class News extends CustomPostType {
 			);
 		}
 
+		$context['header'] = $attr['header'];
+		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
 		// Unset keys to prevent treating them as taxonomies in sc_object_list.
 		unset( $attr['show-archives'] );
-
-		return SDES_Static::sc_object_list( $attr );
+		unset( $attr['header'] );
+		unset( $attr['css_classes'] );
+		$context['objects'] = SDES_Static::sc_object_list( $attr, array('objects_only'=>true,) );
+		$context['archiveUrl'] = '';
+		return static::render_objects_to_html( $context );
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
-		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		$context['objects'] = $objects;
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
 		$context['archiveUrl'] = '';
+		return static::render_objects_to_html( $context );
+	}
+
+	protected static function render_objects_to_html ( $context ) {
 		ob_start();
 		?>
-		<span class="<?= $css_classes ?>">
-			<?php foreach ( $objects as $o ):?>
+		<?php if ( $context['header'] ) : ?>
+			<h2><?= $context['header'] ?></h2>
+		<?php endif; ?>
+		<span class="<?= $context['css_classes'] ?>">
+			<?php foreach ( $context['objects'] as $o ):?>
 				<?= static::toHTML( $o ) ?>
 				<div class="hr-blank"></div>
 			<?php endforeach;?>
@@ -693,7 +766,7 @@ class News extends CustomPostType {
 			<div class="datestamp"><a href="<?= $context['archiveUrl'] ?>">»News Archive</a></div>
 		</span>
 		<?php
-			$html = ob_get_clean();
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -717,7 +790,10 @@ class News extends CustomPostType {
 		$loop->the_post();
 			$context['excerpt'] = get_the_content( "[Read More]" );
 		wp_reset_query();
+		return static::render_to_html( $context );
+	}
 
+	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
 		<div class="news">		
@@ -741,7 +817,8 @@ class News extends CustomPostType {
 			</div>
 		</div>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 }
 

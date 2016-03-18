@@ -401,6 +401,13 @@ class EventsSC extends ShortcodeBase {
                 'type'      => 'text'
             ),
             array(
+                'name'      => 'Header',
+                'id'        => 'header',
+                'help_text' => 'The a header for the events calendar.',
+                'type'      => 'text',
+                'default'   => 'Upcoming Events',
+            ),
+            array(
                 'name'      => 'Limit',
                 'id'        => 'limit',
                 'help_text' => 'Only show this many items.',
@@ -412,11 +419,11 @@ class EventsSC extends ShortcodeBase {
     /**
      * @see https://github.com/ucf-sdes-it/it-php-template/blob/e88a085401523f78b812ea8b4d9557ba30e40c9f/template_functions_generic.php#L241-L326
      */
-    public static function callback($attr, $content='') {  //$id, $limit = 6, $header_text = "Upcoming Events"){
+    public static function callback($attr, $content='') {
         $attr = shortcode_atts( array(
                 'id' => 41, // SDES Events calendar.
                 'limit' => 6,
-                'header_text'    => 'Upcoming Events',
+                'header'    => 'Upcoming Events',
             ), $attr
         );
         if($attr['id'] == null) return true;
@@ -452,7 +459,7 @@ class EventsSC extends ShortcodeBase {
           ob_start();
           ?>
             <div class="panel panel-warning">
-                <div class="panel-heading"><?= $attr['header_text'] ?></div>
+                <div class="panel-heading"><?= $attr['header'] ?></div>
                 <ul class="list-group ucf-events">
                 <?php
                     //check for items
