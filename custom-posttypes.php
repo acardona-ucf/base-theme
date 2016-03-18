@@ -498,6 +498,30 @@ class Staff extends CustomPostType {
 		);
 	}
 
+	public function metabox() {
+		if ( $this->options( 'use_metabox' ) ) {
+			return array(
+				'id'       => 'custom_'.$this->options( 'name' ).'_metabox',
+				'title'    => __( $this->options( 'singular_name' ).' Fields' ),
+				'page'     => $this->options( 'name' ),
+				'context'  => 'after_title',
+				'priority' => 'high',
+				'fields'   => $this->fields(),
+			);
+		}
+		return null;
+	}
+
+	public function register_metaboxes() {
+		// Move and Rename the Featured Image Metabox.
+		remove_meta_box( 'postimagediv', $this->name, 'side' );
+		add_meta_box('postimagediv', __("{$this->singular_name} Image"),
+			'post_thumbnail_meta_box', $this->name, 'after_title', 'high');
+		CustomPostType::register_meta_boxes_after_title();
+
+		parent::register_metaboxes();
+	}
+
 	public function shortcode( $attr ) {
 		$prefix = $this->options('name').'_';
 		$default_attrs = array(
