@@ -32,7 +32,7 @@ add_action( 'wp_enqueue_scripts', 'enqueue_scripts_and_styles');
 add_action( 'admin_enqueue_scripts', 'enqueue_scripts_and_styles');
 function enqueue_scripts_and_styles(){
   wp_enqueue_script( 'jquery-ui-datepicker' );
-  wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
+  wp_enqueue_style( 'jquery-ui-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
 }
 
 
