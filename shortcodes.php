@@ -9,7 +9,6 @@ use Underscore\Types\Arrays;
  * Available attributes:
  * name      => The "Menu Name" of the menu under Appearance>Menus, e.g., Pages
  * heading   => Display an alternate heading instead of the menu Id.
- * max-width => Set a max-width on the container DIV.panel.
  *
  * Example:
  * [menuPanel name="Other Resources" heading="An Alternate heading"]
@@ -35,13 +34,6 @@ class MenuPanelSC extends ShortcodeBase {
                 'id'        => 'heading',
                 'help_text' => 'A heading to display (optional).',
                 'type'      => 'text',
-            ),
-            array(
-                'name'      => 'Max Width',
-                'id'        => 'max-width',
-                'help_text' => 'The maximum width of the menuPanel.',
-                'type'      => 'text',
-                'default'   => '697px',
             ),
         ); // The parameters used by the shortcode.
 
@@ -69,7 +61,7 @@ class MenuPanelSC extends ShortcodeBase {
         $attrs = shortcode_atts( array(
                 'name' => 'Pages',
                 'heading' => $attrs['name'],
-                'max-width' => '697px',
+                'style' => 'max-width: 697px;',
             ), $attrs
         );
         // Check for errors
@@ -86,7 +78,7 @@ class MenuPanelSC extends ShortcodeBase {
         // Sanitize input and set context for view
         $context['heading'] = esc_html( $attrs['heading'] );
         $context['menu_items'] = wp_get_nav_menu_items( esc_attr( $attrs['name'] ) );
-        $context['max-width'] = esc_attr( $attrs['max-width'] );
+        $context['style'] = esc_attr( $attrs['style'] );
         return static::render($context);
     }
 
@@ -95,12 +87,12 @@ class MenuPanelSC extends ShortcodeBase {
      * Context variables:
      * heading    => The panel-heading.
      * menu_items => An array of WP_Post objects representing the items in the menu.
-     * max-width  => Value for the css attribute "max-width" on the container div.
+     * style  => Value for the css attribute "style" on the container div.
      */
     public static function render( $context ){
         ob_start();
         ?>
-        <div class="panel panel-warning menuPanel" style="max-width: <?=$context['max-width']?>;">
+        <div class="panel panel-warning menuPanel" style="<?=$context['style']?>">
             <div class="panel-heading"><?=$context['heading']?></div>
             <div class="list-group">
                 <?php
