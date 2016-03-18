@@ -391,6 +391,7 @@ class EventsSC extends ShortcodeBase {
         $description = 'Show events calendar from a feed', // The description of the shortcode.
         $callback    = 'callback',
         $render      = False,
+        $closing_tag = False,
         $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
         $params      = array(
             array(
@@ -402,8 +403,8 @@ class EventsSC extends ShortcodeBase {
             array(
                 'name'      => 'Limit',
                 'id'        => 'limit',
-                'help_text' => 'The calendar_id of the events.ucf.edu calendar.',
-                'type'      => 'text',
+                'help_text' => 'Only show this many items.',
+                'type'      => 'number',
                 'default'   => 6,
             ),
         ); // The parameters used by the shortcode.

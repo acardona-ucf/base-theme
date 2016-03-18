@@ -244,9 +244,7 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 		$this->description = 'Show list of '.$cpt_instance->options('plural_name').' items.';
 
 		if ( isset($cpt_instance->sc_interface_fields) && !empty($cpt_instance->sc_interface_fields) ) {
-			foreach ($cpt_instance->sc_interface_fields as $param) {
-				$this->params[] = $param;
-			}
+			$this->params = array_merge($cpt_instance->sc_interface_fields, $this->params);
 		}
 
 		// Add taxonomy params
