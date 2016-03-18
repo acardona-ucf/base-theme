@@ -28,18 +28,6 @@ class Post extends CustomPostType {
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null;
-
-	public function fields() {
-		$prefix = 'custom_'.$this->options('name').'_';
-		return array(
-			array(
-				'name' => 'Stylesheet',
-				'descr' => '',
-				'id' => $prefix.'stylesheet',
-				'type' => 'file',
-			),
-		);
-	}
 }
 
 /**
@@ -65,13 +53,7 @@ class Page extends CustomPostType {
 		$prefix = $this->options('name').'_';
 		return array(
 			array(
-				'name'  => 'Stylesheet',
-				'descr' => '',
-				'id'    => $prefix.'stylesheet',
-				'type'  => 'file',
-			),
-			array(
-				'name'  => 'Sidecolumn',
+				'name'  => 'Side Column',
 				'descr' => 'Show content in column to the right or left of the page (e.g., menuPanels).',
 				'id'    => $prefix.'sidecolumn',
 				'type'  => 'editor',
@@ -686,9 +668,9 @@ class News extends CustomPostType {
 				'type' => 'text',
 			),
 			array(
-				'name' => 'Link',
+				'name' => 'URL',
 				'descr' => '',
-				'id' => $prefix.'link',
+				'id' => $prefix.'url',
 				'type' => 'text',
 				'default' => 'http://',
 			),
@@ -801,9 +783,9 @@ class News extends CustomPostType {
 			= has_post_thumbnail($post_object) 
 				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
 				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
-		$news_link = get_post_meta( $post_object->ID, 'news_link', true );
+		$news_url = get_post_meta( $post_object->ID, 'news_url', true );
 		$context['permalink'] = get_permalink( $post_object );
-		$context['title_link'] = ( '' !== $news_link ) ? $news_link : $context['permalink'];
+		$context['title_link'] = ( '' !== $news_url ) ? $news_url : $context['permalink'];
 		$context['title'] = get_the_title( $post_object );
 		$news_strapline = get_post_meta( $post_object->ID, 'news_strapline', true );
 		$context['news_strapline'] =('' !== $news_strapline ) ? '<div class="news-strapline">'.$news_strapline.'</div>' : '';
