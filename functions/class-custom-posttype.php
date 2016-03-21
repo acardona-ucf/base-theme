@@ -1,12 +1,13 @@
 <?php
 
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+	use SDES\SDES_Metaboxes;
+	class_alias('SDES\\SDES_Metaboxes', 'SDES_Metaboxes');  // Allows calling class_exists() without any changes.
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Object;
 use Underscore\Types\Arrays;
-
 /**
  * Abstract class for defining custom post types.
  *

@@ -1,4 +1,5 @@
 <?php
+namespace SDES\Metafields;
 
 /**
  * Abstracted Metafield class, all form Metafields should inherit from this.
