@@ -1,4 +1,6 @@
 <?php
+namespace SDES\BaseTheme;
+use SDES\CustomTaxonomy as CustomTaxonomy;
 
 require_once( get_stylesheet_directory().'/functions/class-custom-taxonomy.php' );
 
@@ -29,7 +31,7 @@ class OrganizationalGroups extends CustomTaxonomy
 
 function register_custom_taxonomies() {
 	CustomTaxonomy::Register_Taxonomies( array(
-		'OrganizationalGroups',
+		__NAMESPACE__.'\OrganizationalGroups',
 	));
 }
-add_action('init', 'register_custom_taxonomies');
+add_action('init', __NAMESPACE__.'\register_custom_taxonomies');
