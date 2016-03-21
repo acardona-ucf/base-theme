@@ -13,7 +13,7 @@ use Underscore\Types\Arrays;
  * Example:
  * [menuPanel name="Other Resources" heading="An Alternate heading"]
  */
-class MenuPanelSC extends ShortcodeBase {
+class sc_menuPanel extends ShortcodeBase {
     public
         $name = 'Menu Panel',
         $command = 'menuPanel',
@@ -164,7 +164,7 @@ require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
  * [row] - Wrap HTML in a Boostrap CSS row.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L454-L504
  */
-class RowSC extends ShortcodeBase {
+class sc_row extends ShortcodeBase {
     public
         $name        = 'Row',
         $command     = 'row',
@@ -221,7 +221,7 @@ class RowSC extends ShortcodeBase {
  * [column] - Wrap HTML in a Boostrap CSS column.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L506-L650
  */
-class ColumnSC extends ShortcodeBase {
+class sc_column extends ShortcodeBase {
     public
         $name        = 'Column',
         $command     = 'column',
@@ -376,7 +376,7 @@ class ColumnSC extends ShortcodeBase {
 /**
  * [events] - Show an events calendar from events.ucf.edu
  */
-class EventsSC extends ShortcodeBase {
+class sc_eventcs extends ShortcodeBase {
     public
         $name = 'Events', // The name of the shortcode.
         $command = 'events', // The command used to call the shortcode.
@@ -496,7 +496,7 @@ class EventsSC extends ShortcodeBase {
 /**
  * [socialButton] - Show a button for social network, based on the URL set in the Theme Customizer.
  */
-class SocialButtonSC extends ShortcodeBase {
+class sc_socialButton extends ShortcodeBase {
     public
         $name = 'Social Button', // The name of the shortcode.
         $command = 'socialButton', // The command used to call the shortcode.
@@ -585,7 +585,7 @@ class AlertWrapper extends Alert {
 /**
  * [alert] - Show a single, ad-hoc alert directly in a page's content.
  */
-class AlertSC extends ShortcodeBase {
+class sc_alert extends ShortcodeBase {
     public
         $name = 'Alert (Ad hoc)', // The name of the shortcode.
         $command = 'alert', // The command used to call the shortcode.
@@ -652,12 +652,12 @@ class AlertSC extends ShortcodeBase {
 
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
-            'RowSC',
-            'ColumnSC',
-            'AlertSC',
-            'MenuPanelSC',
-            'EventsSC',
-            'SocialButtonSC',
+            'sc_row',
+            'sc_column',
+            'sc_alert',
+            'sc_menuPanel',
+            'sc_events',
+            'sc_socialButton',
         ));
 }
 add_action( 'init', 'register_shortcodes' );
