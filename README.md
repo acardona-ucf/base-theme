@@ -48,7 +48,14 @@ Quick Install notes (see [VCCW homepage](http://vccw.cc/) for more details):
   - Delete VM (leaves directory from step 4 intact): `vagrant destroy` (this may take several minutes).
   Consult `vagrant help` or the [Vagrant Documentation](https://www.vagrantup.com/docs/) for additional information.
 11. Remember to "Network Activate" the theme from http://vccw.dev/wp-admin/network/themes.php
-12. Optionally, install [vagrant-multi-putty](https://github.com/nickryand/vagrant-multi-putty) with `vagrant plugin install vagrant-multi-putty`.  This enables the command `vagrant putty` to open an SSH session using PuTTY<sup id="a5">[5](#fn5)</sup>.
+
+Optional Installation Steps
+1. To use PHPDoc:
+  - Install PHPDoc on your system with: `composer global require phpdocumentor/phpdocumentor=2.8.*`
+  - If [GraphViz](http://graphviz.org/Download..php) is not installed on your system, it needs to be installed (tested with [graphviz-2.38.msi](http://graphviz.org/Download_windows.php) on Windows 8).
+  - Make sure to add the GraphViz bin folder (`C:\Program Files (x86)\Graphviz2.38\bin`) to your PATH.
+  - Run `composer phpdoc:all` to compile the `docs` folder (this make take a few minutes the first time it is run).
+2. Optionally, install [vagrant-multi-putty](https://github.com/nickryand/vagrant-multi-putty) with `vagrant plugin install vagrant-multi-putty`.  This enables the command `vagrant putty` to open an SSH session using PuTTY<sup id="a5">[5](#fn5)</sup>.
 
 VCCW also offers another VM specifcally for [Theme Reviewing](https://github.com/vccw-team/vccw-for-theme-review).
 Testing in a fresh environment could be useful after feature completion, whether for a feature branch or alpha testing.
