@@ -57,6 +57,8 @@ function register_theme_customizer( $wp_customizer ) {
 
 	add_to_section_TitleAndTagline($wp_customizer);
 
+	add_section_news_options( $wp_customizer );
+
 	add_section_social_options($wp_customizer);
 
 	add_section_footer_options( $wp_customizer );
@@ -303,6 +305,41 @@ function add_to_section_TitleAndTagline( $wp_customizer, $args = null) {
 	);
 }
 
+function add_section_news_options( $wp_customizer, $args = array() ) {
+	$args = array_merge(array(
+			'panelId' => null, 'sdes_rev_2015-newsArchiveUrl' => array(),
+		), $args );
+
+	/* SECTION */
+	$section = 'sdes_rev_2015-news_options';
+	$wp_customizer->add_section(
+		$section,
+		array(
+			'title'    => 'News Archives',
+			'priority' => 275,
+			'panel' => $args['panelId'],
+		)
+	);
+
+	/* ARGS */
+	$newsArchiveUrl_defaults = array(
+		'sanitize_callback' => 'esc_url',
+		'sanitize_js_callback' => 'esc_url',
+		'control_type' => 'url',
+	);
+	$newsArchiveUrl_args = array_merge( $newsArchiveUrl_defaults, $args['sdes_rev_2015-newsArchiveUrl'] );
+	
+
+	/* FIELDS */
+	// Facebook
+	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', //Control Type
+		$wp_customizer,			// WP_Customize_Manager
+		'sdes_rev_2015-newsArchiveUrl',	// id
+		'News Archive URL',		// label
+		$section,				// section
+		$newsArchiveUrl_args	// arguments array
+	);
+}
 
 /** Register the social_options section, add settings and controls. */
 function add_section_social_options( $wp_customizer, $args = null) {

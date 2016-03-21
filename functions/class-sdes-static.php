@@ -99,6 +99,7 @@ class SDES_Static
 	}
 
 
+	// TODO: allow relative URLs (in relation to get_site_url()) if url start with '/'.
 	/**
 	 * Add a protocol to a URL if it does not exist.
 	 * @param string $url The url variable to adjust.

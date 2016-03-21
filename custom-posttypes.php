@@ -745,15 +745,30 @@ class News extends CustomPostType {
 		unset( $attr['header'] );
 		unset( $attr['css_classes'] );
 		$context['objects'] = SDES_Static::sc_object_list( $attr, array('objects_only'=>true,) );
-		$context['archiveUrl'] = '';
+		$context['archiveUrl'] = static::get_archive_url();
 		return static::render_objects_to_html( $context );
+	}
+
+	/**
+	 * Get the archive URL option stored in ThemeCustomizer (defaults to '/news/').
+	 * @param $option_id   The name of the option stored in Theme Customizer
+	 * @param $posttype_name The name of this posttype, 'news'.
+	 */
+	private static function get_archive_url( $option_id = 'sdes_rev_2015-newsArchiveUrl', $posttype_name = 'news' ) {
+		$archive_url = 
+			SDES_Static::get_theme_mod_defaultIfEmpty(
+				$option_id,
+				get_post_type_archive_link( $posttype_name ) );
+		$archive_url = SDES_Static::url_ensure_prefix( $archive_url );
+		$archive_url = ( 'http://' === $archive_url ) ? get_site_url() . "/{$posttype_name}/" : $archive_url;
+		return $archive_url;
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
 		$context['objects'] = $objects;
 		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
-		$context['archiveUrl'] = '';
+		$context['archiveUrl'] = static::get_archive_url();
 		return static::render_objects_to_html( $context );
 	}
 
