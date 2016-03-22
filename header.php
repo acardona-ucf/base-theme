@@ -1,4 +1,7 @@
 <?php
+/**
+ * Header area for the theme, as called by get_header().
+ */
 use SDES\SDES_Static as SDES_Static; 
 ?>
 <!DOCTYPE html>

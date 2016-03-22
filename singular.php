@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Display a single Post or Page, per the WordPress Template Hierarchy.
+ */ 
 get_header();
 ?>
 <!-- content area -->

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Add metabox functionality to a custom posttype.
+ * Relies on implementations in SDES\Metafields.
+ */
 namespace SDES;
 
 require_once( 'classes-metabox-metafields.php' );

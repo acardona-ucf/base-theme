@@ -1,7 +1,8 @@
 <?php
-/*
-Template Name: Content Full Width
+/**
+* Template Name: Content Full Width
 */
+// TODO: Should template filename conventions be changed, e.g., start with `t_`?
 use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
 	use SDES\BaseTheme\SDES_Helper;

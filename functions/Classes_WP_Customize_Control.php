@@ -1,8 +1,14 @@
 <?php
+/**
+ * Create custom controls to use with Theme Customizer by extending WP_Customize_Control.
+ */
 namespace SDES\CustomizerControls;
 require_once( ABSPATH . WPINC . '/class-wp-customize-control.php' );
 	use \WP_Customize_Control;
 
+/**
+ * Display a TEXTAREA element within Theme Customizer.
+ */
 class Textarea_CustomControl extends WP_Customize_Control {
 	public $type = 'textarea';
  
@@ -20,7 +26,10 @@ class Textarea_CustomControl extends WP_Customize_Control {
 
 
 
-
+/**
+ * Display a field for a phone number within Theme Customizer.
+ * Adds CSS classes: .customize-phoneLabel, .customize-phoneInput
+ */
 class Phone_CustomControl extends WP_Customize_Control {
 	public $type = 'text';
  

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Footer area for the theme, as called by get_footer().
+ */
 namespace SDES\BaseTheme;
 ?>
 </div>
@@ -44,6 +47,7 @@ namespace SDES\BaseTheme;
 	require_once( 'functions/class-render-template.php' );
 		use SDES\BaseTheme\Render_Template;
 	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
+	/** Logic for displaying footer elements. */
 	class Footer {
 		public static function get_header( $position = 'center', $default_header = 'UCF Today News', $template_args = null ) {
 			$ctx_header['header'] = SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_header-{$position}", $default_header );

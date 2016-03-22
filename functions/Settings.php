@@ -1,4 +1,7 @@
 <?php
+/**
+ * Add and configure Settings for this theme (admin settings for IT staff).
+ */
 namespace SDES\BaseTheme\Settings;
 require_once( get_stylesheet_directory().'/functions/SettingsCallbacks.php' );
 

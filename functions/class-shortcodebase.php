@@ -1,4 +1,8 @@
 <?php
+/**
+ * Drop-in file to encapsulate shortcode creation, adds a UI for adding shortcodes.
+ * Can autogenerate a shortcode for a custom posttype (display a listing of items of that posttype).
+ */
 namespace SDES\Shortcodes;
 /**
  * @see js/shortcodebase.js
@@ -224,6 +228,7 @@ abstract class ShortcodeBase implements IShortcodeUI {
 	}
 }
 
+// TODO: add and check for interface of CustomPostTypes with: sc_interface_fields, taxonomies, options(), etc.
 /**
  * Generate shortcodes for classes that extend CustomPostType.
  * @see CustomPostType::$sc_interface_fields

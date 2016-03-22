@@ -1,4 +1,7 @@
 <?php
+/**
+ * Display the Settings fields for this theme (admin settings for IT staff).
+ */
 namespace SDES\BaseTheme\Settings;
 /**
  * Display the "Field" (labels and input areas) for a Setting/Option.

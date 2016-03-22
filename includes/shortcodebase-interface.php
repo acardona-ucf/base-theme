@@ -1,4 +1,7 @@
 <?php
+/**
+ * Implements the interface of the Shortcode UI. Appends the contents of the 'Add Shortcode' Thickbox to a page.
+ */
 namespace SDES\Shortcodes;
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 	use SDES\Shortcodes\ShortcodeBase;

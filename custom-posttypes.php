@@ -1,4 +1,7 @@
 <?php
+/**
+ *  Add and configure custom posttypes for this theme.
+ */
 namespace SDES\BaseTheme\PostTypes;
 use \WP_Query;
 use SDES\SDES_Static as SDES_Static;

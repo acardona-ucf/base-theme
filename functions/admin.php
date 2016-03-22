@@ -1,4 +1,7 @@
 <?php
+/**
+ * Configure the Admin Dashboard (/wp-admin/).
+ */
 namespace SDES\BaseTheme\Admin;
 use \WP_Query;
 use SDES\SDES_Static as SDES_Static;

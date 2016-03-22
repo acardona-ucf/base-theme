@@ -1,4 +1,5 @@
 <?php
+/** Display a single News post, per the WordPress template hierarchy. */
 namespace SDES\BaseTheme\PostTypes;
 use SDES\SDES_Static as SDES_Static;
 use SDES\BaseTheme\SDES_Helper;

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Add and configure Shortcodes for this theme.
+ * Relies on the implementation in ShortcodeBase.
+ */
 namespace SDES\BaseTheme\Shortcodes;
 use \StdClass;
 use \Exception;

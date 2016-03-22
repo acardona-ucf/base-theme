@@ -1,4 +1,8 @@
 <?php
+/**
+ * Add and configure Theme Customizer options for this theme (non-admin settings).
+ * Relies implementation in SDES_Customizer_Helper.
+ */
 namespace SDES\BaseTheme\ThemeCustomizer;
 use \WP_Customize_Control;
 use \WP_Customize_Color_Control;

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Add display metafields within a metabox of a custom posttype.
+ */
 namespace SDES\Metafields;
 
 /**

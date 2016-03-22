@@ -1,4 +1,7 @@
 <?php
+/**
+ * Add and configure custom taxonomies for this theme.
+ */
 namespace SDES\BaseTheme\Taxonomies;
 use SDES\CustomTaxonomy as CustomTaxonomy;
 

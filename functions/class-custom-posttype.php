@@ -1,4 +1,8 @@
 <?php
+/**
+ * Abstract base class for creating custom posttypes.
+ * This class is central the a theme's fuctionality, and heavily relies on other files.
+ */
 namespace SDES;
 
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );

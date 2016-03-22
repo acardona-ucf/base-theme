@@ -1,4 +1,7 @@
 <?php
+/**
+ * Encapsulate adding Theme Customizer options for any theme (non-admin settings).
+ */
 namespace SDES\CustomizerControls;
 use \WP_Customize_Control;
 require_once('class-sdes-static.php');
