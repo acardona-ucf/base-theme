@@ -1,6 +1,8 @@
 <?php
 namespace SDES\BaseTheme\Shortcodes;
 use \StdClass;
+use \Exception;
+use \SimpleXMLElement;
 use SDES\SDES_Static as SDES_Static;
 use SDES\Shortcodes\ShortcodeBase;
 require_once('functions/class-sdes-static.php');
