@@ -1,4 +1,9 @@
 <?php
+/**
+ * Default layout, per the WordPress Template Hierarchy.
+ * This is a page of last resort, and should be overriden in most cases.
+ */
+use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 ?>

@@ -1,10 +1,15 @@
 <?php
 /**
+ * Display the Settings fields for this theme (admin settings for IT staff).
+ */
+namespace SDES\BaseTheme\Settings;
+/**
  * Display the "Field" (labels and input areas) for a Setting/Option.
  * Corresponds to the "Control"s in Theme Customizer.
  */
 
 require_once('class-sdes-static.php');
+    use SDES\SDES_Static as SDES_Static;
 
 function section_one_callback() {
     echo 'Some help text goes here.';

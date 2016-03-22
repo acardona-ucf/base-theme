@@ -1,9 +1,10 @@
 <?php
-/*
-Template Name: Content Page Left Sidecolumn
+/**
+* Template Name: Content Page Left Sidecolumn
 */
+use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
-
+	use SDES\BaseTheme\SDES_Helper;
 get_header();
 ?>
 <!-- content area -->

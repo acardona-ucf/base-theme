@@ -1,14 +1,21 @@
+<?php
+/**
+ * Footer area for the theme, as called by get_footer().
+ */
+namespace SDES\BaseTheme;
+?>
 </div>
 <!-- repeated navigation, social media -->
 	<div class="container site-content-end">
 		<nav class="navbar navbar-default site-nav-repeated">
 			<div class="container-fluid">
 				<?php
-				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				
 				<p class="nav navbar-text navbar-right icons">
 				<?php
+					use SDES\SDES_Static as SDES_Static;
 					$url_facebook = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-facebook', '') );
 					$url_twitter = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-twitter', '') );
 					$url_youtube = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-youtube', '') );
@@ -36,8 +43,11 @@
 
 <?php
 	require_once( 'functions/class-sdes-helper.php' );
+		use SDES\BaseTheme\SDES_Helper;
 	require_once( 'functions/class-render-template.php' );
+		use SDES\BaseTheme\Render_Template;
 	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
+	/** Logic for displaying footer elements. */
 	class Footer {
 		public static function get_header( $position = 'center', $default_header = 'UCF Today News', $template_args = null ) {
 			$ctx_header['header'] = SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_header-{$position}", $default_header );
@@ -60,7 +70,7 @@
 			return
 				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
 				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
-					'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages',
+					'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages',
 					'links_cb' => array(
 							'Footer::get_feed_links', 
 							array($position, array('echo'=>false)) 

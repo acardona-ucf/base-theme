@@ -1,3 +1,9 @@
+<?php
+/**
+ * Header area for the theme, as called by get_header().
+ */
+use SDES\SDES_Static as SDES_Static; 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,7 +98,7 @@
 			</div>
 			<div class="navbar-collapse collapse">
 				<?php
-				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				<p class="navbar-text navbar-right translate-button">
 					<a href="http://it.sdes.ucf.edu/translate/" class="navbar-link">Translate

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Display the Front Page of the site, per the WordPress Template Hierarchy.
+ */
+use SDES\SDES_Static as SDES_Static;
+use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 

@@ -1,10 +1,34 @@
 <?php
+/**
+ * Add metabox functionality to a custom posttype.
+ * Relies on implementations in SDES\Metafields.
+ */
+namespace SDES;
 
 require_once( 'classes-metabox-metafields.php' );
+	use SDES\Metafields\IMetaField as IMetafield;
+	use SDES\Metafields\MetaField as Metafield;
+	use SDES\Metafields\ChoicesMetaField as ChoicesMetaField;
+	use SDES\Metafields\TextMetaField as TextMetaField;
+	use SDES\Metafields\DatePickerMetaField as DatePickerMetaField;
+	use SDES\Metafields\PasswordMetaField as PasswordMetaField;
+	use SDES\Metafields\TextareaMetaField as TextareaMetaField;
+	use SDES\Metafields\SelectMetaField as SelectMetaField;
+	use SDES\Metafields\MultiselectMetaField as MultiselectMetaField;
+	use SDES\Metafields\RadioMetaField as RadioMetaField;
+	use SDES\Metafields\CheckboxListMetaField as CheckboxListMetaField;
+	use SDES\Metafields\FileMetaField as FileMetaField;
+	use SDES\Metafields\EditorMetaField as EditorMetaField;
+
 require_once( 'class-sdes-static.php' );
+	use SDES\SDES_Static as SDES_Static;
+
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Arrays;
 
+use \Exception as Exception;
+
+// TODO: add and check for a metaboxes interface with: register_metaboxes(), metabox(), option(), etc.
 /**
  * POST DATA HANDLERS and META BOX FUNCTIONS
  *
@@ -25,9 +49,9 @@ class SDES_Metaboxes {
 	public static $installed_custom_post_types = null;
 
 	private static function check_installed_custom_post_types() {
-		if ( null == SDES_Metaboxes::$installed_custom_post_types ) {
-			throw new Exception("Instances of metaboxes were not set in " .
-			  "SDES_Metaboxes::$installed_custom_post_types. Cannot retrieve metaboxes.", 1);
+		if ( null == static::$installed_custom_post_types ) {
+			throw new Exception('Instances of metaboxes were not set in ' .
+			  'SDES_Metaboxes::$installed_custom_post_types. Cannot retrieve metaboxes.', 1);
 		}
 	}
 
@@ -38,9 +62,9 @@ class SDES_Metaboxes {
 	 * @author Jared Lang
 	 * */
 	public static function register_meta_boxes() {
-		SDES_Metaboxes::check_installed_custom_post_types();
+		static::check_installed_custom_post_types();
 		//Register custom post types metaboxes
-		foreach ( SDES_Metaboxes::$installed_custom_post_types as $custom_post_type ) {
+		foreach ( static::$installed_custom_post_types as $custom_post_type ) {
 			$custom_post_type->register_metaboxes();
 		}
 	}
@@ -49,9 +73,9 @@ class SDES_Metaboxes {
 	 * Returns a custom post type's metabox data.
 	 **/
 	public static function get_post_meta_box( $post_id ) {
-		SDES_Metaboxes::check_installed_custom_post_types();
+		static::check_installed_custom_post_types();
 		$meta_box = null;
-		foreach ( SDES_Metaboxes::$installed_custom_post_types as $custom_post_type ) {
+		foreach ( static::$installed_custom_post_types as $custom_post_type ) {
 			if ( SDES_Static::get_post_type( $post_id ) == $custom_post_type->options( 'name' ) ) {
 				$meta_box = $custom_post_type->metabox();
 				break;
@@ -67,7 +91,7 @@ class SDES_Metaboxes {
 	 * @author Jared Lang
 	 * */
 	public static function save_meta_data( $post_id ) {
-		$meta_box = SDES_Metaboxes::get_post_meta_box( $post_id );
+		$meta_box = static::get_post_meta_box( $post_id );
 		// verify nonce
 		$nonce = isset( $_POST['meta_box_nonce'] ) ? $_POST['meta_box_nonce'] : null;
 		if ( !wp_verify_nonce( $nonce, basename( __FILE__ ) ) ) {
@@ -87,7 +111,7 @@ class SDES_Metaboxes {
 		}
 		if ( $meta_box ) {
 			foreach ( $meta_box['fields'] as $field ) {
-				SDES_Metaboxes::save_default( $post_id, $field );
+				static::save_default( $post_id, $field );
 			}
 		}
 	}
@@ -114,14 +138,14 @@ class SDES_Metaboxes {
 	 * @author Jared Lang
 	 * */
 	public static function show_meta_boxes( $post ) {
-		$meta_box = SDES_Metaboxes::get_post_meta_box( $post );
+		$meta_box = static::get_post_meta_box( $post );
 		ob_start();
 	?>
 		<input type="hidden" name="meta_box_nonce" value="<?php echo wp_create_nonce( basename( __FILE__ ) ); ?>">
 		<table class="form-table">
 		  <?php
 			foreach ( $meta_box['fields'] as $field ) {
-				SDES_Metaboxes::display_metafield( $post->ID, $field );
+				static::display_metafield( $post->ID, $field );
 			}
 		  ?>
 		</table>
@@ -181,7 +205,7 @@ class SDES_Metaboxes {
 			break;
 		}
 		$markup = '';
-		if ( $field_obj ) {
+		if ( null !== $field_obj && $field_obj instanceof IMetafield) {
 			ob_start();
 	?>
 			<tr>
@@ -199,7 +223,14 @@ class SDES_Metaboxes {
 		}
 		echo $markup;
 	}
+
+	/**
+	 * Register with the WordPress actions, 'do_meta_boxes' and 'save_post'.
+	 */
+	public static function register() {
+		add_action( 'do_meta_boxes', __CLASS__ . '::register_meta_boxes' );
+		add_action( 'save_post', __CLASS__ . '::save_meta_data' );
+	}
 }
 
-add_action( 'do_meta_boxes', 'SDES_Metaboxes::register_meta_boxes' );
-add_action( 'save_post', 'SDES_Metaboxes::save_meta_data' );
+SDES_Metaboxes::register();

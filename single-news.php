@@ -1,4 +1,8 @@
 <?php
+/** Display a single News post, per the WordPress template hierarchy. */
+namespace SDES\BaseTheme\PostTypes;
+use SDES\SDES_Static as SDES_Static;
+use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 ?>
@@ -12,6 +16,7 @@ get_header();
 		global $post;
 		$post_object = $post;
 		//Copied from News::toHTML.
+		// TODO: extract a get_render_context and get_render_metadata, reuse News::render_to_html();
 			$context['Post_ID'] = $post_object->ID;
 			$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
 			$context['thumbnail']

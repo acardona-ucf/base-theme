@@ -1,14 +1,20 @@
 <?php
+/**
+ * Configure the Admin Dashboard (/wp-admin/).
+ */
+namespace SDES\BaseTheme\Admin;
+use \WP_Query;
+use SDES\SDES_Static as SDES_Static;
 
 // @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/functions/admin.php#L41-L71
-add_action( 'admin_menu', 'create_help_page' );
+add_action( 'admin_menu', __NAMESPACE__.'\create_help_page' );
 function create_help_page() {
 	add_utility_page(
 		__( 'Help' ), // $page_title,
 		__( 'Help' ), // $menu_title,
 		'edit_posts',     // $capability,
 		'theme-help', // $menu_slug,
-		'theme_help_page',  // $function,
+		__NAMESPACE__.'\theme_help_page',  // $function,
 		'dashicons-editor-help' // $icon_url
 	);
 }
@@ -18,7 +24,7 @@ function theme_help_page() {
 
 
 
-add_action( 'init', 'register_navpill_dynamic_menus' );
+add_action( 'init', __NAMESPACE__.'\register_navpill_dynamic_menus' );
 function register_navpill_dynamic_menus() {
     // Add menu locations for all posts/pages that match the WP_Query below.
     $query_navpill_locations =
@@ -60,7 +66,7 @@ function customize_admin_bar_menu() {
         )
     ));
 }
-add_action( 'admin_bar_menu', 'customize_admin_bar_menu', 65);
+add_action( 'admin_bar_menu', __NAMESPACE__.'\customize_admin_bar_menu', 65);
 
 
 
@@ -68,4 +74,4 @@ function customize_admin_theme() {
     wp_enqueue_style( 'admin-theme', get_stylesheet_directory_uri() . '/css/admin.css');
     wp_enqueue_script( 'admin-theme', get_stylesheet_directory_uri() . '/js/admin.js');
 }
-add_action('admin_enqueue_scripts','customize_admin_theme');
+add_action('admin_enqueue_scripts', __NAMESPACE__.'\customize_admin_theme');
