@@ -1,6 +1,7 @@
 <?php
 // require_once('functions/class-sdes-static.php');
 use SDES\SDES_Static as SDES_Static;
+// TODO: remove all custom functions, constants (and possibly classes) from global namespace.
 
 /*-------------------------------------------------------------------------------------------*/
 //Home title fix

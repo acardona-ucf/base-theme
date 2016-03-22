@@ -1,3 +1,6 @@
+<?php
+namespace SDES\BaseTheme;
+?>
 </div>
 <!-- repeated navigation, social media -->
 	<div class="container site-content-end">
@@ -39,6 +42,7 @@
 	require_once( 'functions/class-sdes-helper.php' );
 		use SDES\BaseTheme\SDES_Helper;
 	require_once( 'functions/class-render-template.php' );
+		use SDES\BaseTheme\Render_Template;
 	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
 	class Footer {
 		public static function get_header( $position = 'center', $default_header = 'UCF Today News', $template_args = null ) {

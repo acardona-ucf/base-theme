@@ -380,7 +380,7 @@ class sc_column extends ShortcodeBase {
 /**
  * [events] - Show an events calendar from events.ucf.edu
  */
-class sc_eventcs extends ShortcodeBase {
+class sc_events extends ShortcodeBase {
     public
         $name = 'Events', // The name of the shortcode.
         $command = 'events', // The command used to call the shortcode.

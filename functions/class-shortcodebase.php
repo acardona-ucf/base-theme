@@ -6,8 +6,8 @@ namespace SDES\Shortcodes;
  * @see includes/theme-help.php (Has section with documentation shortcodes.)
  */
 
-define('SHORTCODE_JS_URI', get_bloginfo('template_url').'/js/shortcodebase.js' );
-define('SHORTCODE_INTERFACE_PATH', get_stylesheet_directory().'/includes/shortcodebase-interface.php' );
+define( 'SDES\Shortcodes\SHORTCODE_JS_URI', get_bloginfo('template_url').'/js/shortcodebase.js' );
+define( 'SDES\Shortcodes\SHORTCODE_INTERFACE_PATH', get_stylesheet_directory().'/includes/shortcodebase-interface.php' );
 
 /**
  * Register the javascript and PHP components required for ShortcodeBase to work.
