@@ -2,6 +2,7 @@
 namespace SDES;
 
 require_once( 'classes-metabox-metafields.php' );
+	use SDES\Metafields\IMetaField as IMetafield;
 	use SDES\Metafields\MetaField as Metafield;
 	use SDES\Metafields\ChoicesMetaField as ChoicesMetaField;
 	use SDES\Metafields\TextMetaField as TextMetaField;
@@ -23,6 +24,7 @@ use Underscore\Types\Arrays;
 
 use \Exception as Exception;
 
+// TODO: add and check for a metaboxes interface with: register_metaboxes(), metabox(), option(), etc.
 /**
  * POST DATA HANDLERS and META BOX FUNCTIONS
  *
@@ -199,7 +201,7 @@ class SDES_Metaboxes {
 			break;
 		}
 		$markup = '';
-		if ( $field_obj ) {
+		if ( null !== $field_obj && $field_obj instanceof IMetafield) {
 			ob_start();
 	?>
 			<tr>

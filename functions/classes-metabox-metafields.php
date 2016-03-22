@@ -2,13 +2,22 @@
 namespace SDES\Metafields;
 
 /**
+ * Methods used by SDES_Metaboxes to display a metafield.
+ */
+interface IMetafield {
+	function label_html();
+	function input_html();
+	function description_html();
+	function html();
+}
+/**
  * Abstracted Metafield class, all form Metafields should inherit from this.
  *
  * @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L124-L390
  * @package default
  * @author Jared Lang
  * */
-abstract class MetaField {
+abstract class MetaField implements IMetafield {
 	protected function check_for_default() {
 		if ( ( $this->value === null || $this->value === '' ) && isset( $this->default ) ) {
 			$this->value = $this->default;
