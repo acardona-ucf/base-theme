@@ -236,6 +236,7 @@ class SDES_Static
 		return $nav_menu;
 	}
 
+	// TODO: Rename "Admin Alert"s to "Admin Msg" (or something similar) to avoid confusion with Alert CPT.
 	/**
 	 * Fallback_navbar_list_pages - Call from wp_nav_menu as the 'fallback_cb'.
 	 *   Allow graceful failure when menu is not set by showing a formatted listing of links
@@ -320,24 +321,26 @@ class SDES_Static
 	* CustomPostType::toHTML
 	*
 	* @param array $attrs      Search params mapped to WP_Query args.
-	* @param array $options    Override values/behaviors of this function.
+	* @param array $args    Override values/behaviors of this function.
 	* @param string $classname Override the classname to instantiate the class.
 	* @return string
 	* @author Jared Lang
 	* @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L780-L903
 	**/
-	public static function sc_object_list($attrs, $options = array(), $classname = '') {
+	public static function sc_object_list($attrs, $args = array() ) {
 		if (!is_array($attrs)){return '';}
 		
-		$default_options = array(
+		$default_args = array(
 			'default_content' => null,
 			'sort_func' => null,
-			'objects_only' => False
+			'objects_only' => False,
+			'classname' => '',
 		);
 		
-		extract(array_merge($default_options, $options));
+		// Make keys into variable names for merged $default_args/$args.
+		extract( array_merge( $default_args, $args ) );
 		
-		# set defaults and combine with passed arguments
+		// set defaults and combine with passed arguments
 		$default_attrs = array(
 			'type'    => null,
 			'limit'   => -1,
@@ -355,7 +358,7 @@ class SDES_Static
 		$params['limit']  = intval( $params['limit'] );
 		$params['offset'] = intval( $params['offset'] );
 
-		# verify options
+		// verify inputs.
 		if ($params['type'] == null){
 			return '<p class="error">No type defined for object list.</p>';
 		}

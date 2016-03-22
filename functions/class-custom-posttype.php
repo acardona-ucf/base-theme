@@ -233,7 +233,8 @@ abstract class CustomPostType {
 		}else {
 			$attr = $default;
 		}
-		return SDES_Static::sc_object_list( $attr );
+		$args = array( 'classname' => __CLASS__, );
+		return SDES_Static::sc_object_list( $attr, $args );
 	}
 
 	/**

@@ -577,7 +577,7 @@ class sc_socialButton extends ShortcodeBase {
 }
 
 require_once( get_stylesheet_directory().'/custom-posttypes.php' );
-    use \Alert;
+    use SDES\BaseTheme\PostTypes\Alert;
 /**
  * Use code from the Alert class in a shortcode.
  * Extending Alert to add ContextToHTML, assuming responsiblity for sanitizing inputs.

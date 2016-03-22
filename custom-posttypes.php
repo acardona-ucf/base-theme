@@ -1,4 +1,6 @@
 <?php
+namespace SDES\BaseTheme\PostTypes;
+use \WP_Query;
 use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
 	use SDES\SDES_Metaboxes;
@@ -175,7 +177,8 @@ class Alert extends CustomPostType {
 		}
 		// Unset custom attributes.
 		unset( $attr['show_all'] );
-		return SDES_Static::sc_object_list( $attr );
+		$args = array( 'classname' => __CLASS__, );
+		return SDES_Static::sc_object_list( $attr, $args );
 	}
 
 	/**
@@ -356,7 +359,8 @@ class Billboard extends CustomPostType {
 		}else {
 			$attr = $default_attrs;
 		}
-		return SDES_Static::sc_object_list( $attr );
+		$args = array( 'classname' => __CLASS__, );
+		return SDES_Static::sc_object_list( $attr, $args );
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
@@ -523,7 +527,8 @@ class Staff extends CustomPostType {
 		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
 		unset( $attr['header'] );
 		unset( $attr['css_classes'] );
-		$objects = SDES_Static::sc_object_list( $attr, array('objects_only'=>true,) );
+		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
+		$objects = SDES_Static::sc_object_list( $attr, $args );
 
 		$context['objects'] = $objects;
 		return static::render_objects_to_html( $context );
@@ -746,7 +751,8 @@ class News extends CustomPostType {
 		unset( $attr['show-archives'] );
 		unset( $attr['header'] );
 		unset( $attr['css_classes'] );
-		$context['objects'] = SDES_Static::sc_object_list( $attr, array('objects_only'=>true,) );
+		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
+		$context['objects'] = SDES_Static::sc_object_list( $attr, $args );
 		$context['archiveUrl'] = static::get_archive_url();
 		return static::render_objects_to_html( $context );
 	}
@@ -847,12 +853,12 @@ class News extends CustomPostType {
 
 function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
-		'Post',
-		'Page',
-		'Alert',
-		'Billboard',
-		'News',
-		'Staff',
+	__NAMESPACE__.'\Post',
+	__NAMESPACE__.'\Page',
+	__NAMESPACE__.'\Alert',
+	__NAMESPACE__.'\Billboard',
+	__NAMESPACE__.'\News',
+	__NAMESPACE__.'\Staff',
 	));
 }
-add_action('init', 'register_custom_posttypes');
+add_action('init', __NAMESPACE__.'\register_custom_posttypes');
