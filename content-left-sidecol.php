@@ -3,7 +3,7 @@
 Template Name: Content Page Left Sidecolumn
 */
 require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
-
+	use SDES\BaseTheme\SDES_Helper;
 get_header();
 ?>
 <!-- content area -->

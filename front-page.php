@@ -1,4 +1,5 @@
 <?php
+use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 

@@ -1,4 +1,6 @@
 <?php
+use SDES\BaseTheme\SDES_Helper;
+
 // Only content managers and admins should be able to see single alerts, usually as a preview.
 if (! SDES_Static::Is_UserLoggedIn_Can('edit_posts') ) {
 	wp_redirect( site_url() );

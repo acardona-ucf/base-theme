@@ -36,6 +36,7 @@
 
 <?php
 	require_once( 'functions/class-sdes-helper.php' );
+		use SDES\BaseTheme\SDES_Helper;
 	require_once( 'functions/class-render-template.php' );
 	// TODO: extract Footer class to a separate file - with other logic classes? or its own file?
 	class Footer {
