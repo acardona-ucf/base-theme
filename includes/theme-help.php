@@ -1,6 +1,7 @@
 <?php
 // @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/includes/theme-help.php
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
+	use \SDES\Shortcodes\ShortcodeBase;
 global $shortcode_tags;
 ?>
 <div id="theme-help" class="i-am-a-fancy-admin">

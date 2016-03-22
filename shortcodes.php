@@ -1,6 +1,10 @@
 <?php
-
+namespace SDES\BaseTheme\Shortcodes;
+use \StdClass;
+use \SDES_Static;
+use SDES\Shortcodes\ShortcodeBase;
 require_once('functions/class-sdes-static.php');
+
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Arrays;
 
@@ -573,6 +577,7 @@ class sc_socialButton extends ShortcodeBase {
 }
 
 require_once( get_stylesheet_directory().'/custom-posttypes.php' );
+    use \Alert;
 /**
  * Use code from the Alert class in a shortcode.
  * Extending Alert to add ContextToHTML, assuming responsiblity for sanitizing inputs.
@@ -652,12 +657,12 @@ class sc_alert extends ShortcodeBase {
 
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
-            'sc_row',
-            'sc_column',
-            'sc_alert',
-            'sc_menuPanel',
-            'sc_events',
-            'sc_socialButton',
+            __NAMESPACE__.'\sc_row',
+            __NAMESPACE__.'\sc_column',
+            __NAMESPACE__.'\sc_alert',
+            __NAMESPACE__.'\sc_menuPanel',
+            __NAMESPACE__.'\sc_events',
+            __NAMESPACE__.'\sc_socialButton',
         ));
 }
-add_action( 'init', 'register_shortcodes' );
+add_action( 'init', __NAMESPACE__.'\register_shortcodes' );

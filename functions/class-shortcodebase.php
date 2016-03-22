@@ -1,4 +1,5 @@
 <?php
+namespace SDES\Shortcodes;
 /**
  * @see js/shortcodebase.js
  * @see includes/shortcodebase-interface.php
@@ -17,9 +18,9 @@ class ShortcodeBase_Loader {
 
 	public static function Load() {
 		if ( !self::$isLoaded ) {
-			add_action( 'admin_enqueue_scripts', 'ShortcodeBase_Loader::enqueue_shortcode_script' );
-			add_action( 'media_buttons', 'ShortcodeBase_Loader::add_shortcode_interface' );
-			add_action( 'admin_footer', 'ShortcodeBase_Loader::add_shortcode_interface_modal' );
+			add_action( 'admin_enqueue_scripts', __CLASS__.'::enqueue_shortcode_script' );
+			add_action( 'media_buttons', __CLASS__.'::add_shortcode_interface' );
+			add_action( 'admin_footer', __CLASS__.'::add_shortcode_interface_modal' );
 			self::$isLoaded = true;
 		}
 	}
