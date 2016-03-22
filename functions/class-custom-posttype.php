@@ -1,16 +1,21 @@
 <?php
+namespace SDES;
 
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
 	use SDES\SDES_Metaboxes;
 	class_alias('SDES\\SDES_Metaboxes', 'SDES_Metaboxes');  // Allows calling class_exists() without any changes.
+
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 	use SDES\Shortcodes\ShortcodeBase;
 	class_alias('SDES\\Shortcodes\\ShortcodeBase', 'ShortcodeBase');
+
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
 	use SDES\SDES_Static as SDES_Static;
+
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Object;
 use Underscore\Types\Arrays;
+
 /**
  * Abstract class for defining custom post types.
  *
@@ -176,7 +181,7 @@ abstract class CustomPostType {
 	 * @see CustomPostType::do_meta_boxes_after_title()
 	 */
 	public static function register_meta_boxes_after_title() {
-		add_action('edit_form_after_title', 'CustomPostType::do_meta_boxes_after_title');
+		add_action('edit_form_after_title', __CLASS__.'::do_meta_boxes_after_title');
 	}
 
 	/**
@@ -319,7 +324,7 @@ abstract class CustomPostType {
 				ShortcodeBase::$installed_custom_post_types[] = $registered_posttype['instance'];
 			}
 		}
-		CustomPostType::Register_Thumbnails_Support($posttype_instances);
+		static::Register_Thumbnails_Support($posttype_instances);
 		return $posttype_instances;
 	}
 
@@ -340,8 +345,8 @@ abstract class CustomPostType {
 			->obtain();
 		add_theme_support( 'post-thumbnails', $thumbnail_posttypes );
 
-		define('SCALE', false);
-		define('CROP', true);
+		/** Scale thumbnails by default. */ define('SDES\\SCALE', false); 
+		/** Crop thumbnails by default. */  define('SDES\\CROP', true);
 		// For cropping behavior see `add_image_size`, e.g.: https://core.trac.wordpress.org/browser/tags/4.4.2/src/wp-includes/media.php#L228
 		set_post_thumbnail_size( 125, 125, CROP );
 		// $crop_from = array( 'top', 'left');
