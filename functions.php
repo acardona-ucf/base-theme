@@ -1,5 +1,11 @@
 <?php
+/**
+ * Entry point for a WordPress theme, along with the style.css file.
+ * Includes or references all functionality for this theme.
+ */
 // require_once('functions/class-sdes-static.php');
+use SDES\SDES_Static as SDES_Static;
+// TODO: remove all custom functions, constants (and possibly classes) from global namespace.
 
 /*-------------------------------------------------------------------------------------------*/
 //Home title fix
@@ -32,7 +38,7 @@ add_action( 'wp_enqueue_scripts', 'enqueue_scripts_and_styles');
 add_action( 'admin_enqueue_scripts', 'enqueue_scripts_and_styles');
 function enqueue_scripts_and_styles(){
   wp_enqueue_script( 'jquery-ui-datepicker' );
-  wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
+  wp_enqueue_style( 'jquery-ui-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css', true);
 }
 
 
@@ -98,6 +104,8 @@ add_filter('excerpt_more', 'new_excerpt_more');
 
 require_once('functions/class-sdes-static.php');
 /* Reads in and displays department information */
+// TODO: refactor out `get_department_info('menu')` and `get_department_info('ACRONYMN')` functionality.
+// TODO: refactor HTML to use "View-and-Context" pattern instead of stringbuilding pattern.
 function get_department_info($action = NULL) {
     $json = file_get_contents('http://directory.sdes.ucf.edu/feed'); 
     $decodejson = json_decode($json);        

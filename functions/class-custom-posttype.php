@@ -1,8 +1,21 @@
 <?php
+/**
+ * Abstract base class for creating custom posttypes.
+ * This class is central the a theme's fuctionality, and heavily relies on other files.
+ */
+namespace SDES;
 
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+	use SDES\SDES_Metaboxes;
+	class_alias('SDES\\SDES_Metaboxes', 'SDES_Metaboxes');  // Allows calling class_exists() without any changes.
+
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
+	use SDES\Shortcodes\ShortcodeBase;
+	class_alias('SDES\\Shortcodes\\ShortcodeBase', 'ShortcodeBase');
+
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
+	use SDES\SDES_Static as SDES_Static;
+
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Object;
 use Underscore\Types\Arrays;
@@ -172,7 +185,7 @@ abstract class CustomPostType {
 	 * @see CustomPostType::do_meta_boxes_after_title()
 	 */
 	public static function register_meta_boxes_after_title() {
-		add_action('edit_form_after_title', 'CustomPostType::do_meta_boxes_after_title');
+		add_action('edit_form_after_title', __CLASS__.'::do_meta_boxes_after_title');
 	}
 
 	/**
@@ -224,7 +237,8 @@ abstract class CustomPostType {
 		}else {
 			$attr = $default;
 		}
-		return SDES_Static::sc_object_list( $attr );
+		$args = array( 'classname' => __CLASS__, );
+		return SDES_Static::sc_object_list( $attr, $args );
 	}
 
 	/**
@@ -252,18 +266,27 @@ abstract class CustomPostType {
 	 * */
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
-		$css_classes = ( $css_classes ) ? $css_classes : $this->name.'-list';
+		$context['objects'] = $objects;
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		return static::render_objects_to_html( $context );
+	}
+
+	/**
+	 * Render HTML for a collection of objects.
+	 * @param Array $context An array of sanitized variables to display with this view.
+	 */
+	protected static function render_objects_to_html( $context ){
 		ob_start();
 		?>
-		<ul class="<?= $css_classes ?>">
-			<?php foreach ( $objects as $o ):?>
+		<ul class="<?= $context['css_classes'] ?>">
+			<?php foreach ( $context['objects'] as $o ):?>
 			<li>
 				<?= static::toHTML( $o ) ?>
 			</li>
 			<?php endforeach;?>
 		</ul>
 		<?php
-			$html = ob_get_clean();
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -272,7 +295,21 @@ abstract class CustomPostType {
 	 * @param WP_Post $object The post object to display.
 	 * */
 	public static function toHTML( $object ) {
-		$html = '<a href="'.get_permalink( $object->ID ).'">'.$object->post_title.'</a>';
+		$context['permalink'] = get_permalink( $object->ID );
+		$context['title'] = $object->post_title;
+		return static::render_to_html( $context );
+	}
+
+	/**
+	 * Render HTML for a single object.
+	 * @param Array $context An array of sanitized variables to display with this view.
+	 */
+	protected static function render_to_html( $context ) {
+		ob_start();
+		?>
+			<a href="<?= $context['permalink'] ?>"><?= $context['post_title'] ?></a>
+		<?php
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -292,7 +329,7 @@ abstract class CustomPostType {
 				ShortcodeBase::$installed_custom_post_types[] = $registered_posttype['instance'];
 			}
 		}
-		CustomPostType::Register_Thumbnails_Support($posttype_instances);
+		static::Register_Thumbnails_Support($posttype_instances);
 		return $posttype_instances;
 	}
 
@@ -312,6 +349,14 @@ abstract class CustomPostType {
 			->pluck( 'name' )
 			->obtain();
 		add_theme_support( 'post-thumbnails', $thumbnail_posttypes );
+
+		/** Scale thumbnails by default. */ define('SDES\\SCALE', false); 
+		/** Crop thumbnails by default. */  define('SDES\\CROP', true);
+		// For cropping behavior see `add_image_size`, e.g.: https://core.trac.wordpress.org/browser/tags/4.4.2/src/wp-includes/media.php#L228
+		set_post_thumbnail_size( 125, 125, CROP );
+		// $crop_from = array( 'top', 'left');
+		// set_post_thumbnail_size( 125, 125, $crop_from );
+
 	}
 }
 

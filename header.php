@@ -1,3 +1,9 @@
+<?php
+/**
+ * Header area for the theme, as called by get_header().
+ */
+use SDES\SDES_Static as SDES_Static; 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,14 +16,53 @@
 	<link rel="shortcut icon" href="images/favicon_black.png" >
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png" >
 
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<script type="text/javascript" id="ucfhb-script" src="https://universityheader.ucf.edu/bar/js/university-header.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script type="text/javascript" id="ucfhb-script" src="//universityheader.ucf.edu/bar/js/university-header.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/bootstrap/js/bootstrap.min.js"></script>
 
 	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/js/sdes_main_ucf.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/nivoslider/jquery.nivo.slider.pack.js"></script>
-	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.min.js"></script>
+	<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.min.js"></script>
+
+	
+	<?php
+		$sdes_theme_settings_js = esc_attr(get_option('sdes_theme_settings_js', ''));
+		if ( '' != $sdes_theme_settings_js )
+		{ ?>
+		<script>
+			$(document).ready(function(){
+				<?= $sdes_theme_settings_js ?>
+			});	
+		</script>
+	<?php } ?>
+
+	<?php $sdes_theme_settings_js_lib = esc_attr(get_option('sdes_theme_settings_js_lib', ''));
+		if ( '' != $sdes_theme_settings_js_lib )
+		  { ?>			
+			<script type="text/javascript" src="<?= $sdes_theme_settings_js_lib ?>"></script>
+	<?php } ?>
+
+	<?php
+		$sdes_theme_settings_ga_id = esc_attr(get_option('sdes_theme_settings_ga_id', ''));
+		if ( '' != $sdes_theme_settings_ga_id )
+		{ ?>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', "<?= $sdes_theme_settings_ga_id ?>", 'ucf.edu');
+			ga('send', 'pageview');
+		</script>
+	<?php } ?>
+
+	<?php
+		$sdes_theme_settings_css = esc_attr(get_option('sdes_theme_settings_css', ''));
+		if ( '' != $sdes_theme_settings_css )
+		  { ?>		
+			<link rel="stylesheet" href="<?= $sdes_theme_settings_css ?>">
+	<?php } ?>	
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -33,7 +78,7 @@
 		<div class="site-title">
 			<a href="#"><?php bloginfo('name'); ?></a>
 			<div class="site-subtitle">
-				<a href="<?= SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ); ?>">
+				<a href="<?= SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ) ); ?>">
 					<?= html_entity_decode(get_bloginfo('description')); ?>
 				</a>
 			</div>
@@ -53,7 +98,7 @@
 			</div>
 			<div class="navbar-collapse collapse">
 				<?php
-				wp_nav_menu(array('theme_location' => 'main-menu', 'container' => '', 'depth' => 1, 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				<p class="navbar-text navbar-right translate-button">
 					<a href="http://it.sdes.ucf.edu/translate/" class="navbar-link">Translate
@@ -63,16 +108,3 @@
 			</div>
 		</div>
 	</nav>
-
-	<?php
-		/* If using the WP Nivo Plugin, use the following code instead: */
-		// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
-		echo do_shortcode( "[billboard-list]" ); ?>
-
-	<!-- content area -->
-	<div class="container site-content">
-		<?php
-		if ( 'alert' !== get_query_var('post_type') ) {
-			// TODO: Allow alerts to be restricted to certain pages.
-			echo do_shortcode( "[alert-list]" );
-		}

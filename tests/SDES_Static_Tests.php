@@ -2,7 +2,7 @@
 
 // require_once 'vendor/autoload.php';
 require_once '\..\functions\class-sdes-static.php';
-
+    use SDES\SDES_Static as SDES_Static;
 
 class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 {
@@ -114,7 +114,35 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         $result = SDES_Static::sanitize_telephone_407($toSanitize);
     }
 
+    public function test_url_ensure_prefix__DomainNoProtocol__ReturnsPrefixURL(){
+        // Arrange
+        $string_with_url = 'www.sdes.ucf.edu';
+        $expected = 'http://www.sdes.ucf.edu';
+        // Act
+        $result = SDES_Static::url_ensure_prefix( $string_with_url );
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
 
+    public function test_url_ensure_prefix__DomainNeturalProtocol__ReturnsSameURL(){
+        // Arrange
+        $string_with_url = '//www.sdes.ucf.edu';
+        $expected = '//www.sdes.ucf.edu';
+        // Act
+        $result = SDES_Static::url_ensure_prefix( $string_with_url );
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function test_url_ensure_prefix__DomainSpecifyProtocol__ReturnsPrefixURL(){
+        // Arrange
+        $string_with_url = 'www.sdes.ucf.edu';
+        $expected = 'ftp://www.sdes.ucf.edu';
+        // Act
+        $result = SDES_Static::url_ensure_prefix( $string_with_url, 'ftp' );
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
 
     ///////////  SDES_Static::get_theme_mod_defaultIfEmpty()  ////////////////////
     public function test_get_theme_mod_defaultIfEmpty__LookupYieldsNull__ReturnsDefault()
@@ -306,7 +334,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         $esc_attr = function($a){ return $a; }; // Bypass sanitize function for testing
         $get_query_var_preview = function(){ return false; };
         $expected = 
-        '<ul id="" class="menu"><li><a href="Home">Home</a></li><li><a class="text-danger adminmsg" style="color: red !important;" href="/wp-admin/nav-menus.php?action=locations#locations-main-menu">Admin Alert: Missing "main-menu" menu location.</a></li></ul>';
+        '<ul id="" class="menu"><li><a href="Home">Home</a></li><li><a class="text-danger adminmsg adminmsg-menu" style="color: red !important;" data-control-name="nav_menu_locations[main-menu]" href="/wp-admin/nav-menus.php?action=locations#locations-main-menu">Admin Alert: Missing "main-menu" menu location.</a></li></ul>';
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.

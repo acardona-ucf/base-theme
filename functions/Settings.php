@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Add and configure Settings for this theme (admin settings for IT staff).
+ */
+namespace SDES\BaseTheme\Settings;
 require_once( get_stylesheet_directory().'/functions/SettingsCallbacks.php' );
 
 /**
@@ -48,9 +51,9 @@ function options_page() {
     //add_options_page( $page_title, $menu_title, $capability,
     //                  $menu_slug, $function);
     add_options_page( 'SDES Theme Settings', 'SDES Theme Settings', 'manage_options',
-                      'sdes_settings', 'sdes_settings_render' );
+                      'sdes_settings', __NAMESPACE__.'\sdes_settings_render' );
 }
-add_action( 'admin_menu', 'options_page' );
+add_action( 'admin_menu', __NAMESPACE__.'\options_page' );
 
 
 /** Register settings and fields to the 'sdes_settings' options page (id of its menu_slug). */
@@ -70,38 +73,38 @@ function option_page_settings() {
     // SECTIONS
     // add_settings_section( $id, $title, $callback,
     //                       $page );
-    add_settings_section( 'sdes_section_one', 'SDES Theme Settings', 'section_one_callback',
+    add_settings_section( 'sdes_section_one', 'SDES Theme Settings', __NAMESPACE__.'\section_one_callback',
                           'sdes_settings' );
 
     // FIELDS - callbacks functions are defined in SettingsCallbacks.php.
     // add_settings_field( $id, $title, $callback,
     //                     $page, $section, $args );
-    add_settings_field( 'sdes_theme_settings_ga_id', 'Google Analytics ID', 'google_analytics_id_callback',
+    add_settings_field( 'sdes_theme_settings_ga_id', 'Google Analytics ID', __NAMESPACE__.'\google_analytics_id_callback',
                         'sdes_settings', 'sdes_section_one' );
     
-    add_settings_field( 'sdes_theme_settings_js', 'javascript', 'javascript_callback',
+    add_settings_field( 'sdes_theme_settings_js', 'javascript', __NAMESPACE__.'\javascript_callback',
                         'sdes_settings', 'sdes_section_one' );
     
-    add_settings_field( 'sdes_theme_settings_js_lib', 'Javascript Libraries', 'javascript_libraries_callback',
+    add_settings_field( 'sdes_theme_settings_js_lib', 'Javascript Libraries', __NAMESPACE__.'\javascript_libraries_callback',
                         'sdes_settings', 'sdes_section_one' );
 
-    add_settings_field( 'sdes_theme_settings_css', 'CSS', 'css_callback',
+    add_settings_field( 'sdes_theme_settings_css', 'CSS', __NAMESPACE__.'\css_callback',
                         'sdes_settings', 'sdes_section_one' );
 
-    add_settings_field( 'sdes_theme_settings_dir_acronym', 'Acronym in SDES Directory/CMS', 'directory_cms_acronym_callback',
+    add_settings_field( 'sdes_theme_settings_dir_acronym', 'Acronym in SDES Directory/CMS', __NAMESPACE__.'\directory_cms_acronym_callback',
                         'sdes_settings', 'sdes_section_one' );
 
-    add_settings_field( 'sdes_rev_2015-footer_content-left', 'Footer Static Content - Left', 'footer_content_left_callback',
+    add_settings_field( 'sdes_rev_2015-footer_content-left', 'Footer Static Content - Left', __NAMESPACE__.'\footer_content_left_callback',
                         'sdes_settings', 'sdes_section_one' );
 
-    add_settings_field( 'sdes_rev_2015-footer_content-center', 'Footer Static Content - Center', 'footer_content_center_callback',
+    add_settings_field( 'sdes_rev_2015-footer_content-center', 'Footer Static Content - Center', __NAMESPACE__.'\footer_content_center_callback',
                         'sdes_settings', 'sdes_section_one' );
 
-    add_settings_field( 'sdes_rev_2015-footer_content-right', 'Footer Static Content - Right', 'footer_content_right_callback',
+    add_settings_field( 'sdes_rev_2015-footer_content-right', 'Footer Static Content - Right', __NAMESPACE__.'\footer_content_right_callback',
                         'sdes_settings', 'sdes_section_one' );
 }
     
-add_action( 'admin_init', 'option_page_settings' );
+add_action( 'admin_init', __NAMESPACE__.'\option_page_settings' );
 /////////////////////////////////////////////////////////////////////
 
 /** Add a Menu page to the Dashboard's left navigation (with an icon) and add subpages.*/
@@ -112,7 +115,7 @@ function menu_with_submenus() {
         "SDES Options",         // The text to be used for the menu
         'manage_options',       // The required capability of users to access this menu
         'sdes_options',         // The slug by which this menu item is accessible
-        'render_sdes_menu',    // The name of the function used to display the page content
+        __NAMESPACE__.'\render_sdes_menu',    // The name of the function used to display the page content
         '//assets.sdes.ucf.edu/images/favicon_black.png' //  An icon to display besied the menu text
         // 78       // The position to innsert this menu item. Be careful not to hide another item!
     );
@@ -120,15 +123,15 @@ function menu_with_submenus() {
     // add_submenu_page( $parent_slug, $page_title, $menu_title, $capability,
     //                   $menu_slug, $function );
     add_submenu_page( 'sdes_options', 'Developer Settings', "Developer Settings", "manage_options",
-                      "sdes_developer_settings", "render_developer_settings");
+                      "sdes_developer_settings", __NAMESPACE__.'\render_developer_settings');
 
     add_submenu_page( 'sdes_options', 'Customize', 'Customize', 'edit_theme_options',
-                      'sdes_customize', 'redirect_to_customize' );
+                      'sdes_customize', __NAMESPACE__.'\redirect_to_customize' );
 
     add_submenu_page( 'sdes_options', 'Tabbed Settings', "Tabbed Settings", "manage_options",
-                      "tabbed_settings", "render_tabbed_settings");
+                      "tabbed_settings", __NAMESPACE__.'\render_tabbed_settings');
 }
-add_action( 'admin_menu', 'menu_with_submenus' );
+add_action( 'admin_menu', __NAMESPACE__.'\menu_with_submenus' );
 
 /** Render HTML for the menu page 'sdes_options' */
 function render_sdes_menu() {

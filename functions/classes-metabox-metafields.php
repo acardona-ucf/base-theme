@@ -1,5 +1,18 @@
 <?php
+/**
+ * Add display metafields within a metabox of a custom posttype.
+ */
+namespace SDES\Metafields;
 
+/**
+ * Methods used by SDES_Metaboxes to display a metafield.
+ */
+interface IMetafield {
+	function label_html();
+	function input_html();
+	function description_html();
+	function html();
+}
 /**
  * Abstracted Metafield class, all form Metafields should inherit from this.
  *
@@ -7,7 +20,7 @@
  * @package default
  * @author Jared Lang
  * */
-abstract class MetaField {
+abstract class MetaField implements IMetafield {
 	protected function check_for_default() {
 		if ( ( $this->value === null || $this->value === '' ) && isset( $this->default ) ) {
 			$this->value = $this->default;

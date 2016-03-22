@@ -3,8 +3,9 @@
  * Helper functions that are specific to this project, and are not reusable.
  * @package Rev2015 WordPress Prototype
  */
-
+namespace SDES\BaseTheme;
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
+		use SDES\SDES_Static as SDES_Static;
 /**
  * Container for helper methods specific to this repository/solution.
  * Static functions solving general problems should be added to the class SDES_Static.

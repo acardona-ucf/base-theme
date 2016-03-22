@@ -1,13 +1,22 @@
 <?php
+/** Display a single News post, per the WordPress template hierarchy. */
+namespace SDES\BaseTheme\PostTypes;
+use SDES\SDES_Static as SDES_Static;
+use SDES\BaseTheme\SDES_Helper;
 
-get_header('content');
+get_header();
+?>
+<!-- content area -->
+<div class="container site-content" id="content">
+	<?= get_template_part( 'includes/template', 'alert' ); ?>
 
-if (have_posts()) :
+
+<?php if (have_posts()) :
 	while (have_posts()) : the_post(); 
 		global $post;
 		$post_object = $post;
-
 		//Copied from News::toHTML.
+		// TODO: extract a get_render_context and get_render_metadata, reuse News::render_to_html();
 			$context['Post_ID'] = $post_object->ID;
 			$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
 			$context['thumbnail']
@@ -22,7 +31,6 @@ if (have_posts()) :
 			$context['news_strapline'] =('' !== $news_strapline ) ? '<div class="news-strapline">'.$news_strapline.'</div>' : '';
 			$context['month_year_day'] = get_the_date('F j, Y', $post_object);
 			$context['time'] = get_the_time('g:i a', $post_object);
-
 			$context['content'] = get_the_content();
 ?>
 		<h2 class="page-header news-title"><?= the_title(); ?></h2>
@@ -42,6 +50,9 @@ if (have_posts()) :
 	endwhile;
 else:
 	SDES_Helper::Get_No_Posts_Message();
-endif;
+endif; ?>
 
+
+</div> <!-- /DIV.container.site-content -->
+<?php
 get_footer();

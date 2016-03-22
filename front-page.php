@@ -1,6 +1,11 @@
 <?php
+/**
+ * Display the Front Page of the site, per the WordPress Template Hierarchy.
+ */
+use SDES\SDES_Static as SDES_Static;
+use SDES\BaseTheme\SDES_Helper;
 
-get_header(); // Currently includes Billboard.
+get_header();
 
 $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'));
 		$departmentInfo = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
@@ -8,6 +13,21 @@ $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'))
 			$departmentInfo = get_department_info( $directory_cms_acronym );
 		}
 ?>
+<?php
+	$hideBillboard = false; // Could add an option for hiding Billboard in Theme Customizer.
+	if ( $hideBillboard ) {
+		// Could add an adminmsg here.
+	} else {
+		/* If using the WP Nivo Plugin, use the following code instead: */
+		// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
+		echo do_shortcode( "[billboard-list]" );
+	}
+?>
+<!-- content area -->
+<div class="container site-content" id="content">
+	<?= do_shortcode( '[alert-list show_all="true"]' ); ?>
+
+
 <div class="row">
 	<br>
 	<div class="col-sm-8">
@@ -37,5 +57,7 @@ $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'))
 	</div>	
 </div>
 
+
+</div> <!-- /DIV.container.site-content -->
 <?php
 get_footer();

@@ -1,12 +1,17 @@
 <?php
 /**
+ * Drop-in file to encapsulate shortcode creation, adds a UI for adding shortcodes.
+ * Can autogenerate a shortcode for a custom posttype (display a listing of items of that posttype).
+ */
+namespace SDES\Shortcodes;
+/**
  * @see js/shortcodebase.js
  * @see includes/shortcodebase-interface.php
  * @see includes/theme-help.php (Has section with documentation shortcodes.)
  */
 
-define('SHORTCODE_JS_URI', get_bloginfo('template_url').'/js/shortcodebase.js' );
-define('SHORTCODE_INTERFACE_PATH', get_stylesheet_directory().'/includes/shortcodebase-interface.php' );
+define( 'SDES\Shortcodes\SHORTCODE_JS_URI', get_bloginfo('template_url').'/js/shortcodebase.js' );
+define( 'SDES\Shortcodes\SHORTCODE_INTERFACE_PATH', get_stylesheet_directory().'/includes/shortcodebase-interface.php' );
 
 /**
  * Register the javascript and PHP components required for ShortcodeBase to work.
@@ -17,9 +22,9 @@ class ShortcodeBase_Loader {
 
 	public static function Load() {
 		if ( !self::$isLoaded ) {
-			add_action( 'admin_enqueue_scripts', 'ShortcodeBase_Loader::enqueue_shortcode_script' );
-			add_action( 'media_buttons', 'ShortcodeBase_Loader::add_shortcode_interface' );
-			add_action( 'admin_footer', 'ShortcodeBase_Loader::add_shortcode_interface_modal' );
+			add_action( 'admin_enqueue_scripts', __CLASS__.'::enqueue_shortcode_script' );
+			add_action( 'media_buttons', __CLASS__.'::add_shortcode_interface' );
+			add_action( 'admin_footer', __CLASS__.'::add_shortcode_interface_modal' );
 			self::$isLoaded = true;
 		}
 	}
@@ -52,9 +57,15 @@ class ShortcodeBase_Loader {
 }
 ShortcodeBase_Loader::Load();
 
+/**
+ * Functions used to display a shortcode in Shortcode-Interface.php.
+ */
 interface IShortcodeUI {
+	/** Friendly name of the shortcode in the interface dropdown. */
 	public function get_option_markup();
+	/** Description of the shortcode. */
 	public function get_description_markup();
+	/** Options fields shown in the interface form. */
 	public function get_form_markup();
 }
 
@@ -217,6 +228,7 @@ abstract class ShortcodeBase implements IShortcodeUI {
 	}
 }
 
+// TODO: add and check for interface of CustomPostTypes with: sc_interface_fields, taxonomies, options(), etc.
 /**
  * Generate shortcodes for classes that extend CustomPostType.
  * @see CustomPostType::$sc_interface_fields
@@ -244,9 +256,7 @@ class Shortcode_CustomPostType_Wrapper extends ShortcodeBase implements IShortco
 		$this->description = 'Show list of '.$cpt_instance->options('plural_name').' items.';
 
 		if ( isset($cpt_instance->sc_interface_fields) && !empty($cpt_instance->sc_interface_fields) ) {
-			foreach ($cpt_instance->sc_interface_fields as $param) {
-				$this->params[] = $param;
-			}
+			$this->params = array_merge($cpt_instance->sc_interface_fields, $this->params);
 		}
 
 		// Add taxonomy params

@@ -1,7 +1,14 @@
 <?php
-
+/**
+ *  Add and configure custom posttypes for this theme.
+ */
+namespace SDES\BaseTheme\PostTypes;
+use \WP_Query;
+use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
+	use SDES\SDES_Metaboxes;
 require_once( get_stylesheet_directory().'/functions/class-custom-posttype.php' );
+	use SDES\CustomPostType;
 
 /**
  * The built-in post_type named 'Post'.
@@ -28,18 +35,6 @@ class Post extends CustomPostType {
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null;
-
-	public function fields() {
-		$prefix = 'custom_'.$this->options('name').'_';
-		return array(
-			array(
-				'name' => 'Stylesheet',
-				'descr' => '',
-				'id' => $prefix.'stylesheet',
-				'type' => 'file',
-			),
-		);
-	}
 }
 
 /**
@@ -65,13 +60,7 @@ class Page extends CustomPostType {
 		$prefix = $this->options('name').'_';
 		return array(
 			array(
-				'name'  => 'Stylesheet',
-				'descr' => '',
-				'id'    => $prefix.'stylesheet',
-				'type'  => 'file',
-			),
-			array(
-				'name'  => 'Sidecolumn',
+				'name'  => 'Side Column',
 				'descr' => 'Show content in column to the right or left of the page (e.g., menuPanels).',
 				'id'    => $prefix.'sidecolumn',
 				'type'  => 'editor',
@@ -116,19 +105,19 @@ class Alert extends CustomPostType {
 				'descr' => 'If checked, show the alert as red instead of yellow.',
 				'id' => $prefix.'is_unplanned',
 				'type' => 'checkbox_list',
-				'default' => array( 'Unplanned alert.' => $prefix.'is_unplanned' ),
-				// 'choices' => array(
-				// 		'Unplanned alert.' => $prefix.'is_unplanned',
-				// 		// 'Text for another checkbox_list item.' => 'value_for_input_tag'
-				// 	)
+				'choices' => array(
+					'Unplanned alert.' => $prefix.'is_unplanned' 
+				),
 			),
-			// array(  // TODO: Allow alerts to be restricted to certain pages.
-			// 	'name' => 'Sitewide Alert',
-			// 	'descr' => 'Show alert across the entire site.',
-			// 	'id' => $prefix.'is_sitewide',
-			// 	'type' => 'checkbox_list',
-			// 	'default' => array( 'Sitewide alert.' => $prefix.'is_sitewide' ),
-			// ),
+			array(
+				'name' => 'Sitewide Alert',
+				'descr' => 'Show alert across the entire site.',
+				'id' => $prefix.'is_sitewide',
+				'type' => 'checkbox_list',
+				'choices' => array(
+					'Sitewide alert.' => $prefix.'is_sitewide'
+				),
+			),
 			array(
 				'name' => 'Start Date',
 				'descr' => 'The first day the alert should appear.',
@@ -146,6 +135,7 @@ class Alert extends CustomPostType {
 				'descr' => 'Add a link for this alert.',
 				'id' => $prefix.'url',
 				'type' => 'text',
+				'default' => 'http://',
 			),
 		);
 	}
@@ -161,24 +151,44 @@ class Alert extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => $prefix.'start_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date('Y-m-d', time()),
 					'compare' => '<=',
 				),
 				array(
 					'key' => $prefix.'end_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date('Y-m-d', strtotime('+1 day')),
 					'compare' => '>=',
 				),
 			),
+			'show_all'=> false,
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
 		}else {
 			$attr = $default_attrs;
 		}
-		return SDES_Static::sc_object_list( $attr );
+		$attr['show_all'] = filter_var( $attr['show_all'], FILTER_VALIDATE_BOOLEAN);
+		if ( ! $attr['show_all'] ) {
+			array_push( $attr['meta_query'],
+				array(
+					'key' => $prefix.'is_sitewide',
+					// Remember that Checkbox list values are serialized.
+					// See: https://wordpress.org/support/topic/meta_query-doesnt-find-value-if-custom-field-value-is-serialized#post-2106580
+					'value' => serialize(strval($prefix.'is_sitewide')),
+					'compare' => 'LIKE', )
+			);
+		}
+		// Unset custom attributes.
+		unset( $attr['show_all'] );
+		$args = array( 'classname' => __CLASS__, );
+		return SDES_Static::sc_object_list( $attr, $args );
 	}
 
+	/**
+	 * Return an array of only the metadata fields used to create a render context.
+	 * @param WP_Post $alert The alert whose metadata should be retrieved.
+	 * @return Array The fields to pass into get_render_context.
+	 */
 	private static function get_render_metadata( $alert ) {
 		$metadata_fields = array();
 		$metadata_fields['alert_is_unplanned'] = get_post_meta($alert->ID, 'alert_is_unplanned', true);
@@ -187,16 +197,20 @@ class Alert extends CustomPostType {
 	}
 
 	/**
-	 * Generate a render context given a WP_Post object and an array of its metadata fields.
+	 * Generate a render context for an alert, given its WP_Post object and an array of its metadata fields.
 	 * Expected fields:
 	 * $alert - post_content, post_title
 	 * $metadata_fields - alert_is_unplanned, alert_url
+	 * @param WP_Post $alert The post object to be displayed.
+	 * @param Array $metadata_fields The metadata fields associated with this alert.
 	 */
 	public static function get_render_context( $alert, $metadata_fields ) {
 		$alert_css_classes = 
 			( $metadata_fields['alert_is_unplanned'] )
 			? 'alert-danger' : 'alert-warning';
 		$alert_url = $metadata_fields['alert_url'];
+		$alert_url = SDES_Static::url_ensure_prefix( $alert_url );
+		if( false == strrpos($alert_url, '//') ) { $alert_url = 'http://'.$alert_url; }
 		$alert_message = $alert->post_content;
 		$alert_message = 
 			(true !== $alert_url && '' != $alert_url )
@@ -220,6 +234,9 @@ class Alert extends CustomPostType {
 		return static::render_objects_to_html( $context );
 	}
 
+	/**
+	 * Render HTML for a collection of alerts.
+	 */
 	protected static function render_objects_to_html( $context ){
 		ob_start();
 		?>
@@ -229,7 +246,8 @@ class Alert extends CustomPostType {
 				endforeach; ?>
 			</span>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 
 	public static function toHTML ( $post_object ) {
@@ -238,6 +256,9 @@ class Alert extends CustomPostType {
 		return static::render_to_html( $alert_context );
 	}
 
+	/**
+	 * Render HTML for a single alert.
+	 */
 	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
@@ -249,7 +270,8 @@ class Alert extends CustomPostType {
 		</div>
 		<div class="clearfix"></div>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 }
 
@@ -287,6 +309,7 @@ class Billboard extends CustomPostType {
 				'descr' => 'Add a link for this billboard.',
 				'id' => $prefix.'url',
 				'type' => 'text',
+				'default' => 'http://',
 			),
 			array(
 				'name' => 'Start Date',
@@ -339,7 +362,8 @@ class Billboard extends CustomPostType {
 		}else {
 			$attr = $default_attrs;
 		}
-		return SDES_Static::sc_object_list( $attr );
+		$args = array( 'classname' => __CLASS__, );
+		return SDES_Static::sc_object_list( $attr, $args );
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
@@ -351,6 +375,7 @@ class Billboard extends CustomPostType {
 
 	protected static function render_objects_to_html( $context ){
 		// TODO: don't show nivoslider directionNav if only 1 Billboard slide.
+		$billboard_size = array(1140,318);
 		ob_start();
 		?>
 		<!-- nivo slider -->
@@ -368,21 +393,27 @@ class Billboard extends CustomPostType {
 			<div id="slider-sc" class="nivoSlider">
 			<?php foreach ( $context['objects'] as $o ):
 				if ( has_post_thumbnail( $o ) ) :
+					$alt_text = get_post_meta(get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true);
 					$billboard_url = get_post_meta($o, 'billboard_url', true);
-					if( $billboard_url ) : ?>
+					if( $billboard_url ) :
+						$billboard_url = SDES_Static::url_ensure_prefix( $billboard_url );
+					?>
 						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
-							<?= get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) ); ?>
+					<?php endif;
+							echo get_the_post_thumbnail( $o, $billboard_size, 
+									array('title'=>'#nivo-caption-'.$o->ID, 'alt' => $alt_text ) );
+					if( $billboard_url ) : ?>
 						</a>
-				<?php else:
-						echo get_the_post_thumbnail( $o, 'post-thumbnail', array('title'=>'#nivo-caption-'.$o->ID,) );
-				   endif;
+					<?php endif;
 				endif;
 			endforeach; ?>
 			</div>
 			<?php foreach ( $context['objects'] as $o ):
 				if ( has_post_thumbnail( $o ) ) : ?>
 					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
-						<?= $o->post_content ?>
+						<div class="nivo-padding"></div>
+						<div class="nivo-title"><?= $o->post_title ?></div>
+						<div class="nivo-strapline"><?= $o->post_content ?></div>
 					</div>
 		  		<?php endif;
 			endforeach; ?>
@@ -416,7 +447,16 @@ class Staff extends CustomPostType {
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
-		$default_order   = null;
+		$default_order   = null,
+		$sc_interface_fields = array(
+			array(
+				'name' => 'Header',
+				'id' => 'header',
+				'help_text' => 'Show a header for above the staff list.',
+				'type' => 'text',
+				'default' => 'Staff List'
+			),
+		);
 
 	public function register( $args = array() ) {
 		$default_args = array(
@@ -449,46 +489,101 @@ class Staff extends CustomPostType {
 		);
 	}
 
+	public function metabox() {
+		if ( $this->options( 'use_metabox' ) ) {
+			return array(
+				'id'       => 'custom_'.$this->options( 'name' ).'_metabox',
+				'title'    => __( $this->options( 'singular_name' ).' Fields' ),
+				'page'     => $this->options( 'name' ),
+				'context'  => 'after_title',
+				'priority' => 'high',
+				'fields'   => $this->fields(),
+			);
+		}
+		return null;
+	}
+
+	public function register_metaboxes() {
+		// Move and Rename the Featured Image Metabox.
+		remove_meta_box( 'postimagediv', $this->name, 'side' );
+		add_meta_box('postimagediv', __("{$this->singular_name} Image"),
+			'post_thumbnail_meta_box', $this->name, 'after_title', 'high');
+		CustomPostType::register_meta_boxes_after_title();
+
+		parent::register_metaboxes();
+	}
+
+	public function shortcode( $attr ) {
+		$prefix = $this->options('name').'_';
+		$default_attrs = array(
+			'type' => $this->options( 'name' ),
+			'header' => $this->options( 'plural_name' ) . ' List',
+			'css_classes' => '',
+		);
+		if ( is_array( $attr ) ) {
+			$attr = array_merge( $default_attrs, $attr );
+		}else {
+			$attr = $default_attrs;
+		}
+
+		$context['header'] = $attr['header'];
+		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
+		unset( $attr['header'] );
+		unset( $attr['css_classes'] );
+		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
+		$objects = SDES_Static::sc_object_list( $attr, $args );
+
+		$context['objects'] = $objects;
+		return static::render_objects_to_html( $context );
+	}
+
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
-		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
 		$context['archiveUrl'] = '';
+		$context['objects'] = $objects;
+		return static::render_objects_to_html( $context );
+	}
+
+	protected static function render_objects_to_html( $context ) {
 		ob_start();
 		?>
-		<script type="text/javascript">
-			$(function(){
-				var collapsedSize = 60;
-				$(".staff-details").each(function() {
-					var h = this.scrollHeight;
-					var div = $(this);
-					if (h > 30) {
-						div.css("height", collapsedSize);
-						div.after("<a class=\"staff-more\" href=\"\">[Read More]</a>");
-						var link = div.next();
-						link.click(function(e) {
-							e.stopPropagation();
-							e.preventDefault();
-							if (link.text() != "[Collapse]") {
-								link.text("[Collapse]");
-								div.animate({ "height": h });
-							} else {
-								div.animate({ "height": collapsedSize });
-								link.text("[Read More]");
-							}
-						});
-					}
+			<script type="text/javascript">
+				$(function(){
+					var collapsedSize = 60;
+					$(".staff-details").each(function() {
+						var h = this.scrollHeight;
+						var div = $(this);
+						if (h > 30) {
+							div.css("height", collapsedSize);
+							div.after("<a class=\"staff-more\" href=\"\">[Read More]</a>");
+							var link = div.next();
+							link.click(function(e) {
+								e.stopPropagation();
+								e.preventDefault();
+								if (link.text() != "[Collapse]") {
+									link.text("[Collapse]");
+									div.animate({ "height": h });
+								} else {
+									div.animate({ "height": collapsedSize });
+									link.text("[Read More]");
+								}
+							});
+						}
+					});
 				});
-			});
-		</script>
-		<span class="<?= $css_classes ?>">
-			<?php foreach ( $objects as $o ):?>
-				<?= static::toHTML( $o ) ?>
-				<div class="hr-blank"></div>
-			<?php endforeach;?>
-
-		</span>
+			</script>
+			<?php if ( $context['header'] ) : ?>
+				<h2><?= $context['header'] ?></h2>
+			<?php endif; ?>
+			<span class="<?= $context['css_classes'] ?>">
+				<?php foreach ( $context['objects'] as $o ):?>
+					<?= static::toHTML( $o ) ?>
+					<div class="hr-blank"></div>
+				<?php endforeach;?>
+			</span>
 		<?php
-			$html = ob_get_clean();
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -497,18 +592,17 @@ class Staff extends CustomPostType {
 		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
 		$context['thumbnail']
 			= has_post_thumbnail($post_object) 
-				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
+				? get_the_post_thumbnail($post_object, 'post-thumbnail', array('class' => 'img-responsive'))
 				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
 		$context['title'] = get_the_title( $post_object );
 		$context['staff_position_title'] = get_post_meta( $post_object->ID, 'staff_position_title', true );
 		$context['staff_phone'] = get_post_meta( $post_object->ID, 'staff_phone', true );
 		$context['staff_email'] = get_post_meta( $post_object->ID, 'staff_email', true );
+		$context['content'] = $post_object->post_content;
+		return static::render_to_html( $context );
+	}
 
-		$loop = new WP_Query( array('p'=>$post_object->ID, 'post_type'=> $post_object->post_type ) );
-		$loop->the_post();
-			$context['content'] = get_the_content();
-		wp_reset_query();
-
+	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
 			<div class="staff">
@@ -524,7 +618,8 @@ class Staff extends CustomPostType {
 				</div>
 			</div>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 }
 
@@ -583,10 +678,11 @@ class News extends CustomPostType {
 				'type' => 'text',
 			),
 			array(
-				'name' => 'Link',
+				'name' => 'URL',
 				'descr' => '',
-				'id' => $prefix.'link',
+				'id' => $prefix.'url',
 				'type' => 'text',
+				'default' => 'http://',
 			),
 			array(
 				'name' => 'Start Date',
@@ -611,6 +707,8 @@ class News extends CustomPostType {
 			'orderby' => 'meta_value_datetime',
 			'meta_key' => $prefix.'start_date',
 			'order' => 'ASC',
+			'header' => 'News & Announcements',
+			'css_classes' => '',
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
@@ -650,20 +748,49 @@ class News extends CustomPostType {
 			);
 		}
 
+		$context['header'] = $attr['header'];
+		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
 		// Unset keys to prevent treating them as taxonomies in sc_object_list.
 		unset( $attr['show-archives'] );
+		unset( $attr['header'] );
+		unset( $attr['css_classes'] );
+		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
+		$context['objects'] = SDES_Static::sc_object_list( $attr, $args );
+		$context['archiveUrl'] = static::get_archive_url();
+		return static::render_objects_to_html( $context );
+	}
 
-		return SDES_Static::sc_object_list( $attr );
+	/**
+	 * Get the archive URL option stored in ThemeCustomizer (defaults to '/news/').
+	 * @param $option_id   The name of the option stored in Theme Customizer
+	 * @param $posttype_name The name of this posttype, 'news'.
+	 */
+	private static function get_archive_url( $option_id = 'sdes_rev_2015-newsArchiveUrl', $posttype_name = 'news' ) {
+		$archive_url = 
+			SDES_Static::get_theme_mod_defaultIfEmpty(
+				$option_id,
+				get_post_type_archive_link( $posttype_name ) );
+		$archive_url = SDES_Static::url_ensure_prefix( $archive_url );
+		$archive_url = ( 'http://' === $archive_url ) ? get_site_url() . "/{$posttype_name}/" : $archive_url;
+		return $archive_url;
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
-		$css_classes = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
-		$context['archiveUrl'] = '';
+		$context['objects'] = $objects;
+		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
+		$context['archiveUrl'] = static::get_archive_url();
+		return static::render_objects_to_html( $context );
+	}
+
+	protected static function render_objects_to_html ( $context ) {
 		ob_start();
 		?>
-		<span class="<?= $css_classes ?>">
-			<?php foreach ( $objects as $o ):?>
+		<?php if ( $context['header'] ) : ?>
+			<h2><?= $context['header'] ?></h2>
+		<?php endif; ?>
+		<span class="<?= $context['css_classes'] ?>">
+			<?php foreach ( $context['objects'] as $o ):?>
 				<?= static::toHTML( $o ) ?>
 				<div class="hr-blank"></div>
 			<?php endforeach;?>
@@ -671,7 +798,7 @@ class News extends CustomPostType {
 			<div class="datestamp"><a href="<?= $context['archiveUrl'] ?>">»News Archive</a></div>
 		</span>
 		<?php
-			$html = ob_get_clean();
+		$html = ob_get_clean();
 		return $html;
 	}
 
@@ -682,9 +809,9 @@ class News extends CustomPostType {
 			= has_post_thumbnail($post_object) 
 				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
 				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
-		$news_link = get_post_meta( $post_object->ID, 'news_link', true );
+		$news_url = get_post_meta( $post_object->ID, 'news_url', true );
 		$context['permalink'] = get_permalink( $post_object );
-		$context['title_link'] = ( '' !== $news_link ) ? $news_link : $context['permalink'];
+		$context['title_link'] = ( '' !== $news_url ) ? $news_url : $context['permalink'];
 		$context['title'] = get_the_title( $post_object );
 		$news_strapline = get_post_meta( $post_object->ID, 'news_strapline', true );
 		$context['news_strapline'] =('' !== $news_strapline ) ? '<div class="news-strapline">'.$news_strapline.'</div>' : '';
@@ -695,7 +822,10 @@ class News extends CustomPostType {
 		$loop->the_post();
 			$context['excerpt'] = get_the_content( "[Read More]" );
 		wp_reset_query();
+		return static::render_to_html( $context );
+	}
 
+	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
 		<div class="news">		
@@ -719,18 +849,19 @@ class News extends CustomPostType {
 			</div>
 		</div>
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+		return $html;
 	}
 }
 
 function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
-		'Post',
-		'Page',
-		'Alert',
-		'Billboard',
-		'News',
-		'Staff',
+	__NAMESPACE__.'\Post',
+	__NAMESPACE__.'\Page',
+	__NAMESPACE__.'\Alert',
+	__NAMESPACE__.'\Billboard',
+	__NAMESPACE__.'\News',
+	__NAMESPACE__.'\Staff',
 	));
 }
-add_action('init', 'register_custom_posttypes');
+add_action('init', __NAMESPACE__.'\register_custom_posttypes');

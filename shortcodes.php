@@ -1,6 +1,16 @@
 <?php
-
+/**
+ * Add and configure Shortcodes for this theme.
+ * Relies on the implementation in ShortcodeBase.
+ */
+namespace SDES\BaseTheme\Shortcodes;
+use \StdClass;
+use \Exception;
+use \SimpleXMLElement;
+use SDES\SDES_Static as SDES_Static;
+use SDES\Shortcodes\ShortcodeBase;
 require_once('functions/class-sdes-static.php');
+
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Arrays;
 
@@ -9,12 +19,11 @@ use Underscore\Types\Arrays;
  * Available attributes:
  * name      => The "Menu Name" of the menu under Appearance>Menus, e.g., Pages
  * heading   => Display an alternate heading instead of the menu Id.
- * max-width => Set a max-width on the container DIV.panel.
  *
  * Example:
  * [menuPanel name="Other Resources" heading="An Alternate heading"]
  */
-class MenuPanelSC extends ShortcodeBase {
+class sc_menuPanel extends ShortcodeBase {
     public
         $name = 'Menu Panel',
         $command = 'menuPanel',
@@ -35,13 +44,6 @@ class MenuPanelSC extends ShortcodeBase {
                 'id'        => 'heading',
                 'help_text' => 'A heading to display (optional).',
                 'type'      => 'text',
-            ),
-            array(
-                'name'      => 'Max Width',
-                'id'        => 'max-width',
-                'help_text' => 'The maximum width of the menuPanel.',
-                'type'      => 'text',
-                'default'   => '697px',
             ),
         ); // The parameters used by the shortcode.
 
@@ -69,7 +71,7 @@ class MenuPanelSC extends ShortcodeBase {
         $attrs = shortcode_atts( array(
                 'name' => 'Pages',
                 'heading' => $attrs['name'],
-                'max-width' => '697px',
+                'style' => 'max-width: 697px;',
             ), $attrs
         );
         // Check for errors
@@ -86,7 +88,7 @@ class MenuPanelSC extends ShortcodeBase {
         // Sanitize input and set context for view
         $context['heading'] = esc_html( $attrs['heading'] );
         $context['menu_items'] = wp_get_nav_menu_items( esc_attr( $attrs['name'] ) );
-        $context['max-width'] = esc_attr( $attrs['max-width'] );
+        $context['style'] = esc_attr( $attrs['style'] );
         return static::render($context);
     }
 
@@ -95,18 +97,18 @@ class MenuPanelSC extends ShortcodeBase {
      * Context variables:
      * heading    => The panel-heading.
      * menu_items => An array of WP_Post objects representing the items in the menu.
-     * max-width  => Value for the css attribute "max-width" on the container div.
+     * style  => Value for the css attribute "style" on the container div.
      */
     public static function render( $context ){
         ob_start();
         ?>
-        <div class="panel panel-warning menuPanel" style="max-width: <?=$context['max-width']?>;">
+        <div class="panel panel-warning menuPanel" style="<?=$context['style']?>">
             <div class="panel-heading"><?=$context['heading']?></div>
             <div class="list-group">
                 <?php
                 foreach ( (array) $context['menu_items'] as $key => $menu_item ) {
                     $title = $menu_item->title;
-                    $url = $menu_item->url;
+                    $url = SDES_Static::url_ensure_prefix( $menu_item->url );
                     $class_names = SDES_Static::Get_ClassNames($menu_item, 'nav_menu_css_class');
                     //TODO: Automatically add .external if url is external (check with regex?)
                 ?>
@@ -172,7 +174,7 @@ require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
  * [row] - Wrap HTML in a Boostrap CSS row.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L454-L504
  */
-class RowSC extends ShortcodeBase {
+class sc_row extends ShortcodeBase {
     public
         $name        = 'Row',
         $command     = 'row',
@@ -229,7 +231,7 @@ class RowSC extends ShortcodeBase {
  * [column] - Wrap HTML in a Boostrap CSS column.
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/shortcodes.php#L506-L650
  */
-class ColumnSC extends ShortcodeBase {
+class sc_column extends ShortcodeBase {
     public
         $name        = 'Column',
         $command     = 'column',
@@ -384,13 +386,14 @@ class ColumnSC extends ShortcodeBase {
 /**
  * [events] - Show an events calendar from events.ucf.edu
  */
-class EventsSC extends ShortcodeBase {
+class sc_events extends ShortcodeBase {
     public
         $name = 'Events', // The name of the shortcode.
         $command = 'events', // The command used to call the shortcode.
         $description = 'Show events calendar from a feed', // The description of the shortcode.
         $callback    = 'callback',
         $render      = False,
+        $closing_tag = False,
         $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
         $params      = array(
             array(
@@ -400,10 +403,17 @@ class EventsSC extends ShortcodeBase {
                 'type'      => 'text'
             ),
             array(
+                'name'      => 'Header',
+                'id'        => 'header',
+                'help_text' => 'The a header for the events calendar.',
+                'type'      => 'text',
+                'default'   => 'Upcoming Events',
+            ),
+            array(
                 'name'      => 'Limit',
                 'id'        => 'limit',
-                'help_text' => 'The calendar_id of the events.ucf.edu calendar.',
-                'type'      => 'text',
+                'help_text' => 'Only show this many items.',
+                'type'      => 'number',
                 'default'   => 6,
             ),
         ); // The parameters used by the shortcode.
@@ -411,11 +421,11 @@ class EventsSC extends ShortcodeBase {
     /**
      * @see https://github.com/ucf-sdes-it/it-php-template/blob/e88a085401523f78b812ea8b4d9557ba30e40c9f/template_functions_generic.php#L241-L326
      */
-    public static function callback($attr, $content='') {  //$id, $limit = 6, $header_text = "Upcoming Events"){
+    public static function callback($attr, $content='') {
         $attr = shortcode_atts( array(
                 'id' => 41, // SDES Events calendar.
                 'limit' => 6,
-                'header_text'    => 'Upcoming Events',
+                'header'    => 'Upcoming Events',
             ), $attr
         );
         if($attr['id'] == null) return true;
@@ -451,7 +461,7 @@ class EventsSC extends ShortcodeBase {
           ob_start();
           ?>
             <div class="panel panel-warning">
-                <div class="panel-heading"><?= $attr['header_text'] ?></div>
+                <div class="panel-heading"><?= $attr['header'] ?></div>
                 <ul class="list-group ucf-events">
                 <?php
                     //check for items
@@ -496,7 +506,7 @@ class EventsSC extends ShortcodeBase {
 /**
  * [socialButton] - Show a button for social network, based on the URL set in the Theme Customizer.
  */
-class SocialButtonSC extends ShortcodeBase {
+class sc_socialButton extends ShortcodeBase {
     public
         $name = 'Social Button', // The name of the shortcode.
         $command = 'socialButton', // The command used to call the shortcode.
@@ -542,7 +552,9 @@ class SocialButtonSC extends ShortcodeBase {
             case 'twitter':
             case 'youtube':
             default:
-                $ctxt['url'] = esc_attr( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') );
+                $ctxt['url'] = esc_attr(
+                    SDES_Static::url_ensure_prefix(
+                        SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') ) );
                 $ctxt['image'] = esc_attr( "https://assets.sdes.ucf.edu/images/{$attr['network']}.gif" );
                 break;
         }
@@ -571,6 +583,7 @@ class SocialButtonSC extends ShortcodeBase {
 }
 
 require_once( get_stylesheet_directory().'/custom-posttypes.php' );
+    use SDES\BaseTheme\PostTypes\Alert;
 /**
  * Use code from the Alert class in a shortcode.
  * Extending Alert to add ContextToHTML, assuming responsiblity for sanitizing inputs.
@@ -583,7 +596,7 @@ class AlertWrapper extends Alert {
 /**
  * [alert] - Show a single, ad-hoc alert directly in a page's content.
  */
-class AlertSC extends ShortcodeBase {
+class sc_alert extends ShortcodeBase {
     public
         $name = 'Alert (Ad hoc)', // The name of the shortcode.
         $command = 'alert', // The command used to call the shortcode.
@@ -641,7 +654,7 @@ class AlertSC extends ShortcodeBase {
         $alert->post_content = esc_attr( $attr['message'] );
         $metadata_fields = array(
                'alert_is_unplanned' => $attr['is_unplanned'],
-               'alert_url' => esc_attr( $attr['url'] ),
+               'alert_url' => esc_attr( SDES_Static::url_ensure_prefix($attr['url']) ),
             );
         $ctxt = AlertWrapper::get_render_context( $alert, $metadata_fields );
         return AlertWrapper::ContextToHTML( $ctxt );
@@ -650,12 +663,12 @@ class AlertSC extends ShortcodeBase {
 
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
-            'RowSC',
-            'ColumnSC',
-            'AlertSC',
-            'MenuPanelSC',
-            'EventsSC',
-            'SocialButtonSC',
+            __NAMESPACE__.'\sc_row',
+            __NAMESPACE__.'\sc_column',
+            __NAMESPACE__.'\sc_alert',
+            __NAMESPACE__.'\sc_menuPanel',
+            __NAMESPACE__.'\sc_events',
+            __NAMESPACE__.'\sc_socialButton',
         ));
 }
-add_action( 'init', 'register_shortcodes' );
+add_action( 'init', __NAMESPACE__.'\register_shortcodes' );

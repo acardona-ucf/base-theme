@@ -1,10 +1,15 @@
 <?php
 /**
+ * Display the Settings fields for this theme (admin settings for IT staff).
+ */
+namespace SDES\BaseTheme\Settings;
+/**
  * Display the "Field" (labels and input areas) for a Setting/Option.
  * Corresponds to the "Control"s in Theme Customizer.
  */
 
 require_once('class-sdes-static.php');
+    use SDES\SDES_Static as SDES_Static;
 
 function section_one_callback() {
     echo 'Some help text goes here.';
@@ -17,7 +22,7 @@ function google_analytics_id_callback() {
 
 function javascript_callback() {
     $sdes_theme_settings_js = esc_attr( get_option('sdes_theme_settings_js', '') );
-    echo "<textarea name='sdes_theme_settings_js' >$sdes_theme_settings_js</textarea>";
+    echo "<textarea style='width: 560px; height: 150px;' name='sdes_theme_settings_js' >$sdes_theme_settings_js</textarea>";
 }
 
 function javascript_libraries_callback() {
@@ -39,21 +44,21 @@ function footer_content_left_callback() {
     $footer_content_left
         = wp_kses( get_option('sdes_rev_2015-footer_content-left', ''),
                     wp_kses_allowed_html( 'post' ), null );
-    echo "<textarea name='sdes_rev_2015-footer_content-left'>$footer_content_left</textarea>";
+    echo "<textarea style='width: 560px; height: 150px;' name='sdes_rev_2015-footer_content-left'>$footer_content_left</textarea>";
 }
 
 function footer_content_center_callback() {
     $footer_content_center
         = wp_kses( get_option('sdes_rev_2015-footer_content-center', ''),
                     wp_kses_allowed_html( 'post' ), null );
-    echo "<textarea name='sdes_rev_2015-footer_content-center'>$footer_content_center</textarea>";
+    echo "<textarea style='width: 560px; height: 150px;' name='sdes_rev_2015-footer_content-center'>$footer_content_center</textarea>";
 }
 
 function footer_content_right_callback() {
     $footer_content_right
         = wp_kses( get_option('sdes_rev_2015-footer_content-right', ''),
                     wp_kses_allowed_html( 'post' ), null );
-    echo "<textarea name='sdes_rev_2015-footer_content-right'>$footer_content_right</textarea>";
+    echo "<textarea style='width: 560px; height: 150px;' name='sdes_rev_2015-footer_content-right'>$footer_content_right</textarea>";
 }
 
 

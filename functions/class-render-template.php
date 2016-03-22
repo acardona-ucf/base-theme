@@ -3,8 +3,10 @@
  * Static functions to display HTML.
  * @package Rev2015 WordPress Prototype
  */
+namespace SDES\BaseTheme;
 
 require_once( 'class-sdes-static.php' );
+	use SDES\SDES_Static as SDES_Static;
 
 // TODO: rename class to Render_View to avoid confusion with WP Templates.
 /**
