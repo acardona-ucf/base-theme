@@ -53,9 +53,15 @@ class ShortcodeBase_Loader {
 }
 ShortcodeBase_Loader::Load();
 
+/**
+ * Functions used to display a shortcode in Shortcode-Interface.php.
+ */
 interface IShortcodeUI {
+	/** Friendly name of the shortcode in the interface dropdown. */
 	public function get_option_markup();
+	/** Description of the shortcode. */
 	public function get_description_markup();
+	/** Options fields shown in the interface form. */
 	public function get_form_markup();
 }
 

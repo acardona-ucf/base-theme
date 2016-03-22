@@ -1,5 +1,5 @@
 <?php
-namespace SDES\BaseTheme;
+namespace SDES\BaseTheme\Taxonomies;
 use SDES\CustomTaxonomy as CustomTaxonomy;
 
 require_once( get_stylesheet_directory().'/functions/class-custom-taxonomy.php' );

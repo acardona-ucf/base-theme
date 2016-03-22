@@ -1,8 +1,9 @@
 <?php
+namespace SDES\Shortcodes;
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
-	use \SDES\Shortcodes\ShortcodeBase;
-	use \SDES\Shortcodes\IShortcodeUI;
-	use \SDES\Shortcodes\Shortcode_CustomPostType_Wrapper;
+	use SDES\Shortcodes\ShortcodeBase;
+	use SDES\Shortcodes\IShortcodeUI;
+	use SDES\Shortcodes\Shortcode_CustomPostType_Wrapper;
 /**
  * Shortcode admin interface
  * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/includes/shortcode-interface.php
