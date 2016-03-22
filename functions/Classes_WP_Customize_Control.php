@@ -1,6 +1,7 @@
 <?php
+namespace SDES\CustomizerControls;
 require_once( ABSPATH . WPINC . '/class-wp-customize-control.php' );
-
+	use \WP_Customize_Control;
 
 class Textarea_CustomControl extends WP_Customize_Control {
 	public $type = 'textarea';

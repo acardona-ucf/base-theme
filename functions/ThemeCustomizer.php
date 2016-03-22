@@ -1,5 +1,12 @@
 <?php
+namespace SDES\BaseTheme\ThemeCustomizer;
+use \WP_Customize_Control;
+use \WP_Customize_Color_Control;
+use SDES\CustomizerControls\SDES_Customizer_Helper;
+use SDES\CustomizerControls\Textarea_CustomControl;
+use SDES\CustomizerControls\Phone_CustomControl;
 // require_once('class-sdes-static.php');
+use \SDES_Static as SDES_Static;
 // require_once('Classes_WP_Customize_Control.php');
 
 // Theme Customizer ///////////////////////////////////////////////////////////
@@ -63,7 +70,7 @@ function register_theme_customizer( $wp_customizer ) {
 
 	add_section_footer_options( $wp_customizer );
 }
-add_action( 'customize_register', 'register_theme_customizer' );
+add_action( 'customize_register', __NAMESPACE__.'\register_theme_customizer' );
 
 function add_section_DisplayOptions( $wp_customizer, $args = null) {
 	// TODO: define $args defaults here
@@ -510,4 +517,4 @@ function tctheme_customizer_live_preview() {
 	);
 	
 }
-add_action( 'customize_preview_init', 'tctheme_customizer_live_preview' );
+add_action( 'customize_preview_init', __NAMESPACE__.'\tctheme_customizer_live_preview' );
