@@ -6,7 +6,7 @@ use SDES\CustomizerControls\SDES_Customizer_Helper;
 use SDES\CustomizerControls\Textarea_CustomControl;
 use SDES\CustomizerControls\Phone_CustomControl;
 // require_once('class-sdes-static.php');
-use \SDES_Static as SDES_Static;
+	use SDES\SDES_Static as SDES_Static;
 // require_once('Classes_WP_Customize_Control.php');
 
 // Theme Customizer ///////////////////////////////////////////////////////////
@@ -210,8 +210,8 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 		array(
 			'default'    =>  '407-823-4625',
 			'transport'  =>  $args['phone-transport'],  // refresh (default) or postMessage
-			'sanitize_callback' => 'SDES_Static::sanitize_telephone_407',
-			'sanitize_js_callback' => 'SDES_Static::sanitize_telephone_407',
+			'sanitize_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
+			'sanitize_js_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
 			// 'capability' => '',
 		)
 	);
@@ -235,8 +235,8 @@ function add_section_ContactOptions( $wp_customizer, $args = null) {
 		array(
 			'default'    =>  '407-823-2969',
 	        'transport'  =>  $args['fax-transport'],  // refresh (default) or postMessage
-	        'sanitize_callback' => 'SDES_Static::sanitize_telephone_407',
-	        'sanitize_js_callback' => 'SDES_Static::sanitize_telephone_407',
+	        'sanitize_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
+	        'sanitize_js_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
 	        // 'capability' => '',
 		)
 	);

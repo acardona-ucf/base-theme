@@ -2,7 +2,7 @@
 namespace SDES\CustomizerControls;
 use \WP_Customize_Control;
 require_once('class-sdes-static.php');
-	use \SDES_Static as SDES_Static;
+	use SDES\SDES_Static as SDES_Static;
 /**
 * Helper methods for working with the Theme Customizer.
 * @see SDES_Static::set_default_keyValue()	Set default value for an args array.

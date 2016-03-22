@@ -1,7 +1,7 @@
 <?php
 namespace SDES\BaseTheme\Shortcodes;
 use \StdClass;
-use \SDES_Static;
+use SDES\SDES_Static as SDES_Static;
 use SDES\Shortcodes\ShortcodeBase;
 require_once('functions/class-sdes-static.php');
 

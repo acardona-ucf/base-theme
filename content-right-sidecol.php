@@ -2,6 +2,7 @@
 /*
 Template Name: Content Page Right Sidecolumn
 */
+use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
 	use SDES\BaseTheme\SDES_Helper;
 get_header();

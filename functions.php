@@ -1,5 +1,6 @@
 <?php
 // require_once('functions/class-sdes-static.php');
+use SDES\SDES_Static as SDES_Static;
 
 /*-------------------------------------------------------------------------------------------*/
 //Home title fix

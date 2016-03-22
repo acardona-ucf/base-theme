@@ -1,4 +1,5 @@
 <?php
+use SDES\SDES_Static as SDES_Static;
 use SDES\BaseTheme\SDES_Helper;
 
 // Only content managers and admins should be able to see single alerts, usually as a preview.

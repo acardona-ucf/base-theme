@@ -2,7 +2,7 @@
 
 // require_once 'vendor/autoload.php';
 require_once '\..\functions\class-sdes-static.php';
-
+    use SDES\SDES_Static as SDES_Static;
 
 class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 {

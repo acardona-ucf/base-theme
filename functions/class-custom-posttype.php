@@ -7,6 +7,7 @@ require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 	use SDES\Shortcodes\ShortcodeBase;
 	class_alias('SDES\\Shortcodes\\ShortcodeBase', 'ShortcodeBase');
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
+	use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Object;
 use Underscore\Types\Arrays;

@@ -1,5 +1,5 @@
 <?php
-
+use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-metaboxes.php' );
 require_once( get_stylesheet_directory().'/functions/class-custom-posttype.php' );
 

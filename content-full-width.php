@@ -2,6 +2,7 @@
 /*
 Template Name: Content Full Width
 */
+use SDES\SDES_Static as SDES_Static;
 require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
 	use SDES\BaseTheme\SDES_Helper;
 get_header();
@@ -24,7 +25,7 @@ get_header();
 				, 'depth' => 1
 				, 'container' => 'ul'
 				, 'menu_class' => 'nav nav-pills pull-right'
-				, 'fallback_cb' => 'SDES_Static::fallback_navpills_warning'
+				, 'fallback_cb' => 'SDES\\SDES_Static::fallback_navpills_warning'
 			));
 		?>
 		<h1 id="content-top"><?=the_title();?></h1>

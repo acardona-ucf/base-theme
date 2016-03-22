@@ -1,4 +1,6 @@
 <?php
+namespace SDES;
+use \WP_Query;
 /**
  * Static Helper functions that are reusable in any PHP Site.
  * @package SDES Static - Rev2015 WordPress Prototype

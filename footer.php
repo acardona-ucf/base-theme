@@ -4,11 +4,12 @@
 		<nav class="navbar navbar-default site-nav-repeated">
 			<div class="container-fluid">
 				<?php
-				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				
 				<p class="nav navbar-text navbar-right icons">
 				<?php
+					use SDES\SDES_Static as SDES_Static;
 					$url_facebook = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-facebook', '') );
 					$url_twitter = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-twitter', '') );
 					$url_youtube = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-youtube', '') );
@@ -61,7 +62,7 @@
 			return
 				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
 				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
-					'fallback_cb' => 'SDES_Static::fallback_navbar_list_pages',
+					'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages',
 					'links_cb' => array(
 							'Footer::get_feed_links', 
 							array($position, array('echo'=>false)) 

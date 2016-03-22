@@ -1,7 +1,7 @@
 <?php
 namespace SDES;
 require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
-	use \SDES_Static as SDES_Static;
+	use SDES\SDES_Static as SDES_Static;
 
 /**
  * Abstract class for defining custom taxonomies.  
