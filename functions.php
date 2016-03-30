@@ -46,37 +46,7 @@ function enqueue_scripts_and_styles(){
 require_once('custom-taxonomies.php');    // Define and Register taxonomies for this theme
 
 require_once('custom-posttypes.php');  // Define and Register custom post_type's (CPTs) for this theme
-//TODO: extract Custom Post Type classes to their own file.
 
-/* Add thumbnail column to admin page */
-if ( !function_exists('AddThumbColumn') && function_exists('add_theme_support') ) { 
-    function AddThumbColumn($cols) { 
-        $cols['thumbnail'] = __('Thumbnail'); return $cols; 
-    } 
-    function AddThumbValue($column_name, $post_id) { 
-        $width = (int) 120; $height = (int) 120; 
-        if ( 'thumbnail' == $column_name ) { 
-
-            $thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true ); 
-
-            $attachments = get_children( array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image') ); 
-            if ($thumbnail_id) 
-                $thumb = wp_get_attachment_image( $thumbnail_id, array($width, $height), true ); 
-            elseif ($attachments) { 
-                foreach ( $attachments as $attachment_id => $attachment ) { 
-                    $thumb = wp_get_attachment_image( $attachment_id, array($width, $height), true ); 
-                } 
-            } 
-            if ( isset($thumb) && $thumb ) { echo $thumb; } else { echo __('None'); } 
-        }
-    } 
-    // for posts
-    add_filter( 'manage_posts_columns', 'AddThumbColumn' ); 
-    add_action( 'manage_posts_custom_column', 'AddThumbValue', 10, 2 ); 
-    /*     // for pages 
-    add_filter( 'manage_pages_columns', 'AddThumbColumn' ); 
-    add_action( 'manage_pages_custom_column', 'AddThumbValue', 10, 2 );*/ 
-}
 
 
 /* function to return a custom field value. */

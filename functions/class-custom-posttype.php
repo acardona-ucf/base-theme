@@ -53,6 +53,7 @@ abstract class CustomPostType {
 		$default_order   = null,
 		// Interface Columns/Fields
 		$calculated_columns = array(
+			array( 'heading'=>'Thumbnail', 'column_name'=>'_thumbnail_id', 'custom_column_order'=>100 ),
 			// array( 'heading'=>'A Column Heading Text', 'column_name'=>'id_of_the_column' ),
 		), // Calculate values within custom_column_echo_data.
 		$sc_interface_fields = null; // Fields for shortcodebase interface (false hides from list, null shows only the default fields).
@@ -204,6 +205,30 @@ abstract class CustomPostType {
 
 
 	/**
+	 * Get an HTML img element representing an image attachment for this post.
+	 * @param int $post_id The ID of the current post.
+	 * @see custom_column_echo_data() custom_column_echo_data()
+	 * @see http://developer.wordpress.org/reference/functions/wp_get_attachment_image/ WP_Ref: wp_get_attachment_image()
+	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP_Ref: get_post_meta()
+	 * @see http://codex.wordpress.org/Function_Reference/get_children WP_Codex: get_children()
+	 * @usedby custom_column_echo_data()
+	 * @return string An html IMG element or default text.
+	 */
+	public static function get_thumbnail_or_attachment_image( $post_id ) {
+		$width = (int) 120; $height = (int) 120;
+		$thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true ); 
+		$attachments = get_children( array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image') ); 
+		if ($thumbnail_id) 
+			$thumb = wp_get_attachment_image( $thumbnail_id, array($width, $height), true ); 
+		elseif ($attachments) { 
+			foreach ( $attachments as $attachment_id => $attachment ) { 
+				$thumb = wp_get_attachment_image( $attachment_id, array($width, $height), true ); 
+			} 
+		} 
+		if ( isset($thumb) && $thumb ) { return $thumb; } else { return __('None'); }
+	}
+
+	/**
 	 * Get all custom columns for this post type. Autogenerates columns for $this->fields() with a 'custom_column_order' key (note: the value must not be 0).
 	 * @see custom_column_set_headings() custom_column_set_headings()
 	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-filter Underscore-php: filter
@@ -240,13 +265,18 @@ abstract class CustomPostType {
 
 	/**
 	 * Show the data for a single row ($post_id) of a column.
+	 * @see get_thumbnail_or_attachment_image() get_thumbnail_or_attachment_image()
 	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP_Ref: get_post_meta()
+	 * @uses get_thumbnail_or_attachment_image()
 	 * @param string $column  The name of the column to display.
 	 * @param int    $post_id The ID of the current post.
 	 * @return void  Echos the data for this column.
 	 */
 	public function custom_column_echo_data( $column, $post_id ) {
 		switch ( $column ) {
+			case '_thumbnail_id':
+				echo esc_html( static::get_thumbnail_or_attachment_image( $post_id ) );
+				break;
 			default:
 				echo esc_attr( get_post_meta( $post_id, $column, true ) );
 				break;
