@@ -99,6 +99,7 @@ class Alert extends CustomPostType {
 		$calculated_columns = array(), // Empty array to hide thumbnails.
 		$sc_interface_fields = false;
 
+	// TODO: convert checkboxes from 'checkbox_list' to 'checkbox' after it is implemented.
 	public function fields() {
 		$prefix = $this->options('name').'_';
 		return array(
@@ -144,6 +145,21 @@ class Alert extends CustomPostType {
 				'default' => 'http://',
 			),
 		);
+	}
+
+	public function custom_column_echo_data( $column, $post_id ) {
+		$prefix = $this->options( 'name' ) . '_';
+		switch ( $column ) {
+			case $prefix.'is_unplanned':
+			case $prefix.'is_sitewide':
+				$data = get_post_meta( $post_id, $column, true );
+				$checked = ( '' !== $data ) ? "checked='checked'" : '';
+				echo "<input type='checkbox' disabled {$checked}>";
+				break;
+			default:
+				parent::custom_column_echo_data( $column, $post_id );
+				break;
+		}
 	}
 
 	public function shortcode( $attr ) {
