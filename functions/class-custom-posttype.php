@@ -215,17 +215,20 @@ abstract class CustomPostType {
 	 * @return string An html IMG element or default text.
 	 */
 	public static function get_thumbnail_or_attachment_image( $post_id ) {
-		$width = (int) 120; $height = (int) 120;
-		$thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true ); 
-		$attachments = get_children( array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image') ); 
-		if ($thumbnail_id) 
-			$thumb = wp_get_attachment_image( $thumbnail_id, array($width, $height), true ); 
-		elseif ($attachments) { 
-			foreach ( $attachments as $attachment_id => $attachment ) { 
-				$thumb = wp_get_attachment_image( $attachment_id, array($width, $height), true ); 
-			} 
-		} 
-		if ( isset($thumb) && $thumb ) { return $thumb; } else { return __('None'); }
+		$thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true );
+		if ( $thumbnail_id ) {
+			$html = wp_get_attachment_image( $thumbnail_id, 'thumbnail', true );
+		} else {
+			$attachments = get_children(
+				array( 'post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image' )
+			);
+			if ( $attachments ) {
+				$last_attachment_id = endKey( $attachments );
+				$html = wp_get_attachment_image( $last_attachment_id, 'thumbnail', true );
+			}
+		}
+		if ( ! isset( $html )  || ! $html ) { $html = __( 'None' ); }
+		return $html;
 	}
 
 	/**
