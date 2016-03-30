@@ -95,6 +95,8 @@ class Alert extends CustomPostType {
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null,
+		// Interface Columns/Fields
+		$calculated_columns = array(), // Empty array to hide thumbnails.
 		$sc_interface_fields = false;
 
 	public function fields() {
@@ -108,6 +110,7 @@ class Alert extends CustomPostType {
 				'choices' => array(
 					'Unplanned alert.' => $prefix.'is_unplanned' 
 				),
+				'custom_column_order' => 400,
 			),
 			array(
 				'name' => 'Sitewide Alert',
@@ -117,18 +120,21 @@ class Alert extends CustomPostType {
 				'choices' => array(
 					'Sitewide alert.' => $prefix.'is_sitewide'
 				),
+				'custom_column_order' => 300,
 			),
 			array(
 				'name' => 'Start Date',
 				'descr' => 'The first day the alert should appear.',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
+				'custom_column_order' => 100,
 			),
 			array(
 				'name' => 'End Date',
 				'descr' => 'The last day the alert should appear.',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
+				'custom_column_order' => 200,
 			),
 			array(
 				'name' => 'URL',
@@ -316,12 +322,14 @@ class Billboard extends CustomPostType {
 				'descr' => 'The billboard will be shown starting on this date.',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
+				'custom_column_order' => 200,
 			),
 			array(
 				'name' => 'End Date',
 				'descr' => 'Stop showing the billboard after this date.',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
+				'custom_column_order' => 300,
 			),
 		);
 	}
@@ -648,6 +656,8 @@ class News extends CustomPostType {
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null,
+		// Interface Columns/Fields
+		// $calculated_columns = array(),
 		$sc_interface_fields = array(
 			array(
 				'name' => 'Show Archives',
@@ -689,12 +699,14 @@ class News extends CustomPostType {
 				'descr' => '',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
+				'custom_column_order' => 200,
 			),
 			array(
 				'name' => 'End Date',
 				'descr' => '',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
+				'custom_column_order' => 300,
 			),
 		);
 	}
