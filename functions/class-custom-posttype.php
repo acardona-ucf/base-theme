@@ -2,6 +2,7 @@
 /**
  * Abstract base class for creating custom posttypes.
  * This class is central the a theme's fuctionality, and heavily relies on other files.
+ * @filesource
  */
 namespace SDES;
 
@@ -44,12 +45,16 @@ abstract class CustomPostType {
 		$use_order      = False, // Wordpress built-in order meta data
 		$use_metabox    = False, // Enable if you have custom fields to display in admin
 		$use_shortcode  = False, // Auto generate a shortcode for the post type
-		                         // (see also objectsToHTML and toHTML methods)
+								 // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null,
+		// Interface Columns/Fields
+		$calculated_columns = array(
+			// array( 'heading'=>'A Column Heading Text', 'column_name'=>'id_of_the_column' ),
+		), // Calculate values within custom_column_echo_data.
 		$sc_interface_fields = null; // Fields for shortcodebase interface (false hides from list, null shows only the default fields).
 
 	/**
@@ -197,25 +202,98 @@ abstract class CustomPostType {
 		do_meta_boxes( get_current_screen(), 'after_title', $post ); // Output meta boxes for the 'after_title' context.
 	}
 
+
+	/**
+	 * Get all custom columns for this post type. Autogenerates columns for $this->fields() with a 'custom_column_order' key (note: the value must not be 0).
+	 * @see custom_column_set_headings() custom_column_set_headings()
+	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-filter Underscore-php: filter
+	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-each Underscore-php: each
+	 * @usedby custom_column_set_headings()
+	 * @return Array Collection of Columns, each with the keys: 'heading', 'metafield', 'custom_column_order'.
+	 */
+	public function custom_columns_get_all() {
+		$calculated_columns = $this->options( 'calculated_columns' );
+		// Filter and Map fields to custom columns.
+		$field_columns = Arrays::from( $this->fields() )
+			->filter( function( $x ) { return array_key_exists( 'custom_column_order', $x ) && $x['custom_column_order']; } )
+			->each( function( $field ) {
+				$custom_column_order = isset( $field['custom_column_order'] ) ? $field['custom_column_order'] : 1000;
+				return array( 'heading' => $field['name'], 'column_name' => $field['id'], 'custom_column_order' => $custom_column_order );
+			})->obtain();
+		$columns = Arrays::sort( array_merge( $calculated_columns, $field_columns ), 'custom_column_order' );
+		return $columns;
+	}
+
+	/**
+	 * Add headers for custom columns to an index page (built-in listing of posts with this post_type).
+	 * @see custom_columns_get_all() custom_columns_get_all()
+	 * @uses custom_columns_get_all()
+	 * @param array $columns An array of column name ⇒ label. The name is passed to functions to identify the column. The label is shown as the column header.
+	 * @return array The updated column names and labels.
+	 */
+	public function custom_column_set_headings( $columns ) {
+		foreach ( $this->custom_columns_get_all() as $custom_column ) {
+			$columns[ $custom_column['column_name'] ] = $custom_column['heading'];
+		}
+		return $columns;
+	}
+
+	/**
+	 * Show the data for a single row ($post_id) of a column.
+	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP_Ref: get_post_meta()
+	 * @param string $column  The name of the column to display.
+	 * @param int    $post_id The ID of the current post.
+	 * @return void  Echos the data for this column.
+	 */
+	public function custom_column_echo_data( $column, $post_id ) {
+		switch ( $column ) {
+			default:
+				echo esc_attr( get_post_meta( $post_id, $column, true ) );
+				break;
+		}
+		return;
+	}
+
+	/**
+	 * Add columns to an index page (built-in listing of posts with this post_type).
+	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/manage_$post_type_posts_columns WP_Codex: manage_$post_type_posts_columns
+	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/manage_$post_type_posts_custom_column WP_Codex: manage_$post_type_posts_custom_column
+	 * @uses options(), $name.
+	 */
+	public function register_custom_columns() {
+		$posttype = $this->options( 'name' );
+		add_filter( "manage_{$posttype}_posts_columns", array( $this, 'custom_column_set_headings' ) );
+		/* add_action( $tag, $function_to_add, $priority, $accepted_args ); // Signature. */
+		add_action( "manage_{$posttype}_posts_custom_column" , array( $this, 'custom_column_echo_data' ), 10, 2 );
+	}
+
 	/**
 	 * Registers the custom post type and any other ancillary actions that are
 	 * required for the post to function properly.
-	 * @see http://codex.wordpress.org/Function_Reference/register_post_type
+	 * @see http://codex.wordpress.org/Function_Reference/register_post_type Codex - register_post_type()
+	 * @see http://codex.wordpress.org/Function_Reference/add_shortcode Codex - add_shortcode()
+	 * @uses labels(), supports(), options(), custom_columns_get_all(), register_custom_columns()
+	 * @uses $public, $taxonomies, $built_in, $use_order, $name, $use_shortcode
 	 * @param Array $args Override the registration args passed to register_post_type.
 	 * */
 	public function register( $args = array() ) {
+		// Register the post type.
 		$registration = array(
 			'labels'     => $this->labels(),
 			'supports'   => $this->supports(),
 			'public'     => $this->options( 'public' ),
 			'taxonomies' => $this->options( 'taxonomies' ),
-			'_builtin'   => $this->options( 'built_in' )
+			'_builtin'   => $this->options( 'built_in' ),
 		);
 		if ( $this->options( 'use_order' ) ) {
-			$registration = array_merge( $registration, array( 'hierarchical' => True, ) );
+			$registration = array_merge( $registration, array( 'hierarchical' => true ) );
 		}
 		$registration = array_merge( $registration, $args );
 		register_post_type( $this->options( 'name' ), $registration );
+		// Register custom columns.
+		$custom_columns = $this->custom_columns_get_all();
+		if ( null !== $custom_columns && isset( $custom_columns[0] ) ) { $this->register_custom_columns(); }
+		// Add shortcode.
 		if ( $this->options( 'use_shortcode' ) ) {
 			add_shortcode( $this->options( 'name' ).'-list', array( $this, 'shortcode' ) );
 		}
