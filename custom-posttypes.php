@@ -881,6 +881,8 @@ class News extends CustomPostType {
 	}
 }
 
+/** Register custom post types when the theme is initialized.
+ * @see http://codex.wordpress.org/Plugin_API/Action_Reference/init WP-Codex: init action hook. */
 function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
 	__NAMESPACE__.'\Post',

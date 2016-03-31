@@ -30,10 +30,10 @@ use Underscore\Types\Arrays;
  * @see SDES_Metaboxes::$installed_custom_post_types
  * @see SDES_Metaboxes::show_meta_boxes (calls SDES_Metaboxes::display_meta_box_field)
  * @see SDES_Static::instantiate_and_register_classes()
- * Based on: https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/custom-post-types.php#L1-L242
+ * Based on: http://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/custom-post-types.php#L1-L242
  **/
 abstract class CustomPostType {
-  public
+  	public
 	$name           = 'custom_post_type',
 	$plural_name    = 'Custom Posts',
 	$singular_name  = 'Custom Post',
@@ -66,8 +66,8 @@ abstract class CustomPostType {
 	 * custom post type.  Any options valid in get_posts can be passed as an
 	 * option array.
 	 * @todo Should get_objects() be deprecated?
-	 * @see http://codex.wordpress.org/Template_Tags/get_posts Codex: get_posts()
-	 * @see https://developer.wordpress.org/reference/functions/get_posts/ Ref: get_posts()
+	 * @see http://codex.wordpress.org/Template_Tags/get_posts WP-Codex: get_posts()
+	 * @see http://developer.wordpress.org/reference/functions/get_posts/ WP-Ref: get_posts()
 	 * @see get_objects_as_options() get_objects_as_options()
 	 * @usedby get_objects_as_options()
 	 * @param array $options Options to pass to get_posts().
@@ -91,6 +91,7 @@ abstract class CustomPostType {
 	 * @todo Should get_objects_as_options() be deprecated?
 	 * @see get_objects() get_objects()
 	 * @uses get_objects(), options(), $use_title
+	 * @param array $options Options to pass to get_posts().
 	 * @return array Objects as post ids.
 	 **/
 	public function get_objects_as_options( $options ) {
@@ -111,6 +112,8 @@ abstract class CustomPostType {
 
 	/**
 	 * Return the instances values defined by $key.
+	 * @param string|mixed $key The instance value key.
+	 * @return The value stored at the given key.
 	 * */
 	public function options( $key ) {
 		$vars = get_object_vars( $this );
@@ -130,8 +133,8 @@ abstract class CustomPostType {
 	/**
 	 * Using instance variables defined, returns an array defining what this
 	 * custom post type supports.
-	 * @see http://codex.wordpress.org/Function_Reference/register_post_type#supports Codex: register_post_type()
-	 * @see http://codex.wordpress.org/Function_Reference/add_post_type_support Codex: add_post_type_support()
+	 * @see http://codex.wordpress.org/Function_Reference/register_post_type#supports WP-Codex: register_post_type()
+	 * @see http://codex.wordpress.org/Function_Reference/add_post_type_support WP-Codex: add_post_type_support()
 	 * @return array Array of what the post_type supports.
 	 * */
 	public function supports() {
@@ -157,7 +160,7 @@ abstract class CustomPostType {
 
 	/**
 	 * Creates labels array, defining names for admin panel.
-	 * @see http://codex.wordpress.org/Function_Reference/register_post_type#labels Codex: register_post_type()
+	 * @see http://codex.wordpress.org/Function_Reference/register_post_type#labels WP-Codex: register_post_type()
 	 * @return array The labels array used by register_post_type().
 	 * */
 	public function labels() {
@@ -211,7 +214,7 @@ abstract class CustomPostType {
 	/**
 	 * Show metaboxes that have the context 'after_title'.
 	 * @see do_meta_boxes_after_title() do_meta_boxes_after_title()
-	 * @see https://developer.wordpress.org/reference/hooks/edit_form_after_title/ Ref: edit_form_after_title
+	 * @see http://developer.wordpress.org/reference/hooks/edit_form_after_title/ WP-Ref: edit_form_after_title
 	 */
 	public static function register_meta_boxes_after_title() {
 		add_action( 'edit_form_after_title', __CLASS__.'::do_meta_boxes_after_title' );
@@ -220,11 +223,12 @@ abstract class CustomPostType {
 	/**
 	 * Callback function to print metaboxes used by add_action('edit_form_after_title').
 	 * @see register_meta_boxes_after_title() register_meta_boxes_after_title()
-	 * @see http://codex.wordpress.org/Function_Reference/do_meta_boxes Codex: do_meta_boxes()
-	 * @see http://codex.wordpress.org/Function_Reference/get_current_screen Codex: get_current_screen()
+	 * @see http://codex.wordpress.org/Function_Reference/do_meta_boxes WP-Codex: do_meta_boxes()
+	 * @see http://codex.wordpress.org/Function_Reference/get_current_screen WP-Codex: get_current_screen()
+	 * @see http://codex.wordpress.org/Global_Variables WP-Codex: Global variables $wp_meta_boxes, $post
+	 * @param WP_Post $post The post object, passed to the metabox's callback function (defined with add_meta_box() in $this->register_metaboxes().
 	 */
 	public static function do_meta_boxes_after_title( $post ) {
-		// global $post, $wp_meta_boxes; // Get the globals.
 		do_meta_boxes( get_current_screen(), 'after_title', $post ); // Output meta boxes for the 'after_title' context.
 	}
 
@@ -233,9 +237,9 @@ abstract class CustomPostType {
 	 * Get an HTML img element representing an image attachment for this post.
 	 * @param int $post_id The ID of the current post.
 	 * @see custom_column_echo_data() custom_column_echo_data()
-	 * @see http://developer.wordpress.org/reference/functions/wp_get_attachment_image/ WP_Ref: wp_get_attachment_image()
-	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP_Ref: get_post_meta()
-	 * @see http://codex.wordpress.org/Function_Reference/get_children WP_Codex: get_children()
+	 * @see http://developer.wordpress.org/reference/functions/wp_get_attachment_image/ WP-Ref: wp_get_attachment_image()
+	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP-Ref: get_post_meta()
+	 * @see http://codex.wordpress.org/Function_Reference/get_children WP-Codex: get_children()
 	 * @usedby custom_column_echo_data()
 	 * @return string An html IMG element or default text.
 	 */
@@ -266,8 +270,8 @@ abstract class CustomPostType {
 	 */
 	public function custom_columns_get_all() {
 		$calculated_columns = $this->options( 'calculated_columns' );
-		foreach ($calculated_columns as $calculated_column) {
-			$calculated_column = array_merge( array('sortable' => false, 'orderby' => 'meta_value'), $calculated_column);
+		foreach ( $calculated_columns as $calculated_column ) {
+			$calculated_column = array_merge( array( 'sortable' => false, 'orderby' => 'meta_value' ), $calculated_column );
 		}
 		// Filter and Map fields to custom columns.
 		$field_columns = Arrays::from( $this->fields() )
@@ -276,8 +280,13 @@ abstract class CustomPostType {
 			$order = isset( $field['custom_column_order'] ) ? $field['custom_column_order'] : 1000;
 			$sortable = isset( $field['custom_column_sortable'] ) ? $field['custom_column_sortable'] : true;
 			$orderby = isset( $field['custom_column_orderby'] ) ? $field['custom_column_orderby'] : 'meta_value';
-			return array( 'heading' => $field['name'], 'column_name' => $field['id'], 'order' => $order,
-				'sortable' => $sortable, 'orderby' => $orderby );
+			return array(
+				'heading' => $field['name'],
+				'column_name' => $field['id'],
+				'order' => $order,
+				'sortable' => $sortable,
+				'orderby' => $orderby,
+			);
 		})->obtain();
 		$columns = Arrays::sort( array_merge( $calculated_columns, $field_columns ), 'order' );
 		return $columns;
@@ -302,8 +311,8 @@ abstract class CustomPostType {
 	 * Enable sorting on columns by setting the column's 'orderby' to its name.
 	 * @see custom_columns_sort_orderby() custom_columns_sort_orderby() implements the sorting.
 	 * @see custom_columns_get_all() custom_columns_get_all()
-	 * @see https://developer.wordpress.org/reference/hooks/manage_this-screen-id_sortable_columns/ WP_Ref: manage_{$this->screen->id}_sortable_columns
-	 * @tutorial https://code.tutsplus.com/articles/quick-tip-make-your-custom-column-sortable--wp-25095 Quick Tip: Make Your Custom Column Sortable
+	 * @see http://developer.wordpress.org/reference/hooks/manage_this-screen-id_sortable_columns/ WP-Ref: manage_{$this->screen->id}_sortable_columns
+	 * @tutorial http://code.tutsplus.com/articles/quick-tip-make-your-custom-column-sortable--wp-25095 Quick Tip: Make Your Custom Column Sortable
 	 * @param array $columns An array of sortable columns.
 	 */
 	public function custom_columns_make_sortable( $columns ) {
@@ -322,23 +331,25 @@ abstract class CustomPostType {
 	 * @see custom_columns_make_sortable() custom_columns_make_sortable()
 	 * @see custom_columns_get_all() custom_columns_get_all()
 	 * @uses is_admin(), custom_columns_get_all()
-	 * @tutorial https://code.tutsplus.com/articles/quick-tip-make-your-custom-column-sortable--wp-25095 Quick Tip: Make Your Custom Column Sortable
-	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts WP_Codex: pre_get_posts
-	 * @see http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters Codex: WP_Query Orderby_Parameters
+	 * @tutorial http://code.tutsplus.com/articles/quick-tip-make-your-custom-column-sortable--wp-25095 Quick Tip: Make Your Custom Column Sortable
+	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts WP-Codex: pre_get_posts
+	 * @see http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters WP-Codex: WP_Query Orderby_Parameters
 	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-filter Underscore-php: filter
 	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-first Underscore-php: first
 	 * @param WP_Query $query The query object, which is used for sorting columns.
 	 * @return void Edits the $query object in-place.
 	 */
 	public function custom_columns_sort_orderby( $query ) {
-		if( ! is_admin() ) { return; }
+		if ( ! is_admin() ) { return; }
 		$orderby = $query->get( 'orderby' );
 		$match = Arrays::from( $this->custom_columns_get_all() )
-		 ->filter( function( $x ) use ( $orderby ) { return $orderby == $x['column_name']; } )
+		 ->filter( function( $x ) use ( $orderby ) { return $orderby === $x['column_name']; } )
 		 ->obtain();
 		$count = count( $match );
-		if( 1 < $count ) { echo "Admin Msg: column names must be unique. Please edit the following columns:"; var_dump($match); }
-		elseif( 1 == $count ) {
+		if ( 1 < $count ) {
+			echo 'Admin Msg: column names must be unique. Please edit the following columns:';
+			var_dump( $match );
+		} elseif ( 1 === $count ) {
 			$match = Arrays::first( $match );
 			$query->set( 'meta_key', $match['column_name'] );
 			$query->set( 'orderby', $match['orderby'] );
@@ -349,9 +360,9 @@ abstract class CustomPostType {
 	/**
 	 * Show the data for a single row ($post_id) of a column.
 	 * @see get_thumbnail_or_attachment_image() get_thumbnail_or_attachment_image()
-	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP_Ref: get_post_meta()
-	 * @see http://codex.wordpress.org/Function_Reference/wp_kses_post WP_Codex: wp_kses_post()
-	 * @see https://developer.wordpress.org/reference/functions/esc_attr/ WP_Ref: esc_attr()
+	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP-Ref: get_post_meta()
+	 * @see http://codex.wordpress.org/Function_Reference/wp_kses_post WP-Codex: wp_kses_post()
+	 * @see http://developer.wordpress.org/reference/functions/esc_attr/ WP-Ref: esc_attr()
 	 * @uses get_thumbnail_or_attachment_image()
 	 * @param string $column  The name of the column to display.
 	 * @param int    $post_id The ID of the current post.
@@ -374,9 +385,9 @@ abstract class CustomPostType {
 	 * @see custom_columns_set_headings() custom_columns_set_headings()
 	 * @see custom_columns_make_sortable() custom_columns_make_sortable()
 	 * @see custom_column_echo_data() custom_column_echo_data()
-	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/manage_$post_type_posts_columns WP_Codex: manage_$post_type_posts_columns
-	 * @see https://developer.wordpress.org/reference/hooks/manage_this-screen-id_sortable_columns/ WP_Ref: manage_{$this->screen->id}_sortable_columns
-	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/manage_$post_type_posts_custom_column WP_Codex: manage_$post_type_posts_custom_column
+	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/manage_$post_type_posts_columns WP-Codex: manage_$post_type_posts_columns
+	 * @see http://developer.wordpress.org/reference/hooks/manage_this-screen-id_sortable_columns/ WP-Ref: manage_{$this->screen->id}_sortable_columns
+	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/manage_$post_type_posts_custom_column WP-Codex: manage_$post_type_posts_custom_column
 	 * @uses options(), $name.
 	 */
 	public function register_custom_columns() {
@@ -394,8 +405,8 @@ abstract class CustomPostType {
 	/**
 	 * Registers the custom post type and any other ancillary actions that are
 	 * required for the post to function properly.
-	 * @see http://codex.wordpress.org/Function_Reference/register_post_type Codex: register_post_type()
-	 * @see http://codex.wordpress.org/Function_Reference/add_shortcode Codex: add_shortcode()
+	 * @see http://codex.wordpress.org/Function_Reference/register_post_type WP-Codex: register_post_type()
+	 * @see http://codex.wordpress.org/Function_Reference/add_shortcode WP-Codex: add_shortcode()
 	 * @uses labels(), supports(), options(), custom_columns_get_all(), register_custom_columns()
 	 * @uses $public, $taxonomies, $built_in, $use_order, $name, $use_shortcode
 	 * @param Array $args Override the registration args passed to register_post_type.
@@ -424,13 +435,15 @@ abstract class CustomPostType {
 	}
 
 	/**
-	 * Shortcode for this custom post type.  Can be overridden for descendants.
+	 * Shortcode callback for this custom post type.  Can be overridden for descendants.
 	 * Defaults to just outputting a list of objects outputted as defined by
 	 * toHTML method.
 	 * @see SDES_Static::sc_object_list sc_object_list()
 	 * @see CustomPostType::objectsToHTML objectsToHTML()
 	 * @see CustomPostType::toHTML toHTML()
 	 * @uses SDES_Static::sc_object_list()
+	 * @param array $attr The attributes for this shortcode.
+	 * @return string Return the html output for this shortcode.
 	 * */
 	public function shortcode( $attr ) {
 		$default = array(
@@ -488,16 +501,16 @@ abstract class CustomPostType {
 	protected static function render_objects_to_html( $context ) {
 		ob_start();
 		?>
-		<ul class="<?= $context['css_classes'] ?>">
-		<?php foreach ( $context['objects'] as $o ) : ?>
-		<li>
-			<?= static::toHTML( $o ) ?>
-		</li>
-		<?php endforeach;?>
-	</ul>
-	<?php
-	$html = ob_get_clean();
-	return $html;
+			<ul class="<?= $context['css_classes'] ?>">
+			<?php foreach ( $context['objects'] as $o ) : ?>
+				<li>
+					<?= static::toHTML( $o ) ?>
+				</li>
+			<?php endforeach;?>
+			</ul>
+		<?php
+		$html = ob_get_clean();
+		return $html;
 	}
 
 	/**
@@ -519,10 +532,10 @@ abstract class CustomPostType {
 	protected static function render_to_html( $context ) {
 		ob_start();
 		?>
-		<a href="<?= $context['permalink'] ?>"><?= $context['post_title'] ?></a>
-	<?php
-	$html = ob_get_clean();
-	return $html;
+			<a href="<?= $context['permalink'] ?>"><?= $context['post_title'] ?></a>
+		<?php
+		$html = ob_get_clean();
+		return $html;
 	}
 
 
@@ -567,7 +580,7 @@ abstract class CustomPostType {
 
 		/** Scale thumbnails by default. */ define( 'SDES\\SCALE', false );
 		/** Crop thumbnails by default. */  define( 'SDES\\CROP', true );
-		// For cropping behavior see `add_image_size`, e.g.: https://core.trac.wordpress.org/browser/tags/4.4.2/src/wp-includes/media.php#L228 .
+		// For cropping behavior see `add_image_size`, e.g.: http://core.trac.wordpress.org/browser/tags/4.4.2/src/wp-includes/media.php#L228 .
 		set_post_thumbnail_size( 125, 125, CROP );
 		// $crop_from = array( 'top', 'left');
 		// set_post_thumbnail_size( 125, 125, $crop_from );
