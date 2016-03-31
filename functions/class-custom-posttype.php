@@ -64,7 +64,14 @@ abstract class CustomPostType {
 	/**
 	 * Wrapper for get_posts function, that predefines post_type for this
 	 * custom post type.  Any options valid in get_posts can be passed as an
-	 * option array.  Returns an array of objects.
+	 * option array.
+	 * @todo Should get_objects() be deprecated?
+	 * @see http://codex.wordpress.org/Template_Tags/get_posts Codex: get_posts()
+	 * @see https://developer.wordpress.org/reference/functions/get_posts/ Ref: get_posts()
+	 * @see get_objects_as_options() get_objects_as_options()
+	 * @usedby get_objects_as_options()
+	 * @param array $options Options to pass to get_posts().
+	 * @return WP_Post  Array of post objects.
 	 * */
 	public function get_objects( $options = array() ) {
 		$defaults = array(
@@ -81,6 +88,10 @@ abstract class CustomPostType {
 	/**
 	 * Similar to get_objects, but returns array of key values mapping post
 	 * title to id if available, otherwise it defaults to id=>id.
+	 * @todo Should get_objects_as_options() be deprecated?
+	 * @see get_objects() get_objects()
+	 * @uses get_objects(), options(), $use_title
+	 * @return array Objects as post ids.
 	 **/
 	public function get_objects_as_options( $options ) {
 		$objects = $this->get_objects( $options );
@@ -109,7 +120,8 @@ abstract class CustomPostType {
 	/**
 	 * Additional fields on a custom post type may be defined by overriding this
 	 * method on an descendant object.
-	 * @see SDES_Metaboxes::display_metafield() for field types.
+	 * @see SDES_Metaboxes::display_metafield() SDES_Metaboxes::display_metafield() contains field types.
+	 * @return array Specifications of the metadata fields for this post_type (to be displayed in metaboxes).
 	 * */
 	public function fields() {
 		return array();
@@ -120,6 +132,7 @@ abstract class CustomPostType {
 	 * custom post type supports.
 	 * @see http://codex.wordpress.org/Function_Reference/register_post_type#supports Codex: register_post_type()
 	 * @see http://codex.wordpress.org/Function_Reference/add_post_type_support Codex: add_post_type_support()
+	 * @return array Array of what the post_type supports.
 	 * */
 	public function supports() {
 		// Default support array.
@@ -145,6 +158,7 @@ abstract class CustomPostType {
 	/**
 	 * Creates labels array, defining names for admin panel.
 	 * @see http://codex.wordpress.org/Function_Reference/register_post_type#labels Codex: register_post_type()
+	 * @return array The labels array used by register_post_type().
 	 * */
 	public function labels() {
 		return array(
@@ -159,6 +173,7 @@ abstract class CustomPostType {
 	/**
 	 * Creates metabox array for custom post type. Override method in
 	 * descendants to add or modify metaboxes.
+	 * @return array The metaboxes for this post_type.
 	 * */
 	public function metabox() {
 		if ( $this->options( 'use_metabox' ) ) {
@@ -176,7 +191,8 @@ abstract class CustomPostType {
 
 	/**
 	 * Registers metaboxes defined for custom post type.
-	 * @see SDES_Metaboxes::show_meta_boxes (calls SDES_Metaboxes::display_meta_box_field)
+	 * @see SDES_Metaboxes::show_meta_boxes() SDES_Metaboxes::show_meta_boxes()
+	 * @see SDES_Metaboxes::display_meta_box_field() SDES_Metaboxes::display_meta_box_field()
 	 * */
 	public function register_metaboxes() {
 		if ( $this->options( 'use_metabox' ) ) {
@@ -194,7 +210,8 @@ abstract class CustomPostType {
 
 	/**
 	 * Show metaboxes that have the context 'after_title'.
-	 * @see CustomPostType::do_meta_boxes_after_title()
+	 * @see do_meta_boxes_after_title() do_meta_boxes_after_title()
+	 * @see https://developer.wordpress.org/reference/hooks/edit_form_after_title/ Ref: edit_form_after_title
 	 */
 	public static function register_meta_boxes_after_title() {
 		add_action( 'edit_form_after_title', __CLASS__.'::do_meta_boxes_after_title' );
@@ -202,7 +219,9 @@ abstract class CustomPostType {
 
 	/**
 	 * Callback function to print metaboxes used by add_action('edit_form_after_title').
-	 * @see CustomPostType::register_meta_boxes_after_title()
+	 * @see register_meta_boxes_after_title() register_meta_boxes_after_title()
+	 * @see http://codex.wordpress.org/Function_Reference/do_meta_boxes Codex: do_meta_boxes()
+	 * @see http://codex.wordpress.org/Function_Reference/get_current_screen Codex: get_current_screen()
 	 */
 	public static function do_meta_boxes_after_title( $post ) {
 		// global $post, $wp_meta_boxes; // Get the globals.
@@ -382,6 +401,8 @@ abstract class CustomPostType {
 	 * the toHTML method.
 	 * @param WP_Post $objects Iterable of the post objects to display.
 	 * @param string  $css_classes List of css classes for the objects container.
+	 * @see render_objects_to_html() render_objects_to_html()
+	 * @uses render_objects_to_html()
 	 * @see http://php.net/manual/en/language.oop5.late-static-bindings.php
 	 * @see Always prefer `static::` over `self::` (in PHP 5.3+): http://stackoverflow.com/a/6807615
 	 * */
@@ -395,6 +416,8 @@ abstract class CustomPostType {
 	/**
 	 * Render HTML for a collection of objects.
 	 * @param Array $context An array of sanitized variables to display with this view.
+	 * @uses toHTML() toHTML()
+	 * @usedby render_objects_to_html()
 	 */
 	protected static function render_objects_to_html( $context ) {
 		ob_start();
@@ -414,6 +437,7 @@ abstract class CustomPostType {
 	/**
 	 * Outputs this item in HTML.  Can be overridden for descendants.
 	 * @param WP_Post $object The post object to display.
+	 * @see render_to_html() render_to_html()
 	 * */
 	public static function toHTML( $object ) {
 		$context['permalink'] = get_permalink( $object->ID );
@@ -424,6 +448,7 @@ abstract class CustomPostType {
 	/**
 	 * Render HTML for a single object.
 	 * @param Array $context An array of sanitized variables to display with this view.
+	 * @usedby toHTML()
 	 */
 	protected static function render_to_html( $context ) {
 		ob_start();
