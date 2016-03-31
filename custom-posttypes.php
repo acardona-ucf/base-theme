@@ -153,8 +153,8 @@ class Alert extends CustomPostType {
 			case $prefix.'is_unplanned':
 			case $prefix.'is_sitewide':
 				$data = get_post_meta( $post_id, $column, true );
-				$checked = ( '' !== $data ) ? "checked='checked'" : '';
-				echo "<input type='checkbox' disabled {$checked}>";
+				$checked = ( '' !== $data ) ? "Yes" : '&mdash;';
+				echo wp_kses_data( "{$checked}" );
 				break;
 			default:
 				parent::custom_column_echo_data( $column, $post_id );

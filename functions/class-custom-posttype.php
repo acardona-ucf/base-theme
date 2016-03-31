@@ -56,8 +56,8 @@ abstract class CustomPostType {
 	$default_order   = null,
 	// Interface Columns/Fields.
 	$calculated_columns = array(
-		array( 'heading' => 'Thumbnail', 'column_name' => '_thumbnail_id', 'custom_column_order' => 100 ),
-		// array( 'heading'=>'A Column Heading Text', 'column_name'=>'id_of_the_column' ),
+		array( 'heading' => 'Thumbnail', 'column_name' => '_thumbnail_id', 'order' => 100, 'sortable' => false ),
+		// array( 'heading'=>'A Column Heading Text', 'column_name'=>'id_of_the_column', 'order' => 1000 'sortable' => true ),
 	), // Calculate values within custom_column_echo_data.
 	$sc_interface_fields = null; // Fields for shortcodebase interface (false hides from list, null shows only the default fields).
 
@@ -258,33 +258,40 @@ abstract class CustomPostType {
 
 	/**
 	 * Get all custom columns for this post type. Autogenerates columns for $this->fields() with a 'custom_column_order' key (note: the value must not be 0).
-	 * @see custom_column_set_headings() custom_column_set_headings()
+	 * @see custom_columns_set_headings() custom_columns_set_headings()
 	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-filter Underscore-php: filter
 	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-each Underscore-php: each
-	 * @usedby custom_column_set_headings()
-	 * @return Array Collection of Columns, each with the keys: 'heading', 'metafield', 'custom_column_order'.
+	 * @usedby custom_columns_set_headings(), custom_columns_make_sortable() custom_columns_sort_orderby()
+	 * @return Array Collection of Columns, each with the keys: 'heading', 'metafield', 'order', 'sortable', 'orderby'.
 	 */
 	public function custom_columns_get_all() {
 		$calculated_columns = $this->options( 'calculated_columns' );
+		foreach ($calculated_columns as $calculated_column) {
+			$calculated_column = array_merge( array('sortable' => false, 'orderby' => 'meta_value'), $calculated_column);
+		}
 		// Filter and Map fields to custom columns.
 		$field_columns = Arrays::from( $this->fields() )
 		->filter( function( $x ) { return array_key_exists( 'custom_column_order', $x ) && $x['custom_column_order']; } )
 		->each( function( $field ) {
-			$custom_column_order = isset( $field['custom_column_order'] ) ? $field['custom_column_order'] : 1000;
-			return array( 'heading' => $field['name'], 'column_name' => $field['id'], 'custom_column_order' => $custom_column_order );
+			$order = isset( $field['custom_column_order'] ) ? $field['custom_column_order'] : 1000;
+			$sortable = isset( $field['custom_column_sortable'] ) ? $field['custom_column_sortable'] : true;
+			$orderby = isset( $field['custom_column_orderby'] ) ? $field['custom_column_orderby'] : 'meta_value';
+			return array( 'heading' => $field['name'], 'column_name' => $field['id'], 'order' => $order,
+				'sortable' => $sortable, 'orderby' => $orderby );
 		})->obtain();
-		$columns = Arrays::sort( array_merge( $calculated_columns, $field_columns ), 'custom_column_order' );
+		$columns = Arrays::sort( array_merge( $calculated_columns, $field_columns ), 'order' );
 		return $columns;
 	}
 
 	/**
 	 * Add headers for custom columns to an index page (built-in listing of posts with this post_type).
 	 * @see custom_columns_get_all() custom_columns_get_all()
+	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-group Underscore-php: group
 	 * @uses custom_columns_get_all()
 	 * @param array $columns An array of column name ⇒ label. The name is passed to functions to identify the column. The label is shown as the column header.
 	 * @return array The updated column names and labels.
 	 */
-	public function custom_column_set_headings( $columns ) {
+	public function custom_columns_set_headings( $columns ) {
 		foreach ( $this->custom_columns_get_all() as $custom_column ) {
 			$columns[ $custom_column['column_name'] ] = $custom_column['heading'];
 		}
@@ -292,9 +299,59 @@ abstract class CustomPostType {
 	}
 
 	/**
+	 * Enable sorting on columns by setting the column's 'orderby' to its name.
+	 * @see custom_columns_sort_orderby() custom_columns_sort_orderby() implements the sorting.
+	 * @see custom_columns_get_all() custom_columns_get_all()
+	 * @see https://developer.wordpress.org/reference/hooks/manage_this-screen-id_sortable_columns/ WP_Ref: manage_{$this->screen->id}_sortable_columns
+	 * @tutorial https://code.tutsplus.com/articles/quick-tip-make-your-custom-column-sortable--wp-25095 Quick Tip: Make Your Custom Column Sortable
+	 * @param array $columns An array of sortable columns.
+	 */
+	public function custom_columns_make_sortable( $columns ) {
+		foreach ( $this->custom_columns_get_all() as $custom_column ) {
+			if ( $custom_column['sortable'] ) {
+				$columns[ $custom_column['column_name'] ] = $custom_column['column_name'];
+			} else {
+				unset( $columns[ $custom_column['column_name'] ] );
+			}
+		}
+		return $columns;
+	}
+
+	/**
+	 * Implement sorting for Dashboard queries where the $query's 'orderby' matches the custom_column's 'column_name'.
+	 * @see custom_columns_make_sortable() custom_columns_make_sortable()
+	 * @see custom_columns_get_all() custom_columns_get_all()
+	 * @uses is_admin(), custom_columns_get_all()
+	 * @tutorial https://code.tutsplus.com/articles/quick-tip-make-your-custom-column-sortable--wp-25095 Quick Tip: Make Your Custom Column Sortable
+	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts WP_Codex: pre_get_posts
+	 * @see http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters Codex: WP_Query Orderby_Parameters
+	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-filter Underscore-php: filter
+	 * @see http://anahkiasen.github.io/underscore-php/#Arrays-first Underscore-php: first
+	 * @param WP_Query $query The query object, which is used for sorting columns.
+	 * @return void Edits the $query object in-place.
+	 */
+	public function custom_columns_sort_orderby( $query ) {
+		if( ! is_admin() ) { return; }
+		$orderby = $query->get( 'orderby' );
+		$match = Arrays::from( $this->custom_columns_get_all() )
+		 ->filter( function( $x ) use ( $orderby ) { return $orderby == $x['column_name']; } )
+		 ->obtain();
+		$count = count( $match );
+		if( 1 < $count ) { echo "Admin Msg: column names must be unique. Please edit the following columns:"; var_dump($match); }
+		elseif( 1 == $count ) {
+			$match = Arrays::first( $match );
+			$query->set( 'meta_key', $match['column_name'] );
+			$query->set( 'orderby', $match['orderby'] );
+		}
+		return;
+	}
+
+	/**
 	 * Show the data for a single row ($post_id) of a column.
 	 * @see get_thumbnail_or_attachment_image() get_thumbnail_or_attachment_image()
 	 * @see http://developer.wordpress.org/reference/functions/get_post_meta/ WP_Ref: get_post_meta()
+	 * @see http://codex.wordpress.org/Function_Reference/wp_kses_post WP_Codex: wp_kses_post()
+	 * @see https://developer.wordpress.org/reference/functions/esc_attr/ WP_Ref: esc_attr()
 	 * @uses get_thumbnail_or_attachment_image()
 	 * @param string $column  The name of the column to display.
 	 * @param int    $post_id The ID of the current post.
@@ -303,7 +360,7 @@ abstract class CustomPostType {
 	public function custom_column_echo_data( $column, $post_id ) {
 		switch ( $column ) {
 			case '_thumbnail_id':
-				echo esc_html( static::get_thumbnail_or_attachment_image( $post_id ) );
+				echo wp_kses_post( static::get_thumbnail_or_attachment_image( $post_id ) );
 				break;
 			default:
 				echo esc_attr( get_post_meta( $post_id, $column, true ) );
@@ -314,13 +371,22 @@ abstract class CustomPostType {
 
 	/**
 	 * Add columns to an index page (built-in listing of posts with this post_type).
+	 * @see custom_columns_set_headings() custom_columns_set_headings()
+	 * @see custom_columns_make_sortable() custom_columns_make_sortable()
+	 * @see custom_column_echo_data() custom_column_echo_data()
 	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/manage_$post_type_posts_columns WP_Codex: manage_$post_type_posts_columns
+	 * @see https://developer.wordpress.org/reference/hooks/manage_this-screen-id_sortable_columns/ WP_Ref: manage_{$this->screen->id}_sortable_columns
 	 * @see http://codex.wordpress.org/Plugin_API/Action_Reference/manage_$post_type_posts_custom_column WP_Codex: manage_$post_type_posts_custom_column
 	 * @uses options(), $name.
 	 */
 	public function register_custom_columns() {
 		$posttype = $this->options( 'name' );
-		add_filter( "manage_{$posttype}_posts_columns", array( $this, 'custom_column_set_headings' ) );
+		// Column Header.
+		add_filter( "manage_{$posttype}_posts_columns", array( $this, 'custom_columns_set_headings' ) );
+		// Sorting and Order By.
+		add_filter( "manage_edit-{$posttype}_sortable_columns", array( $this, 'custom_columns_make_sortable' ) );
+		add_action( 'pre_get_posts', array( $this, 'custom_columns_sort_orderby' ) );
+		// Show data in rows.
 		/* add_action( $tag, $function_to_add, $priority, $accepted_args ); // Signature. */
 		add_action( "manage_{$posttype}_posts_custom_column" , array( $this, 'custom_column_echo_data' ), 10, 2 );
 	}
