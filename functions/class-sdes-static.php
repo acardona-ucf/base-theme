@@ -13,7 +13,7 @@ class SDES_Static
 {
 
 	/**
-	 * Set default value for a give key in $args, which is passed by reference.
+	 * Set default value for a given key in $args, which is passed by reference.
 	 * @param array  $args    An args array (that is passed in by reference).
 	 * @param string $key     The key to set.
 	 * @param mixed  $default_value   A default value for the key if it is not already set.
@@ -22,6 +22,19 @@ class SDES_Static
 		$args[ $key ] = (isset( $args[ $key ] ))
 			 ? $args[ $key ]
 			 : $default_value;
+	}
+
+	/**
+	 * Set multiple default values for keys in $args, which is passed by reference.
+	 * @param array $args    An args array (that is passed in by reference).
+	 * @param array $default_values   An collections of keys and their default values.
+	 */
+	public static function set_default_keyValue_array( &$args, $default_values ) {
+		foreach ( $default_values as $key => $default_value ) {
+			$args[ $key ] = (isset( $args[ $key ] ))
+				 ? $args[ $key ]
+				 : $default_value;
+		}
 	}
 
 	// TODO: add tests, verify that register function exists.
