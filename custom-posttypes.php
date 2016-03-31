@@ -91,6 +91,7 @@ class Alert extends CustomPostType {
 		$use_shortcode  = True,  // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
+		$menu_icon      = 'dashicons-warning',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -318,6 +319,7 @@ class Billboard extends CustomPostType {
 		$use_shortcode  = True,  // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
+		$menu_icon      = 'dashicons-slides',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -468,6 +470,7 @@ class Staff extends CustomPostType {
 		$use_shortcode  = True, // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag', 'org_groups' ),
+		$menu_icon      = 'dashicons-groups',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -481,13 +484,6 @@ class Staff extends CustomPostType {
 				'default' => 'Staff List'
 			),
 		);
-
-	public function register( $args = array() ) {
-		$default_args = array(
-				'menu_icon' => 'dashicons-groups',
-			);
-		parent::register( array_merge($default_args, $args) );
-	}
 
 	public function fields() {
 		$prefix = $this->options('name').'_';
@@ -668,6 +664,7 @@ class News extends CustomPostType {
 		$use_shortcode  = True, // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag', 'categories' ),
+		$menu_icon      = 'dashicons-admin-site',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -686,13 +683,6 @@ class News extends CustomPostType {
 					)
 			),
 		);
-
-	public function register( $args = array() ) {
-		$default_args = array(
-				'menu_icon' => 'dashicons-admin-site',
-			);
-		parent::register( array_merge($default_args, $args) );
-	}
 
 	public function fields() {
 		$prefix = $this->options('name').'_';

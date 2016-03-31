@@ -50,6 +50,7 @@ abstract class CustomPostType {
 	$use_shortcode  = false, // Auto generate a shortcode for the post type
 							 // (see also objectsToHTML and toHTML methods)
 	$taxonomies     = array( 'post_tag' ),
+	$menu_icon      = null,
 	$built_in       = false,
 	// Optional default ordering for generic shortcode if not specified by user.
 	$default_orderby = null,
@@ -419,6 +420,7 @@ abstract class CustomPostType {
 		'public'     => $this->options( 'public' ),
 		'taxonomies' => $this->options( 'taxonomies' ),
 		'_builtin'   => $this->options( 'built_in' ),
+		'menu_icon'  => $this->options( 'menu_icon' ),
 		);
 		if ( $this->options( 'use_order' ) ) {
 			$registration = array_merge( $registration, array( 'hierarchical' => true ) );
