@@ -173,12 +173,12 @@ class Alert extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => $prefix.'start_date',
-					'value' => date('Y-m-d', time()),
+					'value' => date( 'Y-m-d', time() ),
 					'compare' => '<=',
 				),
 				array(
 					'key' => $prefix.'end_date',
-					'value' => date('Y-m-d', strtotime('+1 day')),
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				),
 			),
@@ -371,12 +371,12 @@ class Billboard extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => $prefix.'start_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date( 'Y-m-d', time() ),
 					'compare' => '<=',
 				),
 				array(
 					'key' => $prefix.'end_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				),
 			),
@@ -747,7 +747,6 @@ class News extends CustomPostType {
 		// TODO: consider using boolval after PHP 5.5.0.
 		$attr['show-archives'] = filter_var( $attr['show-archives'], FILTER_VALIDATE_BOOLEAN);
 
-		$current_datetime = date('Y-m-d H:i:s'); // Calculate NOW as MySQL datetime format.
 		if ( $attr['show-archives'] ) {
 			// Show where EndDate <= NOW
 			$attr['meta_query'] = array(
@@ -765,12 +764,12 @@ class News extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => esc_sql( $prefix.'start_date' ),
-					'value' => $current_datetime,
+					'value' => date( 'Y-m-d', time() ),
 					'compare' => '<=',
 				),
 				array(
 					'key' => esc_sql( $prefix.'end_date' ),
-					'value' => $current_datetime,
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				)
 			);
