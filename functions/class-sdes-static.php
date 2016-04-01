@@ -3,6 +3,7 @@
  * Static Helper functions that are reusable in any PHP Site.
  * @package SDES Static - Rev2015 WordPress Prototype
  */
+
 namespace SDES;
 use \WP_Query;
 
@@ -44,10 +45,12 @@ class SDES_Static
 	 * @return Array Array of instantiated classes (array of arrays). Each item has the keys: 'classname', 'instance'.
 	 */
 	public static function instantiate_and_register_classes( $classnames_to_register = null ) {
-		if ( null == $classnames_to_register ) return;
-		$get_class = function($classname){ return array('classname'=>$classname, 'instance'=>new $classname); };
-		$class_instances = array_map($get_class, $classnames_to_register);
-		foreach ($class_instances as $new_class) {
+		if ( null === $classnames_to_register ) { return; }
+		$get_class = function( $classname ) {
+			return array( 'classname' => $classname, 'instance' => new $classname );
+		};
+		$class_instances = array_map( $get_class, $classnames_to_register );
+		foreach ( $class_instances as $new_class ) {
 			$new_class['instance']->register();
 		}
 		return $class_instances;
@@ -70,15 +73,17 @@ class SDES_Static
 
 		$output = array();
 		$i = 0;  // TODO: refactor with generator pattern when VCCW upgrades to PHP 5.5+.
-		foreach ( $xml->channel->item  as $idx => $item ) if ( $i++ < $max_count ) {
-			$title_truncated
-				= ( strlen( $item->title ) > $char_limit )
-					? substr( $item->title, 0, $char_limit ) . '&hellip;'
-					: (string) $item->title;
-			$output[] = array(
-				'link' => (string) $item->link,
-				'title' => $title_truncated,
-			);
+		foreach ( $xml->channel->item  as $idx => $item ) {
+			if ( $i++ < $max_count ) {
+				$title_truncated
+					= ( strlen( $item->title ) > $char_limit )
+						? substr( $item->title, 0, $char_limit ) . '&hellip;'
+						: (string) $item->title;
+				$output[] = array(
+					'link' => (string) $item->link,
+					'title' => $title_truncated,
+					);
+			}
 		}
 		return $output;
 	}
@@ -120,8 +125,8 @@ class SDES_Static
 	 * @param string $url The url variable to adjust.
 	 * @param string $protocol The protocol to prepend to the url. (defaults to http://).
 	 */
-	public static function url_ensure_prefix( $url, $protocol="http" ) {
-		if( false === strrpos($url, "//") ) {
+	public static function url_ensure_prefix( $url, $protocol = 'http' ) {
+		if ( false === strrpos( $url, '//' ) ) {
 			$url = $protocol . '://' . $url;
 		}
 		return $url;
@@ -167,19 +172,19 @@ class SDES_Static
 	/**
 	 * Really get the post type.  A post type of revision will return its parent
 	 * post type.
-	 * @param int|WPPost $post  The post or the post's ID.
+	 * @param int|WPPost $this_post  The post or the post's ID.
 	 * @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L411-L432
 	 * @return string  The 'post_type' for a post.
 	 * @author Jared Lang
 	 * */
-	public static function get_post_type( $post ) {
-		if ( is_int( $post ) ) {
-			$post = get_post( $post );
+	public static function get_post_type( $this_post ) {
+		if ( is_int( $this_post ) ) {
+			$this_post = get_post( $this_post );
 		}
-		// check post_type field
-		$post_type = $post->post_type;
-		if ( $post_type === 'revision' ) {
-			$parent    = (int)$post->post_parent;
+		// Check post_type field.
+		$post_type = $this_post->post_type;
+		if ( 'revision' === $post_type ) {
+			$parent    = (int) $this_post->post_parent;
 			$post_type = self::get_post_type( $parent );
 		}
 		return $post_type;
@@ -254,6 +259,7 @@ class SDES_Static
 	 * Fallback_navbar_list_pages - Call from wp_nav_menu as the 'fallback_cb'.
 	 *   Allow graceful failure when menu is not set by showing a formatted listing of links
 	 *   instead of the default wp_page_menu output.
+	 *
 	 *  @see http://codex.wordpress.org/Navigation_Menus
 	 *  @see developer.wordpress.org/reference/functions/wp_nav_menu/
 	 *  @see developer.wordpress.org/reference/functions/wp_list_pages/
@@ -290,7 +296,7 @@ class SDES_Static
 		if ( 1 !== $args['depth'] ) {
 			trigger_error( "Calling 'fallback_navbar_list_pages' with a depth that is not 1. The SDES base-theme CSS does not currently support multi-level menus." ); }
 
-		// links_cb > links > wp_list_pages
+		// Priority: links_cb > links > wp_list_pages.
 		if ( null !== $args['links_cb'] ) {
 				$args['links'] = call_user_func_array(
 					$args['links_cb'][0],
@@ -326,34 +332,34 @@ class SDES_Static
 
 
 	/**
-	* Fetches objects defined by arguments passed, outputs the objects according
-	* to the objectsToHTML method located on the object. Used by the auto
-	* generated shortcodes enabled on custom post types. See also:
-	*
-	* CustomPostType::objectsToHTML
-	* CustomPostType::toHTML
-	*
-	* @param array $attrs      Search params mapped to WP_Query args.
-	* @param array $args    Override values/behaviors of this function.
-	* @param string $classname Override the classname to instantiate the class.
-	* @return string
-	* @author Jared Lang
-	* @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L780-L903
-	**/
-	public static function sc_object_list($attrs, $args = array() ) {
-		if (!is_array($attrs)){return '';}
-		
+	 * Fetches objects defined by arguments passed, outputs the objects according
+	 * to the objectsToHTML method located on the object. Used by the auto
+	 * generated shortcodes enabled on custom post types. See also:
+	 *
+	 * CustomPostType::objectsToHTML
+	 * CustomPostType::toHTML
+	 *
+	 * @param array $attrs Search params mapped to WP_Query args.
+	 * @param array $args  Override values/behaviors of this function.
+	 *  $args['classname'] string - Override the classname to instantiate the class.
+	 * @return string
+	 * @author Jared Lang
+	 * @see https://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/functions/base.php#L780-L903
+	 **/
+	public static function sc_object_list( $attrs, $args = array() ) {
+		if ( ! is_array( $attrs ) ) {return '';}
+
 		$default_args = array(
 			'default_content' => null,
 			'sort_func' => null,
-			'objects_only' => False,
+			'objects_only' => false,
 			'classname' => '',
 		);
-		
+
 		// Make keys into variable names for merged $default_args/$args.
 		extract( array_merge( $default_args, $args ) );
-		
-		// set defaults and combine with passed arguments
+
+		// Set defaults and combine with passed arguments.
 		$default_attrs = array(
 			'type'    => null,
 			'limit'   => -1,
@@ -365,58 +371,58 @@ class SDES_Static
 			'offset'  => 0,
 			'meta_query' => array(),
 		);
-		$params = array_merge($default_attrs, $attrs);
+		$params = array_merge( $default_attrs, $attrs );
 		$classname = ( '' === $classname ) ? $params['type'] : $classname;
 
 		$params['limit']  = intval( $params['limit'] );
 		$params['offset'] = intval( $params['offset'] );
 
-		// verify inputs.
-		if ($params['type'] == null){
+		// Verify inputs.
+		if ( null === $params['type'] ) {
 			return '<p class="error">No type defined for object list.</p>';
 		}
-		if (!in_array(strtoupper($params['join']), array('AND', 'OR'))){
+		if ( ! in_array( strtoupper( $params['join'] ), array( 'AND', 'OR' ) ) ) {
 			return '<p class="error">Invalid join type, must be one of "and" or "or".</p>';
 		}
-		if ( !class_exists($classname) ){
+		if ( ! class_exists( $classname ) ) {
 			return '<p class="error">Invalid post type or classname.</p>';
 		}
-		
+
 		$class = new $classname;
-		
-		# Use post type specified ordering?
-		if(!isset($attrs['orderby']) && !is_null($class->default_orderby)) {
+
+		// Use post type specified ordering?
+		if ( ! isset( $attrs['orderby'] ) && ! is_null( $class->default_orderby ) ) {
 			$params['orderby'] = $class->orderby;
 		}
-		if(!isset($attrs['order']) && !is_null($class->default_order)) {
+		if ( ! isset( $attrs['order'] ) && ! is_null( $class->default_order ) ) {
 			$params['order'] = $class->default_order;
 		}
 
-		# get taxonomies and translation
+		// Get taxonomies and translation.
 		$translate = array(
 			'tags' => 'post_tag',
 			'categories' => 'category',
-			'org_groups' => 'org_groups'
+			'org_groups' => 'org_groups',
 		);
-		$taxonomies = array_diff(array_keys($attrs), array_keys($default_attrs));
-		
-		# assemble taxonomy query
-		$tax_queries = array();
-		$tax_queries['relation'] = strtoupper($params['join']);
-		
-		foreach($taxonomies as $tax){
-			$terms = $params[$tax];
-			$terms = trim(preg_replace('/\s+/', ' ', $terms));
-			$terms = explode(' ', $terms);
-			if ( '' == $terms[0] ) { continue; } // Skip empty taxonomies.
+		$taxonomies = array_diff( array_keys( $attrs ), array_keys( $default_attrs ) );
 
-			if (array_key_exists($tax, $translate)){
-				$tax = $translate[$tax];
+		// Assemble taxonomy query.
+		$tax_queries = array();
+		$tax_queries['relation'] = strtoupper( $params['join'] );
+
+		foreach ( $taxonomies as $tax ) {
+			$terms = $params[ $tax ];
+			$terms = trim( preg_replace( '/\s+/', ' ', $terms ) );
+			$terms = explode( ' ', $terms );
+			if ( '' === $terms[0] ) { continue; } // Skip empty taxonomies.
+
+			if ( array_key_exists( $tax, $translate ) ) {
+				$tax = $translate[ $tax ];
 			}
-			
-			foreach ($terms as $idx => $term) {
-				if ( in_array(strtolower($term), array("none", "null", "empty") ) ) {
-					unset( $terms[$idx] );
+
+			foreach ( $terms as $idx => $term ) {
+				if ( in_array( strtolower( $term ), array( 'none', 'null', 'empty' ) ) ) {
+					unset( $terms[ $idx ] );
 					$terms[] = '';
 				}
 			}
@@ -427,8 +433,8 @@ class SDES_Static
 				'terms' => array_unique( $terms ),
 			);
 		}
-		
-		# perform query
+
+		// Perform query.
 		$query_array = array(
 			'tax_query'      => $tax_queries,
 			'post_status'    => 'publish',
@@ -439,32 +445,32 @@ class SDES_Static
 			'offset'         => $params['offset'],
 			'meta_query'     => $params['meta_query'],
 		);
-		
-		$query = new WP_Query($query_array);
+
+		$query = new WP_Query( $query_array );
 
 		global $post;
 		$objects = array();
-		while($query->have_posts()){
+		while ( $query->have_posts() ) {
 			$query->the_post();
 			$objects[] = $post;
 		}
-		
-		# Custom sort if applicable
-		if ($sort_func !== null){
-			usort($objects, $sort_func);
+
+		// Custom sort if applicable.
+		if ( null !== $sort_func ) {
+			usort( $objects, $sort_func );
 		}
-		
+
 		wp_reset_postdata();
-		
-		if($objects_only) {
+
+		if ( $objects_only ) {
 			return $objects;
 		}
-		
-		if (count($objects)){
-			$html = $class->objectsToHTML($objects, $params['class']);
-		}else{
-			if( isset($tax_queries['terms']) ) {
-				$default_content .= "<!-- No results were returned for: " . $tax_queries['taxonomy'] . ". Does this attribute need to be unset()? -->";
+
+		if ( count( $objects ) ) {
+			$html = $class->objectsToHTML( $objects, $params['class'] );
+		} else {
+			if ( isset( $tax_queries['terms'] ) ) {
+				$default_content .= '<!-- No results were returned for: ' . $tax_queries['taxonomy'] . '. Does this attribute need to be unset()? -->';
 			}
 			$html = $default_content;
 		}
