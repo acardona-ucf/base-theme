@@ -132,6 +132,10 @@ class SDES_Static
 		return $url;
 	}
 
+	public static function is_null_or_whitespace( $string ) {
+		return null === $string || '' === $string || ctype_space( $string );
+	}
+
 	/**
 	 * *********************
 	 * WordPress functions
@@ -145,7 +149,7 @@ class SDES_Static
 	public static function get_theme_mod_defaultIfEmpty( $value, $default_to, $get_theme_mod = 'get_theme_mod' ) {
 		$output = $get_theme_mod( $value, $default_to );  // Default if no value stored in database.
 		// Default if value in db is null, empty string, or whitespace.
-		if ( null === $output || '' === $output || ctype_space( $output ) ) { $output = $default_to; }
+		if ( self::is_null_or_whitespace( $output ) ) { $output = $default_to; }
 		return $output;
 	}
 

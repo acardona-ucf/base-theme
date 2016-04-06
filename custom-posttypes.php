@@ -408,7 +408,17 @@ class Billboard extends CustomPostType {
 
 	protected static function render_objects_to_html( $context ){
 		// TODO: don't show nivoslider directionNav if only 1 Billboard slide.
-		$billboard_size = array(1140,318);
+		$BILLBOARD_SIZE = array( 1140, 318 );
+		foreach ( $context['objects'] as $o ) {
+			// Extend WP_Post objects to save query results.
+			$o->has_post_thumbnail = has_post_thumbnail( $o );
+			if ( $o->has_post_thumbnail ) {
+				$o->alt_text = get_post_meta( get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true );
+				$o->billboard_url = get_post_meta( $o, 'billboard_url', true );
+				$o->billboard_url = ( $o->billboard_url ) ? SDES_Static::url_ensure_prefix( $o->billboard_url ) : false;
+				$o->is_title_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title ) );
+			}
+		}
 		ob_start();
 		?>
 		<!-- nivo slider -->
@@ -425,30 +435,29 @@ class Billboard extends CustomPostType {
 		<div class="container site-billboard theme-default">
 			<div id="slider-sc" class="nivoSlider">
 			<?php foreach ( $context['objects'] as $o ):
-				if ( has_post_thumbnail( $o ) ) :
-					$alt_text = get_post_meta(get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true);
-					$billboard_url = get_post_meta($o, 'billboard_url', true);
-					if( $billboard_url ) :
-						$billboard_url = SDES_Static::url_ensure_prefix( $billboard_url );
-					?>
-						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
+				if ( $o->has_post_thumbnail ) :
+					if( $o->billboard_url ) : ?>
+						<a href="<?= $o->billboard_url ?>" class="nivo-imageLink">
 					<?php endif;
-							echo get_the_post_thumbnail( $o, $billboard_size, 
-									array('title'=>'#nivo-caption-'.$o->ID, 'alt' => $alt_text ) );
-					if( $billboard_url ) : ?>
+							$title = ( $o->is_title_valid ) ? '#nivo-caption-'.$o->ID : '' ;
+							echo get_the_post_thumbnail( $o, $BILLBOARD_SIZE, 
+									array('title'=> $title, 'alt' => $o->alt_text ) );
+					if( $o->billboard_url ) : ?>
 						</a>
 					<?php endif;
 				endif;
 			endforeach; ?>
 			</div>
 			<?php foreach ( $context['objects'] as $o ):
-				if ( has_post_thumbnail( $o ) ) : ?>
+				if ( $o->has_post_thumbnail ):
+					if ( $o->is_title_valid ) : ?>
 					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
 						<div class="nivo-padding"></div>
 						<div class="nivo-title"><?= $o->post_title ?></div>
 						<div class="nivo-strapline"><?= $o->post_content ?></div>
 					</div>
 		  		<?php endif;
+		  		endif;
 			endforeach; ?>
 		</div>
 		<?php
