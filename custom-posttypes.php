@@ -499,6 +499,16 @@ class Staff extends CustomPostType {
 				'type' => 'text',
 				'default' => 'Staff List'
 			),
+			array(
+				'name' => 'Collapse',
+				'id' => 'collapse',
+				'help_text' => 'Add a "[Read More] link for long "Details" sections.',
+				'type' => 'dropdown',
+				'choices' => array(
+					array('value'=>'false', 'name'=>"Don't show [Read More] link."),
+					array('value'=>'true', 'name'=>'Show [Read More] link.'),
+				),
+			),
 		);
 
 	public function fields() {
@@ -555,6 +565,7 @@ class Staff extends CustomPostType {
 			'type' => $this->options( 'name' ),
 			'header' => $this->options( 'plural_name' ) . ' List',
 			'css_classes' => '',
+			'collapse' => false,
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
@@ -564,8 +575,10 @@ class Staff extends CustomPostType {
 
 		$context['header'] = $attr['header'];
 		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
+		$context['collapse'] = filter_var( $attr['collapse'], FILTER_VALIDATE_BOOLEAN);
 		unset( $attr['header'] );
 		unset( $attr['css_classes'] );
+		unset( $attr['collapse'] );
 		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
 		$objects = SDES_Static::sc_object_list( $attr, $args );
 
@@ -584,6 +597,7 @@ class Staff extends CustomPostType {
 	protected static function render_objects_to_html( $context ) {
 		ob_start();
 		?>
+			<?php if( $context['collapse'] ) : ?>
 			<script type="text/javascript">
 				$(function(){
 					var collapsedSize = 60;
@@ -609,7 +623,8 @@ class Staff extends CustomPostType {
 					});
 				});
 			</script>
-			<?php if ( $context['header'] ) : ?>
+			<?php endif;
+			if ( $context['header'] ) : ?>
 				<h2><?= $context['header'] ?></h2>
 			<?php endif; ?>
 			<span class="<?= $context['css_classes'] ?>">
