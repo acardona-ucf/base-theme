@@ -190,6 +190,7 @@ class SDES_Metaboxes {
 		case 'radio':
 			$field_obj = new RadioMetaField( $field );
 			break;
+		// TODO: add CheckboxMetaField for single checkboxes.
 		case 'checkbox':
 		case 'checkbox_list':
 			$field_obj = new CheckboxListMetaField( $field );

@@ -91,12 +91,16 @@ class Alert extends CustomPostType {
 		$use_shortcode  = True,  // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
+		$menu_icon      = 'dashicons-warning',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null,
+		// Interface Columns/Fields
+		$calculated_columns = array(), // Empty array to hide thumbnails.
 		$sc_interface_fields = false;
 
+	// TODO: convert checkboxes from 'checkbox_list' to 'checkbox' after it is implemented.
 	public function fields() {
 		$prefix = $this->options('name').'_';
 		return array(
@@ -108,6 +112,7 @@ class Alert extends CustomPostType {
 				'choices' => array(
 					'Unplanned alert.' => $prefix.'is_unplanned' 
 				),
+				'custom_column_order' => 400,
 			),
 			array(
 				'name' => 'Sitewide Alert',
@@ -117,18 +122,21 @@ class Alert extends CustomPostType {
 				'choices' => array(
 					'Sitewide alert.' => $prefix.'is_sitewide'
 				),
+				'custom_column_order' => 300,
 			),
 			array(
 				'name' => 'Start Date',
 				'descr' => 'The first day the alert should appear.',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
+				'custom_column_order' => 100,
 			),
 			array(
 				'name' => 'End Date',
 				'descr' => 'The last day the alert should appear.',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
+				'custom_column_order' => 200,
 			),
 			array(
 				'name' => 'URL',
@@ -138,6 +146,21 @@ class Alert extends CustomPostType {
 				'default' => 'http://',
 			),
 		);
+	}
+
+	public function custom_column_echo_data( $column, $post_id ) {
+		$prefix = $this->options( 'name' ) . '_';
+		switch ( $column ) {
+			case $prefix.'is_unplanned':
+			case $prefix.'is_sitewide':
+				$data = get_post_meta( $post_id, $column, true );
+				$checked = ( '' !== $data ) ? "Yes" : '&mdash;';
+				echo wp_kses_data( "{$checked}" );
+				break;
+			default:
+				parent::custom_column_echo_data( $column, $post_id );
+				break;
+		}
 	}
 
 	public function shortcode( $attr ) {
@@ -151,12 +174,12 @@ class Alert extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => $prefix.'start_date',
-					'value' => date('Y-m-d', time()),
+					'value' => date( 'Y-m-d', time() ),
 					'compare' => '<=',
 				),
 				array(
 					'key' => $prefix.'end_date',
-					'value' => date('Y-m-d', strtotime('+1 day')),
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				),
 			),
@@ -296,6 +319,7 @@ class Billboard extends CustomPostType {
 		$use_shortcode  = True,  // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag' ),
+		$menu_icon      = 'dashicons-slides',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -316,12 +340,14 @@ class Billboard extends CustomPostType {
 				'descr' => 'The billboard will be shown starting on this date.',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
+				'custom_column_order' => 200,
 			),
 			array(
 				'name' => 'End Date',
 				'descr' => 'Stop showing the billboard after this date.',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
+				'custom_column_order' => 300,
 			),
 		);
 	}
@@ -347,14 +373,21 @@ class Billboard extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => $prefix.'start_date',
-					'value' => date('Y-m-d H:i:s'),
+					'value' => date( 'Y-m-d', time() ),
 					'compare' => '<=',
 				),
 				array(
-					'key' => $prefix.'end_date',
-					'value' => date('Y-m-d H:i:s'),
-					'compare' => '>=',
-				),
+					'relation' => 'OR',
+					array(
+						'key' => $prefix.'end_date',
+						'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
+						'compare' => '>=',
+					),
+					array(
+						'key' => $prefix.'end_date',
+						'compare' => 'NOT EXISTS', // Allow perpetual billboards.
+					),
+				)
 			),
 		);
 		if ( is_array( $attr ) ) {
@@ -375,7 +408,17 @@ class Billboard extends CustomPostType {
 
 	protected static function render_objects_to_html( $context ){
 		// TODO: don't show nivoslider directionNav if only 1 Billboard slide.
-		$billboard_size = array(1140,318);
+		$BILLBOARD_SIZE = array( 1140, 318 );
+		foreach ( $context['objects'] as $o ) {
+			// Extend WP_Post objects to save query results.
+			$o->has_post_thumbnail = has_post_thumbnail( $o );
+			if ( $o->has_post_thumbnail ) {
+				$o->alt_text = get_post_meta( get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true );
+				$o->billboard_url = get_post_meta( $o, 'billboard_url', true );
+				$o->billboard_url = ( $o->billboard_url ) ? SDES_Static::url_ensure_prefix( $o->billboard_url ) : false;
+				$o->is_title_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title ) );
+			}
+		}
 		ob_start();
 		?>
 		<!-- nivo slider -->
@@ -392,30 +435,29 @@ class Billboard extends CustomPostType {
 		<div class="container site-billboard theme-default">
 			<div id="slider-sc" class="nivoSlider">
 			<?php foreach ( $context['objects'] as $o ):
-				if ( has_post_thumbnail( $o ) ) :
-					$alt_text = get_post_meta(get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true);
-					$billboard_url = get_post_meta($o, 'billboard_url', true);
-					if( $billboard_url ) :
-						$billboard_url = SDES_Static::url_ensure_prefix( $billboard_url );
-					?>
-						<a href="<?= $billboard_url ?>" class="nivo-imageLink">
+				if ( $o->has_post_thumbnail ) :
+					if( $o->billboard_url ) : ?>
+						<a href="<?= $o->billboard_url ?>" class="nivo-imageLink">
 					<?php endif;
-							echo get_the_post_thumbnail( $o, $billboard_size, 
-									array('title'=>'#nivo-caption-'.$o->ID, 'alt' => $alt_text ) );
-					if( $billboard_url ) : ?>
+							$title = ( $o->is_title_valid ) ? '#nivo-caption-'.$o->ID : '' ;
+							echo get_the_post_thumbnail( $o, $BILLBOARD_SIZE, 
+									array('title'=> $title, 'alt' => $o->alt_text ) );
+					if( $o->billboard_url ) : ?>
 						</a>
 					<?php endif;
 				endif;
 			endforeach; ?>
 			</div>
 			<?php foreach ( $context['objects'] as $o ):
-				if ( has_post_thumbnail( $o ) ) : ?>
+				if ( $o->has_post_thumbnail ):
+					if ( $o->is_title_valid ) : ?>
 					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
 						<div class="nivo-padding"></div>
 						<div class="nivo-title"><?= $o->post_title ?></div>
 						<div class="nivo-strapline"><?= $o->post_content ?></div>
 					</div>
 		  		<?php endif;
+		  		endif;
 			endforeach; ?>
 		</div>
 		<?php
@@ -444,6 +486,7 @@ class Staff extends CustomPostType {
 		$use_shortcode  = True, // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag', 'org_groups' ),
+		$menu_icon      = 'dashicons-groups',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
@@ -456,14 +499,17 @@ class Staff extends CustomPostType {
 				'type' => 'text',
 				'default' => 'Staff List'
 			),
+			array(
+				'name' => 'Collapse',
+				'id' => 'collapse',
+				'help_text' => 'Add a "[Read More] link for long "Details" sections.',
+				'type' => 'dropdown',
+				'choices' => array(
+					array('value'=>'false', 'name'=>"Don't show [Read More] link."),
+					array('value'=>'true', 'name'=>'Show [Read More] link.'),
+				),
+			),
 		);
-
-	public function register( $args = array() ) {
-		$default_args = array(
-				'menu_icon' => 'dashicons-groups',
-			);
-		parent::register( array_merge($default_args, $args) );
-	}
 
 	public function fields() {
 		$prefix = $this->options('name').'_';
@@ -519,6 +565,7 @@ class Staff extends CustomPostType {
 			'type' => $this->options( 'name' ),
 			'header' => $this->options( 'plural_name' ) . ' List',
 			'css_classes' => '',
+			'collapse' => false,
 		);
 		if ( is_array( $attr ) ) {
 			$attr = array_merge( $default_attrs, $attr );
@@ -528,8 +575,10 @@ class Staff extends CustomPostType {
 
 		$context['header'] = $attr['header'];
 		$context['css_classes'] = ( $attr['css_classes'] ) ? $attr['css_classes'] : $this->options('name').'-list';
+		$context['collapse'] = filter_var( $attr['collapse'], FILTER_VALIDATE_BOOLEAN);
 		unset( $attr['header'] );
 		unset( $attr['css_classes'] );
+		unset( $attr['collapse'] );
 		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
 		$objects = SDES_Static::sc_object_list( $attr, $args );
 
@@ -548,6 +597,7 @@ class Staff extends CustomPostType {
 	protected static function render_objects_to_html( $context ) {
 		ob_start();
 		?>
+			<?php if( $context['collapse'] ) : ?>
 			<script type="text/javascript">
 				$(function(){
 					var collapsedSize = 60;
@@ -573,7 +623,8 @@ class Staff extends CustomPostType {
 					});
 				});
 			</script>
-			<?php if ( $context['header'] ) : ?>
+			<?php endif;
+			if ( $context['header'] ) : ?>
 				<h2><?= $context['header'] ?></h2>
 			<?php endif; ?>
 			<span class="<?= $context['css_classes'] ?>">
@@ -644,10 +695,13 @@ class News extends CustomPostType {
 		$use_shortcode  = True, // Auto generate a shortcode for the post type
 		                         // (see also objectsToHTML and toHTML methods)
 		$taxonomies     = array( 'post_tag', 'categories' ),
+		$menu_icon      = 'dashicons-admin-site',
 		$built_in       = False,
 		// Optional default ordering for generic shortcode if not specified by user.
 		$default_orderby = null,
 		$default_order   = null,
+		// Interface Columns/Fields
+		// $calculated_columns = array(),
 		$sc_interface_fields = array(
 			array(
 				'name' => 'Show Archives',
@@ -660,13 +714,6 @@ class News extends CustomPostType {
 					)
 			),
 		);
-
-	public function register( $args = array() ) {
-		$default_args = array(
-				'menu_icon' => 'dashicons-admin-site',
-			);
-		parent::register( array_merge($default_args, $args) );
-	}
 
 	public function fields() {
 		$prefix = $this->options('name').'_';
@@ -689,12 +736,14 @@ class News extends CustomPostType {
 				'descr' => '',
 				'id' => $prefix.'start_date',
 				'type' => 'date',
+				'custom_column_order' => 200,
 			),
 			array(
 				'name' => 'End Date',
 				'descr' => '',
 				'id' => $prefix.'end_date',
 				'type' => 'date',
+				'custom_column_order' => 300,
 			),
 		);
 	}
@@ -719,7 +768,6 @@ class News extends CustomPostType {
 		// TODO: consider using boolval after PHP 5.5.0.
 		$attr['show-archives'] = filter_var( $attr['show-archives'], FILTER_VALIDATE_BOOLEAN);
 
-		$current_datetime = date('Y-m-d H:i:s'); // Calculate NOW as MySQL datetime format.
 		if ( $attr['show-archives'] ) {
 			// Show where EndDate <= NOW
 			$attr['meta_query'] = array(
@@ -737,12 +785,12 @@ class News extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => esc_sql( $prefix.'start_date' ),
-					'value' => $current_datetime,
+					'value' => date( 'Y-m-d', time() ),
 					'compare' => '<=',
 				),
 				array(
 					'key' => esc_sql( $prefix.'end_date' ),
-					'value' => $current_datetime,
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				)
 			);
@@ -854,6 +902,8 @@ class News extends CustomPostType {
 	}
 }
 
+/** Register custom post types when the theme is initialized.
+ * @see http://codex.wordpress.org/Plugin_API/Action_Reference/init WP-Codex: init action hook. */
 function register_custom_posttypes() {
 	CustomPostType::Register_Posttypes(array(
 	__NAMESPACE__.'\Post',

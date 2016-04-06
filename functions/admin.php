@@ -75,3 +75,23 @@ function customize_admin_theme() {
     wp_enqueue_script( 'admin-theme', get_stylesheet_directory_uri() . '/js/admin.js');
 }
 add_action('admin_enqueue_scripts', __NAMESPACE__.'\customize_admin_theme');
+
+
+/**
+ * Hide Appearance > Themes (/wp-admin/themes.php)
+ * @see http://codex.wordpress.org/remove_submenu_page WP-Codex: remove_submenu_page()
+ */
+function remove_theme_submenu() {
+  $page = remove_submenu_page( 'themes.php', 'themes.php' );
+}
+add_action( 'admin_menu', __NAMESPACE__.'\remove_theme_submenu', 999 );
+
+
+/**
+ * Hide links to "Themes.php" in adminbar (in the dropdown menu between "My Sites" and "Customize").
+ * @see http://codex.wordpress.org/Function_Reference/remove_node WP-Codex: remove_node()
+ */
+function remove_theme_link_adminbar( $wp_admin_bar ) {
+    $wp_admin_bar->remove_node( 'themes' );
+}
+add_action( 'admin_bar_menu', __NAMESPACE__.'\remove_theme_link_adminbar', 999 );

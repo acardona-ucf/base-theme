@@ -74,11 +74,12 @@ use SDES\SDES_Static as SDES_Static;
 </head>
 <body>
 	<!-- header -->
+	<?php $taglineURL = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ) ); ?>
 	<div class="container header">
 		<div class="site-title">
-			<a href="#"><?php bloginfo('name'); ?></a>
+			<a href="<?= $taglineURL ?>"><?php bloginfo('name'); ?></a>
 			<div class="site-subtitle">
-				<a href="<?= SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ) ); ?>">
+				<a href="<?= $taglineURL ?>">
 					<?= html_entity_decode(get_bloginfo('description')); ?>
 				</a>
 			</div>
