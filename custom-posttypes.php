@@ -377,10 +377,17 @@ class Billboard extends CustomPostType {
 					'compare' => '<=',
 				),
 				array(
-					'key' => $prefix.'end_date',
-					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
-					'compare' => '>=',
-				),
+					'relation' => 'OR',
+					array(
+						'key' => $prefix.'end_date',
+						'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
+						'compare' => '>=',
+					),
+					array(
+						'key' => $prefix.'end_date',
+						'compare' => 'NOT EXISTS', // Allow perpetual billboards.
+					),
+				)
 			),
 		);
 		if ( is_array( $attr ) ) {
