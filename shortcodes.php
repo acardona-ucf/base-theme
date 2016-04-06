@@ -661,6 +661,163 @@ class sc_alert extends ShortcodeBase {
     }
 }
 
+class sc_departmentInfo extends ShortcodeBase {
+    public
+        $name = 'Department Information', // The name of the shortcode.
+        $command = 'departmentInfo', // The command used to call the shortcode.
+        $description = 'Show the department contact information box.', // The description of the shortcode.
+        $callback    = 'callback',
+        $render      = 'render',
+        $closing_tag = False,
+        $wysiwyg     = True, // Whether to add it to the shortcode Wysiwyg modal.
+        $params      = array();
+
+    public static function callback( $attr, $content='' ) {
+        $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'));
+        $departmentInfo = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
+        if( null != $directory_cms_acronym && !ctype_space($directory_cms_acronym) ) {
+            $departmentInfo = static::get_department_info( $directory_cms_acronym );
+        }
+        $ctxt['departmentInfo'] = $departmentInfo;
+        return static::render( $ctxt );
+    }
+
+    /**
+     * Render HTML for a "departmentInfo" shortcode with a given context.
+     * Context variables:
+     * container_classes    => List of css classes for the cotainer div..
+     */
+    public static function render ( $ctxt ) {
+        ob_start();
+        ?>
+            <span id="departmentInfo"><?= $ctxt['departmentInfo'] ?></span>
+        <?php
+        return ob_get_clean();
+    }
+
+    /* Reads in and displays department information */
+    // TODO: Set the department feed URL with a Theme Option, default to the feed's current URL.
+    // TODO: refactor out `get_department_info('menu')` and `get_department_info("{$ACRONYMN}")` functionality.
+    // TODO: refactor HTML to use "View-and-Context" pattern instead of stringbuilding pattern.
+    public static function get_department_info($action = NULL) {
+        $json = file_get_contents('http://directory.sdes.ucf.edu/feed'); 
+        $decodejson = json_decode($json);        
+
+        $yield = '';
+
+        if (!empty($action)) {
+            switch ($action) {
+                case 'menu':
+                $yield .= '<div class="panel panel-warning">';
+                $yield .= '<div class="panel-heading">Page Navigation</div>';
+                $yield .= '<div class="list-group">';
+                foreach ($decodejson->departments as $department) { 
+                    $yield .= "<a href='#{$department->acronym}' class='list-group-item'>{$department->name}</a>";
+                }                            
+                $yield .= '</div>';
+                $yield .= '</div>';
+                break;
+                
+                default:
+                $yield .= '<table class="table table-condensed table-striped table-bordered">';
+                $yield .= '<tbody>';
+                foreach ($decodejson->departments as $department) {
+                    // TODO: helper function or best practices for get_theme_mod
+                    $phone = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', $department->phone );
+                    $fax = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', $department->fax );
+                    $hours = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-hours', $department->hours );
+                    $email = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', $department->email );
+
+                    $site_hours = ($hours == $department->hours) ? html_site_hours($department->hours) : $hours;
+
+                    if( $department->acronym == $action){
+                        $yield .= '<tr><th scope="row">Hours</th>';
+                        $yield .= '<td>' . $site_hours . '</td>';
+                        $yield .= '</tr><tr>';
+                        $yield .= '<th scope="row">Phone</th>';
+                        $yield .= "<td>{$phone}</td>";
+                        $yield .= '</tr><tr>';
+                        $yield .= '<th scope="row">Fax</th>';
+                        $yield .= "<td>{$fax}</td>";
+                        $yield .= '</tr><tr>';
+                        $yield .= '<th scope="row">Email</th>';
+                        $yield .= "<td><a href='mailto:{$email}'>{$email}</a></td>";
+                        $yield .= '</tr><tr>';
+                        $yield .= '<th scope="row">Location</th>';
+                        $yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->building}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
+                        $yield .= '</tr>';
+                    }
+                }
+                $yield .= '</tbody></table>';
+                break;
+            }
+        } else {
+            foreach ($decodejson->departments as $department) {
+                // TODO: helper function or best practices for get_theme_mod
+                $phone = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', $department->phone );
+                $fax = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', $department->fax );
+                $email = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', $department->email );
+
+                $yield .= "<div class='news' id='{$department->acronym}'>";
+                $yield .= "<img src='http://directory.sdes.ucf.edu/{$department->image}' alt='thumbnail' class='img-responsive'>";
+                $yield .= '<div class="news-content">';
+                $yield .= '<div class="news-title">';
+                $yield .= "<a href='{$department->websites[0]->uri}'>{$department->name}</a>";
+                $yield .= '</div>';
+                $yield .= '<div class="news-strapline">';
+                foreach ($department->staff as $staff) {
+                    $yield .= "{$staff->name}, <small class='text-muted'>{$staff->position}</small><br>";
+                }
+                $yield .= '</div>';
+                $yield .= '<br>';
+                $yield .= '<table class="table table-striped table-hover dept">';
+                $yield .= '<tbody>';
+                $yield .= '<tr>';
+                $yield .= '<th scope="row">Phone</th>';
+                $yield .= "<td>{$phone}</td>";
+                $yield .= '</tr><tr>';
+                $yield .= '<th scope="row">Fax</th>';
+                $yield .= "<td>{$fax}</td>";
+                $yield .= '</tr><tr>';
+                $yield .= '<th scope="row">Email</th>';
+                $yield .= "<td><a href='mailto:{$email}'>{$email}</a></td>";
+                $yield .= '</tr><tr>';
+                $yield .= '<th scope="row">Location</th>';
+                $yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->building}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
+                $yield .= '</tr><tr>';
+                $yield .= '<th scope="row">Website</th>';
+                $yield .= "<td><a href='{$department->websites[0]->uri}' class='external'>{$department->websites[0]->uri}</a></td>";
+                $yield .= '</tr>';
+                if(!empty($department->socialNetworks)){
+                    $yield .= '<tr>';
+                    $yield .= '<th scope="row">Social</th>';
+                    $yield .= '<td>';
+                    asort($department->socialNetworks);
+                    foreach ($department->socialNetworks as $network) {
+                        $yield .= "<a href='{$network->uri}'>";
+                        $yield .= '<img src="//assets.sdes.ucf.edu/images/icons/'.strtolower($network->name).'.png" class="social" alt="icon">';
+                        $yield .= '</a>';
+                    }
+                    $yield .= '</td>';
+                    $yield .= '</tr>';
+                }            
+                $yield .= '</tbody></table>';
+                array_shift($department->websites);
+                if(!empty($department->websites)){
+                    $yield .= '<table class="table table-striped table-hover sites">';
+                    $yield .= '<caption>Programs, Teams, and Other Websites</caption>';
+                    $yield .= '<tbody>';
+                    foreach ($department->websites as $website) {
+                        $yield .= "<tr><td><a href='{$website->uri}'>{$website->uri}</a></td></tr>";
+                    }
+                }
+                $yield .= '</tbody></table></div></div>';
+            }
+        }
+        return $yield;
+    }
+}
+
 function register_shortcodes() {
     ShortcodeBase::Register_Shortcodes(array(
             __NAMESPACE__.'\sc_row',
@@ -669,6 +826,7 @@ function register_shortcodes() {
             __NAMESPACE__.'\sc_menuPanel',
             __NAMESPACE__.'\sc_events',
             __NAMESPACE__.'\sc_socialButton',
+            __NAMESPACE__.'\sc_departmentInfo',
         ));
 }
 add_action( 'init', __NAMESPACE__.'\register_shortcodes' );

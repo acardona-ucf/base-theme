@@ -7,21 +7,14 @@ use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 
-$directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'));
-		$departmentInfo = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
-		if( null != $directory_cms_acronym && !ctype_space($directory_cms_acronym) ) {
-			$departmentInfo = get_department_info( $directory_cms_acronym );
-		}
-?>
-<?php
-	$hideBillboard = false; // Could add an option for hiding Billboard in Theme Customizer.
-	if ( $hideBillboard ) {
-		// Could add an adminmsg here.
-	} else {
-		/* If using the WP Nivo Plugin, use the following code instead: */
-		// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
-		echo do_shortcode( "[billboard-list]" );
-	}
+$hideBillboard = false; // Could add an option for hiding Billboard in Theme Customizer.
+if ( $hideBillboard ) {
+	// Could add an adminmsg here.
+} else {
+	/* If using the WP Nivo Plugin, use the following code instead: */
+	// if ( function_exists('show_nivo_slider') ) { show_nivo_slider(); } 
+	echo do_shortcode( "[billboard-list]" );
+}
 ?>
 <!-- content area -->
 <div class="container site-content" id="content">
@@ -49,8 +42,8 @@ $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'))
 		endif; ?>
 	</div>
 	<div class="col-sm-4">
-		<span id="departmentInfo"><?= $departmentInfo ?></span>
 		<?php
+			echo do_shortcode( "[departmentInfo]" );
 			$sidebar = get_post_meta($post->ID, 'page_sidebar', $single=true);
 			echo do_shortcode($sidebar);
 		?>
