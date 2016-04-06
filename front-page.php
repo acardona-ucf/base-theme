@@ -44,8 +44,9 @@ if ( $hideBillboard ) {
 	<div class="col-sm-4">
 		<?php
 			echo do_shortcode( "[departmentInfo]" );
-			$sidebar = get_post_meta($post->ID, 'page_sidebar', $single=true);
-			echo do_shortcode($sidebar);
+
+			$sidebar = get_post_meta( $post->ID, 'page_sidecolumn', $single=true );
+			echo do_shortcode( $sidebar );
 		?>
 	</div>	
 </div>

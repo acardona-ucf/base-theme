@@ -19,18 +19,18 @@ namespace SDES\BaseTheme;
 					$url_facebook = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-facebook', '') );
 					$url_twitter = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-twitter', '') );
 					$url_youtube = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-youtube', '') );
-					if( '' != $url_facebook) { 
+					if( '' !== $url_facebook && 'http://' !== $url_facebook) { 
 					?>
 					<a href="<?= $url_facebook ?>">
 						<img src="<?php bloginfo('template_url'); ?>/images/facebook.png" alt="icon" title="Facebook">
 					</a>
 				<?php } 
-					if( '' != $url_twitter) { ?>
+					if( '' !== $url_twitter && 'http://' !== $url_twitter) { ?>
 					<a href="<?= $url_twitter ?>">
 						<img src="<?php bloginfo('template_url'); ?>/images/twitter.png" alt="icon" title="Twitter">
 					</a>
 				<?php }
-					if( '' != $url_youtube) {?>
+					if( '' !== $url_youtube && 'http://' !== $url_youtube) {?>
 					<a href="<?= $url_youtube ?>">
 						<img src="<?php bloginfo('template_url'); ?>/images/youtube.png" alt="icon" title="YouTube">
 					</a>
