@@ -16,3 +16,20 @@
 .site-footer {
 	color: #ccc;  /* All text should be visible in footer, not just text in <P> tags.*/
 }
+
+/* Highlight current page in top nav (from li.active style). */
+.site-nav.navbar-default .navbar-nav > li:hover,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a:hover,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a:focus {
+	background-color: rgba(50,50,50,0.1);
+	transition: .2s ease;
+}
+
+/* Highlight current page in bottom nav (from bootstrap styles on ".navbar-default .navbar-nav>.active>a"). */
+.navbar-default .navbar-nav > .current-menu-item > a,
+.navbar-default .navbar-nav > .current-menu-item > a:focus,
+.navbar-default .navbar-nav > .current-menu-item > a:hover {
+    color: #555;
+    background-color: #e7e7e7;
+}
