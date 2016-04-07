@@ -126,35 +126,35 @@ li:empty{
 	width: 100%;
 }
 
-.site-billboard > img, .site-billboard > #slider{
+.site-billboard > img, .site-billboard > .nivoSlider{
 	box-shadow: 0 2px 3px #aaa;
 	border-radius: 10px;
 }
 
-.site-billboard > #slider{
+.site-billboard > .nivoSlider{
 	background: url("../images/ajax-loader.gif") no-repeat center center #fff;
 	height: 317px;
 }
 
 @media only screen and (max-width: 1200px){ /* medium breakpoint and smaller */
-	.site-billboard > #slider{
+	.site-billboard > .nivoSlider{
 		height: 247px;
 	}
 }
 
 @media only screen and (max-width: 992px){ /* small breakpoint and smaller */
-	.site-billboard > #slider{
+	.site-billboard > .nivoSlider{
 		height: 185px;
 	}
 }
 
 @media only screen and (max-width: 768px){ /* tiny breakpoint and smaller */
-	.site-billboard > #slider{
+	.site-billboard > .nivoSlider{
 		height: auto;
 	}
 }
 
-.site-billboard > #slider img{
+.site-billboard > .nivoSlider img{
 	border-radius: 10px;
 	width: 100%;
 	display: none;

@@ -424,7 +424,7 @@ class Billboard extends CustomPostType {
 		<!-- nivo slider -->
 		<script type="text/javascript">
 			$(window).load(function() {
-				$('#slider-sc').nivoSlider({
+				$('#slider').nivoSlider({
 					slices: 10,
 					pauseTime: 5000,
 					controlNav: false,
@@ -433,7 +433,7 @@ class Billboard extends CustomPostType {
 			});
 		</script>
 		<div class="container site-billboard theme-default">
-			<div id="slider-sc" class="nivoSlider">
+			<div id="slider" class="nivoSlider">
 			<?php foreach ( $context['objects'] as $o ):
 				if ( $o->has_post_thumbnail ) :
 					if( $o->billboard_url ) : ?>
