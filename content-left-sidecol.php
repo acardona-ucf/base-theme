@@ -13,6 +13,7 @@ get_header();
 
 
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+	<?= get_template_part( 'includes/template', 'heading' ); ?>
 	<div class="col-sm-4">
 		<?php
 			$prefix = SDES_Static::get_post_type( get_the_ID() ).'_';
