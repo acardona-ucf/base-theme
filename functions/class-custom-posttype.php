@@ -253,7 +253,7 @@ abstract class CustomPostType {
 				array( 'post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image' )
 			);
 			if ( $attachments ) {
-				$last_attachment_id = endKey( $attachments );
+				$last_attachment_id = end( $attachments );
 				$html = wp_get_attachment_image( $last_attachment_id, 'thumbnail', true );
 			}
 		}

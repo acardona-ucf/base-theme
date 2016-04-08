@@ -10,18 +10,18 @@ use SDES\SDES_Static as SDES_Static;
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title><?php wp_title(' | ', true, 'right'); ?></title>
+	<title><?= wp_title('&raquo;', true, 'right'); ?>UCF</title>
 
-	<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" >
-	<link rel="shortcut icon" href="images/favicon_black.png" >
-	<link rel="apple-touch-icon" href="images/apple-touch-icon.png" >
+	<link rel="stylesheet" href="<?= bloginfo('stylesheet_url'); ?>" >
+	<link rel="shortcut icon" href="<?= bloginfo('template_url'); ?>/images/favicon_black.png" >
+	<link rel="apple-touch-icon" href="<?= bloginfo('template_url'); ?>/images/apple-touch-icon.png" >
 
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script type="text/javascript" id="ucfhb-script" src="//universityheader.ucf.edu/bar/js/university-header.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="<?= bloginfo('template_url'); ?>/bootstrap/js/bootstrap.min.js"></script>
 
-	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/js/sdes_main_ucf.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('template_url'); ?>/nivoslider/jquery.nivo.slider.pack.js"></script>
+	<script type="text/javascript" src="<?= bloginfo('template_url'); ?>/js/sdes_main_ucf.js"></script>
+	<script type="text/javascript" src="<?= bloginfo('template_url'); ?>/nivoslider/jquery.nivo.slider.pack.js"></script>
 	<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.min.js"></script>
 
@@ -74,12 +74,11 @@ use SDES\SDES_Static as SDES_Static;
 </head>
 <body>
 	<!-- header -->
-	<?php $taglineURL = SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '#' ) ); ?>
 	<div class="container header">
 		<div class="site-title">
-			<a href="<?= $taglineURL ?>"><?php bloginfo('name'); ?></a>
+			<a href="<?= site_url() ?>"><?php bloginfo('name'); ?></a>
 			<div class="site-subtitle">
-				<a href="<?= $taglineURL ?>">
+				<a href="<?= SDES_Static::url_ensure_prefix( SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-taglineURL', '//www.sdes.ucf.edu/' ) ); ?>">
 					<?= html_entity_decode(get_bloginfo('description')); ?>
 				</a>
 			</div>
