@@ -14,7 +14,7 @@ get_header();
 ?>
 <!-- content area -->
 <div class="container site-content">
-
+<div class="row">
 
 <?php
 // NOTE: Metadata fields don't have revisions, so the alert color will not be updated in previews.
@@ -34,7 +34,7 @@ else:
 	SDES_Helper::Get_No_Posts_Message();
 endif; ?>
 
-
+</div> <!-- /DIV.row -->
 </div> <!-- /DIV.container.site-content -->
 <?php
 get_footer();
