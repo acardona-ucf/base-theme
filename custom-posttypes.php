@@ -409,10 +409,12 @@ class Billboard extends CustomPostType {
 	protected static function render_objects_to_html( $context ){
 		// TODO: don't show nivoslider directionNav if only 1 Billboard slide.
 		$BILLBOARD_SIZE = array( 1140, 318 );
+		$billboard_count = 0;
 		foreach ( $context['objects'] as $o ) {
 			// Extend WP_Post objects to save query results.
 			$o->has_post_thumbnail = has_post_thumbnail( $o );
 			if ( $o->has_post_thumbnail ) {
+				$billboard_count++;
 				$o->alt_text = get_post_meta( get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true );
 				$o->billboard_url = get_post_meta( $o, 'billboard_url', true );
 				$o->billboard_url = ( $o->billboard_url ) ? SDES_Static::url_ensure_prefix( $o->billboard_url ) : false;
@@ -425,10 +427,13 @@ class Billboard extends CustomPostType {
 		<script type="text/javascript">
 			$(window).load(function() {
 				$('#slider').nivoSlider({
-					slices: 10,
+					slices: <?= $billboard_count ?>,
 					pauseTime: 5000,
 					controlNav: false,
-					captionOpacity: 0.7
+					captionOpacity: 0.7,
+					<?php if ( 1 === $billboard_count ) : ?>
+					directionNav: false,
+					<?php endif; ?>
 				});
 			});
 		</script>
