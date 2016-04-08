@@ -179,7 +179,7 @@ class Alert extends CustomPostType {
 				),
 				array(
 					'key' => $prefix.'end_date',
-					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				),
 			),
@@ -380,7 +380,7 @@ class Billboard extends CustomPostType {
 					'relation' => 'OR',
 					array(
 						'key' => $prefix.'end_date',
-						'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
+						'value' => date( 'Y-m-d', strtotime('-1 day') ), // Datetime is stored as 24 hours before it should expire.
 						'compare' => '>=',
 					),
 					array(
@@ -774,7 +774,7 @@ class News extends CustomPostType {
 				'relation' => 'AND',
 				array(
 					'key' => esc_sql( $prefix.'end_date' ),
-					'value' => $current_datetime,
+					'value' => date( 'Y-m-d', strtotime('-1 day') ),  // Datetime is stored as 24 hours before it should expire.
 					'compare' => '<=',
 				)
 			);
@@ -790,7 +790,7 @@ class News extends CustomPostType {
 				),
 				array(
 					'key' => esc_sql( $prefix.'end_date' ),
-					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Alert datetime is stored as 24 hours before it should expire.
+					'value' => date( 'Y-m-d', strtotime('-1 day') ), // Datetime is stored as 24 hours before it should expire.
 					'compare' => '>=',
 				)
 			);

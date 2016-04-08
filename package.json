@@ -1,0 +1,45 @@
+{
+  "private": true,
+  "config": {
+    "cmd_jshint": "jshint --verbose --show-non-errors",
+    "cmd_jscs": "jscs --preset=wordpress"
+  },
+  "scripts": {
+    "//": {
+      "test": "Default command to run javascript tests.",
+      "install:globaldev": "Choose to install reusable developer dependecies globally.",
+      "jshint": "A code linter for javascript files.",
+      "jscs": "Javascript codesniffer with a wordpress preset."
+    },
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install:globaldev": "npm install -g jshint jscs",
+    "jshint": "npm run from_config -- cmd_jshint",
+    "jscs": "npm run from_config -- cmd_jscs",
+
+    "//": "Utility npm scripts.",
+    "//": {
+      "from_config": "Store and run a command from the environment's package (cross-platform) variable, i.e., `%npm_package_config_VAR%` or `$npm_package_config_VAR`.",
+      "in_node": "Wrapper for running shell commands within `node --eval` (allows error catching, cross-platform environmental variables)."
+    },
+    "from_config": "node -e \"try{ cmd=`${process.env['npm_package_config_'+process.argv[1]]} ${process.argv.splice(2)}`;console.log(cmd); require('child_process').execSync(cmd, {stdio:'inherit'}) }catch(e){}\"",
+    "in_node": "node -e \"try{ argv=process.argv;cmd=`${argv.splice(1).join(' ')}`;console.log(cmd); require('child_process').execSync(cmd, {stdio:'inherit'}) }catch(e){}\"",
+
+    "//": "",
+    "//": "Reference commands (disabled).",
+    "//": {
+      "//": "Call in_node without a config command, or make a variant that uses other environmental variables.",
+      "jshint:in_node": "npm run in_node -- jshint --verbose --show-non-errors",
+      "jshint:stylish": "node -e \"try{ cmd='jshint --verbose --show-non-errors --reporter='+`${process.env.npm_config_prefix}`+'/node_modules/jshint-stylish '+`${process.argv.splice(1)}`;console.log(cmd); require('child_process').execSync(cmd, {stdio:'inherit'}) }catch(e){}\"",
+      "//": "Using the shell's variables requires separate commands (for both cmd.exe and bash):",
+      "jshint-win": "%npm_package_config_cmd_jshint%",
+      "jshint-nix": "$npm_package_config_cmd_jshint",
+      "jscs-win": "%npm_package_config_cmd_jscs%",
+      "jscs-nix": "$npm_package_config_cmd_jscs",
+      "//": "# Intermediary steps towards in_node.",
+      "in_node0": "node -e \"try{ cmd=process.argv.splice(1).join(' ');console.log(cmd); require(`child_process`).execSync(cmd, {stdio:`inherit`}) }catch(e){}\"",
+      "jshint0": "npm run in_node0 -- %npm_package_config_cmd_jshint%",
+      "jshint:inline": "node -e \"try{ require(`child_process`).execSync(`${process.env.npm_package_config_cmd_jshint} ${process.argv.splice(1)}`, {stdio:`inherit`}) }catch(e){}\"",
+      "jscs:inline": "node -e \"try{ require(`child_process`).execSync(`${process.env.npm_package_config_cmd_jscs} ${process.argv.splice(1)}`, {stdio:`inherit`}) }catch(e){}\""
+    }
+  }
+}
