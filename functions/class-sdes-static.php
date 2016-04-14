@@ -94,8 +94,8 @@ class SDES_Static
 	 * Always include an area code, show only numbers and the dash symbol, always show 2 dashes.
 	 * @param string $value    The value to be sanitized, as passed back by sanitize_callback.
 	 */
-	public static function sanitize_telephone_407( $value ) {
-		$areaCode = '407';
+	public static function sanitize_telephone( $value, $areaCode = '407' ) {
+		if ( '' === $value ) { return $value; }
 		$value = preg_replace( '/[^0-9-]/', '', $value ); // Remove non-numeric, unless a dash.
 
 		// Prepend area code if necessary.

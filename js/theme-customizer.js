@@ -17,12 +17,14 @@
 
 		wp.customize( 'sdes_rev_2015-phone', function( value ) {
 			value.bind( function( to ) {
+				to = ( '' !== to ) ? to : '407-823-4625';
 				$( '#departmentInfo td:eq(1)' ).html( to );
 			});
 		});
 
 		wp.customize( 'sdes_rev_2015-fax', function( value ) {
 			value.bind( function( to ) {
+				to = ( '' !== to ) ? to : '407-823-2969';
 				$( '#departmentInfo td:eq(2)' ).html( to );
 			});
 		});

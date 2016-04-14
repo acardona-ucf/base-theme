@@ -47,54 +47,67 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
 
 
-    ///////////  SDES_Static::sanitize_telephone_407()  ////////////////////
-    public function test_sanitize_telephone_407__MissingAreaCode__ReturnsWithAreacode()
+    ///////////  SDES_Static::sanitize_telephone()  ////////////////////
+    public function test_sanitize_telephone__EmptyString__ReturnsEmptyString()
+    {
+        // Arrange
+        $toSanitize = '';
+        $expected = '';
+
+        // Act
+        $result = SDES_Static::sanitize_telephone($toSanitize);
+
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function test_sanitize_telephone__MissingAreaCode__ReturnsWithAreacode()
     {
         // Arrange
         $toSanitize = '823-5896';
         $expected = '407-823-5896';
 
         // Act
-        $result = SDES_Static::sanitize_telephone_407($toSanitize);
+        $result = SDES_Static::sanitize_telephone($toSanitize);
 
         // Assert
         $this->assertEquals($expected, $result);
     }
 
-    public function test_sanitize_telephone_407__MixedInput__ReturnsOnlyNumbersAndDashes()
+    public function test_sanitize_telephone__MixedInput__ReturnsOnlyNumbersAndDashes()
     {
         // Arrange
         $toSanitize = 'ABCDEFG!@# 407-123-4567';
         $expected = '407-123-4567';
 
         // Act
-        $result = SDES_Static::sanitize_telephone_407($toSanitize);
+        $result = SDES_Static::sanitize_telephone($toSanitize);
 
         // Assert
         $this->assertEquals($expected, $result);
     }
 
-    public function test_sanitize_telephone_407__MissingtDashes__ReturnsWithDashes()
+    public function test_sanitize_telephone__MissingtDashes__ReturnsWithDashes()
     {
         // Arrange
         $toSanitize = '4071234567';
         $expected = '407-123-4567';
 
         // Act
-        $result = SDES_Static::sanitize_telephone_407($toSanitize);
+        $result = SDES_Static::sanitize_telephone($toSanitize);
 
         // Assert
         $this->assertEquals($expected, $result);
     }
 
-    public function test_sanitize_telephone_407__AtLeast8Numeric__NoThrowsException()
+    public function test_sanitize_telephone__AtLeast8Numeric__NoThrowsException()
     {
         // Arrange
         $toSanitize = 'ABCDEF123-';
         $expected = '407-123-';
 
         // Act
-        $result = SDES_Static::sanitize_telephone_407($toSanitize);
+        $result = SDES_Static::sanitize_telephone($toSanitize);
 
         $this->assertEquals($expected, $result);
     }
@@ -104,16 +117,17 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
      * @expectedException PHPUnit_Framework_Error
      * @expectedExceptionMessage Uninitialized string offset: 7
      */
-    public function test_sanitize_telephone_407__Under8Numeric__ThrowsException()
+    public function test_sanitize_telephone__Under8Numeric__ThrowsException()
     {
         // Arrange
         $toSanitize = 'ABCDEF123';
         $expected = '407-123';
 
         // Act
-        $result = SDES_Static::sanitize_telephone_407($toSanitize);
+        $result = SDES_Static::sanitize_telephone($toSanitize);
     }
 
+    ///////////  SDES_Static::url_ensure_prefix()  ////////////////////
     public function test_url_ensure_prefix__DomainNoProtocol__ReturnsPrefixURL(){
         // Arrange
         $string_with_url = 'www.sdes.ucf.edu';
@@ -143,6 +157,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         // Assert
         $this->assertEquals($expected, $result);
     }
+
 
     ///////////  SDES_Static::get_theme_mod_defaultIfEmpty()  ////////////////////
     public function test_get_theme_mod_defaultIfEmpty__LookupYieldsNull__ReturnsDefault()

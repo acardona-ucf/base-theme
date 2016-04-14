@@ -94,16 +94,16 @@ function add_section_ContactOptions( $wp_customizer, $args = null ) {
 	SDES_Static::set_default_keyValue_array( $phone_args, array(
 		'default' => '407-823-4625',
 		'transport' => 'postMessage',
-		'sanitize_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
-		'sanitize_js_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
+		'sanitize_callback' => 'SDES\\SDES_Static::sanitize_telephone',
+		'sanitize_js_callback' => 'SDES\\SDES_Static::sanitize_telephone',
 	));
 
 	$fax_args = $args['sdes_rev_2015-fax'];
 	SDES_Static::set_default_keyValue_array( $fax_args, array(
 		'default' => '407-823-2969',
 		'transport' => 'postMessage',
-		'sanitize_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
-		'sanitize_js_callback' => 'SDES\\SDES_Static::sanitize_telephone_407',
+		'sanitize_callback' => 'SDES\\SDES_Static::sanitize_telephone',
+		'sanitize_js_callback' => 'SDES\\SDES_Static::sanitize_telephone',
 	));
 
 	$email_args = $args['sdes_rev_2015-email'];
@@ -121,9 +121,9 @@ function add_section_ContactOptions( $wp_customizer, $args = null ) {
 	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type.
 		$wp_customizer,			// WP_Customize_Manager.
 		'sdes_rev_2015-departmentName',	// Id.
-		'Department Name',		// Label..
-		$section,				// Section..
-		$departmentName_args	// Arguments array..
+		'Department Name',		// Label.
+		$section,				// Section.
+		$departmentName_args	// Arguments array.
 	);
 
 	// Hours.
