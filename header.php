@@ -10,14 +10,14 @@ use SDES\SDES_Static as SDES_Static;
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title><?= wp_title('&raquo;', true, 'right'); ?>UCF</title>
+	<title><?= wp_title('&raquo;', true, 'right'); bloginfo('name');?> &raquo; UCF</title>
 
 	<link rel="stylesheet" href="<?= bloginfo('stylesheet_url'); ?>" >
 	<link rel="shortcut icon" href="<?= bloginfo('template_url'); ?>/images/favicon_black.png" >
 	<link rel="apple-touch-icon" href="<?= bloginfo('template_url'); ?>/images/apple-touch-icon.png" >
 
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<script type="text/javascript" id="ucfhb-script" src="//universityheader.ucf.edu/bar/js/university-header.js"></script>
+	<script type="text/javascript" id="ucfhb-script" src="//universityheader.ucf.edu/bar/js/university-header.js?use-1200-breakpoint=1"></script>
 	<script type="text/javascript" src="<?= bloginfo('template_url'); ?>/bootstrap/js/bootstrap.min.js"></script>
 
 	<script type="text/javascript" src="<?= bloginfo('template_url'); ?>/js/sdes_main_ucf.js"></script>
