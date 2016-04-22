@@ -43,7 +43,9 @@ if ( $hideBillboard ) {
 	</div>
 	<div class="col-sm-4">
 		<?php
-			echo do_shortcode( "[departmentInfo]" );
+			if( ! SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-hideDepartmentInfo', false) ) {
+				echo do_shortcode( "[departmentInfo]" );
+			}
 
 			$sidebar = get_post_meta( $post->ID, 'page_sidecolumn', $single=true );
 			echo do_shortcode( $sidebar );
