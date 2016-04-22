@@ -350,7 +350,15 @@ class sc_column extends ShortcodeBase {
         $callback    = 'callback',
         $wysiwig     = True;
 
+    /**
+     * @see http://codex.wordpress.org/Function_Reference/shortcode_atts  WP-Codex: shortcode_atts()
+     */
     public static function callback( $attr, $content='' ) {
+        $attr = shortcode_atts( array(
+                'class' => '',
+                'style' => '',
+            ), $attr
+        );
         // Size classes
         $classes = array( $attr['class'] ? $attr['class'] : '' );
 
@@ -359,8 +367,8 @@ class sc_column extends ShortcodeBase {
 
         foreach( $prefixes as $prefix ) {
             foreach( $suffixes as $suffix ) {
-                if ( $attr[$prefix.$suffix] ) {
-                    $suf = str_replace('_', '-', $suffix);
+                if ( array_key_exists( $prefix.$suffix, $attr ) ) {
+                    $suf = str_replace( '_', '-', $suffix );
                     $classes[] = 'col-'.$prefix.$suf.'-'.$attr[$prefix.$suffix];
                 }
             }
