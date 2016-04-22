@@ -4,8 +4,10 @@
  */
 namespace SDES\BaseTheme;
 ?>
+	<div class="blank"></div>
 </div>
-<!-- repeated navigation, social media -->
+
+	<!-- repeated navigation, social media -->
 	<div class="container site-content-end">
 		<nav class="navbar navbar-default site-nav-repeated">
 			<div class="container-fluid">

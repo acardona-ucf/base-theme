@@ -341,6 +341,7 @@ class Billboard extends CustomPostType {
 				'id' => $prefix.'start_date',
 				'type' => 'date',
 				'custom_column_order' => 200,
+				'default' => date( 'Y-m-d', time() ),
 			),
 			array(
 				'name' => 'End Date',
@@ -418,7 +419,7 @@ class Billboard extends CustomPostType {
 				$o->alt_text = get_post_meta( get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true );
 				$o->billboard_url = get_post_meta( $o, 'billboard_url', true );
 				$o->billboard_url = ( $o->billboard_url ) ? SDES_Static::url_ensure_prefix( $o->billboard_url ) : false;
-				$o->is_title_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title ) );
+				$o->is_caption_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title )  || ! SDES_Static::is_null_or_whitespace( $o->post_content ));
 			}
 		}
 		ob_start();
@@ -444,7 +445,7 @@ class Billboard extends CustomPostType {
 					if( $o->billboard_url ) : ?>
 						<a href="<?= $o->billboard_url ?>" class="nivo-imageLink">
 					<?php endif;
-							$title = ( $o->is_title_valid ) ? '#nivo-caption-'.$o->ID : '' ;
+							$title = ( $o->is_caption_valid ) ? '#nivo-caption-'.$o->ID : '' ;
 							echo get_the_post_thumbnail( $o, $BILLBOARD_SIZE, 
 									array('title'=> $title, 'alt' => $o->alt_text ) );
 					if( $o->billboard_url ) : ?>
@@ -455,7 +456,7 @@ class Billboard extends CustomPostType {
 			</div>
 			<?php foreach ( $context['objects'] as $o ):
 				if ( $o->has_post_thumbnail ):
-					if ( $o->is_title_valid ) : ?>
+					if ( $o->is_caption_valid ) : ?>
 					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
 						<div class="nivo-padding"></div>
 						<div class="nivo-title"><?= $o->post_title ?></div>
@@ -630,7 +631,7 @@ class Staff extends CustomPostType {
 			</script>
 			<?php endif;
 			if ( $context['header'] ) : ?>
-				<h2><?= $context['header'] ?></h2>
+				<div class="staff-role"><?= $context['header'] ?></div>
 			<?php endif; ?>
 			<span class="<?= $context['css_classes'] ?>">
 				<?php foreach ( $context['objects'] as $o ):?>
@@ -840,13 +841,18 @@ class News extends CustomPostType {
 		ob_start();
 		?>
 		<?php if ( $context['header'] ) : ?>
-			<h2><?= $context['header'] ?></h2>
+			<div class="page-header">
+				<h2><?= $context['header'] ?></h2>
+			</div>
 		<?php endif; ?>
 		<span class="<?= $context['css_classes'] ?>">
 			<?php foreach ( $context['objects'] as $o ):?>
 				<?= static::toHTML( $o ) ?>
 				<div class="hr-blank"></div>
 			<?php endforeach;?>
+			<?php if ( 0 == count( $context['objects'] ) ) : ?>
+				No archived news articles were found.
+			<?php endif; ?>
 			<div class="top-b"></div>
 			<div class="datestamp"><a href="<?= $context['archiveUrl'] ?>">»News Archive</a></div>
 		</span>
