@@ -646,7 +646,7 @@ class Staff extends CustomPostType {
 
 	public static function toHTML ( $post_object ){
 		$context['Post_ID'] = $post_object->ID;
-		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+		$thumbnailUrl = get_stylesheet_directory_uri() . '/images/blank.png';
 		$context['thumbnail']
 			= has_post_thumbnail($post_object) 
 				? get_the_post_thumbnail($post_object, 'post-thumbnail', array('class' => 'img-responsive'))
@@ -875,7 +875,7 @@ class News extends CustomPostType {
 
 	public static function toHTML ( $post_object ){
 		$context['Post_ID'] = $post_object->ID;
-		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+		$thumbnailUrl = get_stylesheet_directory_uri() . '/images/blank.png';
 		$context['thumbnail']
 			= has_post_thumbnail($post_object) 
 				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))

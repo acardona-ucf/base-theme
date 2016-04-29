@@ -563,7 +563,7 @@ class sc_socialButton extends ShortcodeBase {
                 $ctxt['url'] = esc_attr(
                     SDES_Static::url_ensure_prefix(
                         SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') ) );
-                $ctxt['image'] = esc_attr( "https://assets.sdes.ucf.edu/images/{$attr['network']}.gif" );
+                $ctxt['image'] = esc_attr( get_stylesheet_directory_uri() ."/images/{$attr['network']}.gif" );
                 break;
         }
         if ( '' == $ctxt['url'] ) return '';
@@ -856,7 +856,7 @@ class sc_contactBlock extends ShortcodeBase {
                     asort($department->socialNetworks);
                     foreach ($department->socialNetworks as $network) {
                         $yield .= "<a href='{$network->uri}'>";
-                        $yield .= '<img src="//assets.sdes.ucf.edu/images/icons/'.strtolower($network->name).'.png" class="social" alt="icon">';
+                        $yield .= '<img src="'.get_stylesheet_directory_uri().'/images/icons/'.strtolower($network->name).'.png" class="social" alt="icon">';
                         $yield .= '</a>';
                     }
                     $yield .= '</td>';

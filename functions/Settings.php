@@ -123,7 +123,7 @@ function menu_with_submenus() {
         'manage_options',       // The required capability of users to access this menu
         'sdes_options',         // The slug by which this menu item is accessible
         __NAMESPACE__.'\render_sdes_menu',    // The name of the function used to display the page content
-        '//assets.sdes.ucf.edu/images/favicon_black.png' //  An icon to display besied the menu text
+        get_stylesheet_directory_uri() . '/images/favicon_black.png' //  An icon to display besied the menu text
         // 78       // The position to innsert this menu item. Be careful not to hide another item!
     );
 

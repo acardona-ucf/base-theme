@@ -12,12 +12,12 @@ use SDES\SDES_Static as SDES_Static;
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><?= wp_title('&raquo;', true, 'right'); bloginfo('name');?> &raquo; UCF</title>
 
-	<link rel="shortcut icon" href="<?= bloginfo('template_url'); ?>/images/favicon_black.png" >
-	<link rel="apple-touch-icon" href="<?= bloginfo('template_url'); ?>/images/apple-touch-icon.png" >
+	<link rel="shortcut icon" href="<?= get_stylesheet_directory_uri(); ?>/images/favicon_black.png" >
+	<link rel="apple-touch-icon" href="<?= get_stylesheet_directory_uri(); ?>/images/apple-touch-icon.png" >
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/nivoslider/3.2/nivo-slider.css" integrity="sha256-ozCgGW2jByABzzSU1X46571+0m23IUok6fdIjS5+nVQ=" crossorigin="anonymous" >
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/nivoslider/3.2/themes/default/default.css" integrity="sha256-O1/X/SEJPvJ8T2QC3NQvoARgaeAk1iGHstf0wUjuNkA=" crossorigin="anonymous" >
-	<link rel="stylesheet" href="<?= bloginfo('stylesheet_url'); ?>" >
+	<link rel="stylesheet" href="<?= get_stylesheet_uri(); ?>" >
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" integrity="sha384-Pn+PczAsODRZ2PiGg0IheRROpP7lXO1NTIjiPo6cca8TliBvaeil42fobhzvZd74" crossorigin="anonymous"></script>
 	<script type="text/javascript" id="ucfhb-script" src="//universityheader.ucf.edu/bar/js/university-header.js?use-1200-breakpoint=1"></script>
@@ -25,7 +25,7 @@ use SDES\SDES_Static as SDES_Static;
 	<script src="https://cdn.jsdelivr.net/nivoslider/3.2/jquery.nivo.slider.pack.js" integrity="sha256-4WhPxM5Oma2+XZ8KTrGc4sVBFtqLD5IkzclNM5iKo4c=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/jquery.validation/1.13.1/jquery.validate.min.js" integrity="sha256-8PU3OtIDEB6pG/gmxafvj3zXSIfwa60suSd6UEUDueI=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/jquery.validation/1.13.1/additional-methods.min.js" integrity="sha256-TZwF+mdLcrSLlptjyffYpBb8iUAuLtidBmNiMj7ll1k=" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="<?= bloginfo('template_url'); ?>/js/sdes_main_ucf.js"></script>
+	<script type="text/javascript" src="<?= get_stylesheet_directory_uri(); ?>/js/sdes_main_ucf.js"></script>
 
 	
 	<?php
@@ -104,7 +104,7 @@ use SDES\SDES_Static as SDES_Static;
 				?> 
 				<p class="navbar-text navbar-right translate-button">
 					<a href="http://it.sdes.ucf.edu/translate/" class="navbar-link">Translate
-						<img alt="translate icon" src="<?php bloginfo('template_url'); ?>/images/fff_page_world.png" >
+						<img alt="translate icon" src="<?= get_stylesheet_directory_uri(); ?>/images/fff_page_world.png" >
 					</a>
 				</p>
 			</div>
