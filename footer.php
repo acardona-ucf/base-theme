@@ -24,17 +24,17 @@ namespace SDES\BaseTheme;
 					if( '' !== $url_facebook && 'http://' !== $url_facebook) { 
 					?>
 					<a href="<?= $url_facebook ?>">
-						<img src="<?php bloginfo('template_url'); ?>/images/facebook.png" alt="icon" title="Facebook">
+						<img src="<?php bloginfo('template_url'); ?>/images/facebook.png" class="icon" alt="icon" title="Facebook">
 					</a>
 				<?php } 
 					if( '' !== $url_twitter && 'http://' !== $url_twitter) { ?>
 					<a href="<?= $url_twitter ?>">
-						<img src="<?php bloginfo('template_url'); ?>/images/twitter.png" alt="icon" title="Twitter">
+						<img src="<?php bloginfo('template_url'); ?>/images/twitter.png" class="icon" alt="icon" title="Twitter">
 					</a>
 				<?php }
 					if( '' !== $url_youtube && 'http://' !== $url_youtube) {?>
 					<a href="<?= $url_youtube ?>">
-						<img src="<?php bloginfo('template_url'); ?>/images/youtube.png" alt="icon" title="YouTube">
+						<img src="<?php bloginfo('template_url'); ?>/images/youtube.png" class="icon" alt="icon" title="YouTube">
 					</a>
 				<?php } ?>
 					<a href="http://get.adobe.com/reader/"><img src="<?php bloginfo('template_url'); ?>/images/content-end-pdf.jpg" alt="icon" title="Get Adobe Reader"></a>

@@ -54,10 +54,15 @@ li:empty{
 .container.header{
 	margin: 2.5em auto 1.5em;
 }
+
 .site-title{
 	font-size: 3.5em;
 	letter-spacing: -2px;
 	line-height: 1em;
+}
+
+.site-title img{
+	vertical-align: inherit;
 }
 
 /* TODO: Should .site-subtitle be renamed to .site-tagline or .site-description to match the built-in Theme Customizer field? */
@@ -102,10 +107,14 @@ li:empty{
 }
 
 .site-nav.navbar-default .navbar-nav > li:hover,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a:hover,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a:focus 
 .site-nav.navbar-default .navbar-nav > li.active > a,
 .site-nav.navbar-default .navbar-nav > li.active > a:hover,
 .site-nav.navbar-default .navbar-nav > li.active > a:focus {
-	background-color: #fff;
+	background-color: rgba(50,50,50,0.1);
+	transition: .2s ease;
 }
 
 .site-nav .translate-button{
@@ -192,6 +201,12 @@ li:empty{
 	padding: 15px 0 0!important;
 }
 
+/* Fix nivo slider scaling: http://stackoverflow.com/questions/14872634/nivo-slider-first-image-is-scaled-unproportional-when-displayed-the-first-time#15073788*/
+.nivo-main-image {
+	height: auto !important;
+}
+
+
 .site-content{
 	min-height: 475px;
 }
@@ -226,6 +241,10 @@ li:empty{
 	margin-right: 0.5em;
 }
 
+.site-nav-repeated .icons a{
+	text-decoration: none;
+}
+
 .site-nav-repeated .icons img{
 	margin-left: 4px;
 	border: 1px solid #ccc;
@@ -234,6 +253,7 @@ li:empty{
 .site-footer{
 	background: #222 url('../images/footer-bg.png') repeat-x;
 	padding: 1em 0;
+	color: #ccc;  /* All text should be visible in footer, not just text in <P> tags.*/
 }
 
 .site-footer h2{
@@ -251,6 +271,11 @@ li:empty{
 
 .site-footer a{
 	color: #ccc;
+}
+
+.site-footer a.external, .site-footer a[href$='.pdf']{
+	background: none;
+	padding: 0;
 }
 
 .site-footer a:hover{
@@ -474,6 +499,12 @@ ul.bullets > li {
 	font-size: 1.5em;
 }
 
+@media (max-width: 768px){ /* tiny breakpoint and smaller */
+	ul.bullets > li{
+		font-size: 1.2em;
+	}
+}
+
 ul.bullets > li > a {
 	color: #666;
 }
@@ -692,6 +723,14 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
 	background-color: #fdfbf5;
 }
 
+/* Highlight current page in bottom nav (from bootstrap styles on ".navbar-default .navbar-nav>.active>a"). */
+.navbar-default .navbar-nav > .current-menu-item > a,
+.navbar-default .navbar-nav > .current-menu-item > a:focus,
+.navbar-default .navbar-nav > .current-menu-item > a:hover {
+    color: #555;
+    background-color: #e7e7e7;
+}
+
 /* .NET fixers ----------------------------------------------------------------------------------------------------- */
 
 .editor-field textarea {
@@ -757,7 +796,6 @@ div.top-b{
 
 /* WP new image alignment -------------------------------------------------------------------------------------------
 https://codex.wordpress.org/Wrapping_Text_Around_Images*/
-
 img.alignright { float: right; margin: 0 0 1em 1em; }
 img.alignleft { float: left; margin: 0 1em 1em 0; }
 img.aligncenter { display: block; margin-left: auto; margin-right: auto; }
