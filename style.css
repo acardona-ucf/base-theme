@@ -7,8 +7,4 @@
 	Author URI: https://sdescmsdev.smca.ucf.edu/
 */
 
-@import url('//assets.sdes.ucf.edu/plugins/bootstrap3/css/bootstrap.min.css');
-@import url('//assets.sdes.ucf.edu/plugins/nivoslider3.2/nivo-slider.css');
-@import url('//assets.sdes.ucf.edu/plugins/nivoslider3.2/themes/default/default.css');
 @import url('./css/style.css');
-
