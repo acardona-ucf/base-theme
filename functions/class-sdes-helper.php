@@ -54,7 +54,7 @@ class SDES_Helper
 		$no_posts = 
 			( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
 			? '<a class="text-danger adminmsg" style="color: red !important;"'
-			. 'href="/wp-admin/">Admin Alert: %1$s</a>'
+			. 'href="' . get_site_url() . '/wp-admin/">Admin Alert: %1$s</a>'
 			: '<!-- %1$s -->';
 		$output = sprintf( $no_posts, 'No posts were found.');
 		if ( $args['echo'] ) {

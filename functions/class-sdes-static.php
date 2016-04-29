@@ -293,7 +293,7 @@ class SDES_Static
 		SDES_Static::set_default_keyValue( $args, 'warn', true );
 		SDES_Static::set_default_keyValue( $args, 'warn_message',
 			'<li><a class="text-danger adminmsg adminmsg-menu" style="color: red !important;" data-control-name="nav_menu_locations[%1$s]" '
-			. 'href="/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Alert: Missing "%1$s" menu location.</a></li>'
+			. 'href="' . get_site_url() . '/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Alert: Missing "%1$s" menu location.</a></li>'
 		);
 		SDES_Static::set_default_keyValue( $args, 'links_cb', null );
 

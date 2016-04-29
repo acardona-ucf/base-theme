@@ -810,30 +810,40 @@ class News extends CustomPostType {
 		unset( $attr['css_classes'] );
 		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
 		$context['objects'] = SDES_Static::sc_object_list( $attr, $args );
-		$context['archiveUrl'] = static::get_archive_url();
+		$context['archiveLink'] = static::get_archive_link();
 		return static::render_objects_to_html( $context );
 	}
 
 	/**
-	 * Get the archive URL option stored in ThemeCustomizer (defaults to '/news/').
+	 * Get the a link for the archive URL option stored in ThemeCustomizer or show an adminmsg.
 	 * @param $option_id   The name of the option stored in Theme Customizer
 	 * @param $posttype_name The name of this posttype, 'news'.
 	 */
-	private static function get_archive_url( $option_id = 'sdes_rev_2015-newsArchiveUrl', $posttype_name = 'news' ) {
+	private static function get_archive_link( $option_id = 'sdes_rev_2015-newsArchiveUrl', $posttype_name = 'News' ) {
 		$archive_url = 
 			SDES_Static::get_theme_mod_defaultIfEmpty(
 				$option_id,
 				get_post_type_archive_link( $posttype_name ) );
 		$archive_url = SDES_Static::url_ensure_prefix( $archive_url );
-		$archive_url = ( 'http://' === $archive_url ) ? get_site_url() . "/{$posttype_name}/" : $archive_url;
-		return $archive_url;
+		if( 'http://' !== $archive_url ) {
+			$archive_link = '<div class="datestamp"><a href="' . $archive_url . '>»News Archive</a></div>';
+		} else {
+			$format_default_message =
+				( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
+				? '<span style="color: red !important;">Admin Alert:<a class="text-danger adminmsg adminmsg-menu" data-control-name="sdes_rev_2015-newsArchiveUrl"'
+				  . 'href="' . get_site_url() . '/wp-admin/">%1$s</a><br>'
+				  . "If you have not created <a href='".get_admin_url()."/post-new.php?post_type=page&post_title={$posttype_name}&content=%%5Bnews-list%%20show-archives%%3Dtrue%%5D'>a news archive page with a [news-list] shortcode</a>, please do this first.<br></span>"
+				: '<!-- %1$s -->';
+			$archive_link = sprintf( $format_default_message, 'No news archive page was set.');
+		}
+		return $archive_link;
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
 		$context['objects'] = $objects;
 		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
-		$context['archiveUrl'] = static::get_archive_url();
+		$context['archiveLink'] = static::get_archive_link();
 		return static::render_objects_to_html( $context );
 	}
 
@@ -854,7 +864,9 @@ class News extends CustomPostType {
 				No archived news articles were found.
 			<?php endif; ?>
 			<div class="top-b"></div>
-			<div class="datestamp"><a href="<?= $context['archiveUrl'] ?>">»News Archive</a></div>
+			<?php if ( ! SDES_Static::is_null_or_whitespace( $context['archiveLink'] ) ) :?>
+				<?= $context['archiveLink'] ?>
+			<?php endif; ?>
 		</span>
 		<?php
 		$html = ob_get_clean();
