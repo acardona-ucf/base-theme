@@ -30,20 +30,20 @@ class SDES_Helper
 					break;
 				}
 			}
-		} else {
-			$department = array_merge( 
-				array(
-				'location' => array( 'building' => '', 'buildingNumber' => '', 'roomNumber' => '', ),
-				'name' => '', 'acroynm' => '', 'phone' => '', 'fax' => '', 'email' => '', 'postOfficeBox' => '',
-				'image' => '', 'offersPublicServices' => '', 'isDept' => '', 'functionalGroup' => '',
-				'websites' => array( array( 'name' => '', 'slug' => '', 'uri' => '', ), ) ,
-				'hours' => array( array( 'day' => '', 'open' => '', 'close' => '', ) ) ,
-				'staff' => array( array( 'name' => '', 'position' => '', ) ) ,
-				'socialNetworks' => array( array( 'name' => '', 'uri' => '', 'uid' => '', ) ) ,
-				),
-				$default_department
-			);
 		}
+		$department = array_merge( 
+			array(
+			'location' => array( 'building' => '', 'buildingNumber' => '', 'roomNumber' => '', ),
+			'name' => '', 'acroynm' => '', 'phone' => '', 'fax' => '', 'email' => '', 'postOfficeBox' => '',
+			'image' => '', 'offersPublicServices' => '', 'isDept' => '', 'functionalGroup' => '',
+			'websites' => array( array( 'name' => '', 'slug' => '', 'uri' => '', ), ) ,
+			'hours' => array( array( 'day' => '', 'open' => '', 'close' => '', ) ) ,
+			'staff' => array( array( 'name' => '', 'position' => '', ) ) ,
+			'socialNetworks' => array( array( 'name' => '', 'uri' => '', 'uid' => '', ) ) ,
+			),
+			(array) $default_department,
+			(array) $department  // Cast as array to handle null arrays. See: http://stackoverflow.com/a/20132209 for more.
+		);
 		return $department;
 	}
 

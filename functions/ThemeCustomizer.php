@@ -81,8 +81,8 @@ function add_section_ContactOptions( $wp_customizer, $args = null ) {
 	);
 
 	/* ARGS */
-	$hideDepartmentInfo_args = $args['sdes_rev_2015-hideDepartmentInfo'];
-	SDES_Static::set_default_keyValue( $hideDepartmentInfo_args, 'control_type', 'checkbox' );
+	$hideContactBlock_args = $args['sdes_rev_2015-hideContactBlock'];
+	SDES_Static::set_default_keyValue( $hideContactBlock_args, 'control_type', 'checkbox' );
 
 	$departmentName_args = $args['sdes_rev_2015-departmentName'];
 	SDES_Static::set_default_keyValue( $departmentName_args, 'default', get_bloginfo( 'name' ) );
@@ -123,10 +123,10 @@ function add_section_ContactOptions( $wp_customizer, $args = null ) {
 	// Hide Department Info.
 	SDES_Customizer_Helper::add_setting_and_control('WP_Customize_Control', // Control Type.
 		$wp_customizer,			// WP_Customize_Manager.
-		'sdes_rev_2015-hideDepartmentInfo',		// Id.
+		'sdes_rev_2015-hideContactBlock',		// Id.
 		'Hide Department Info (front page).',	// Label.
 		$section,					// Section.
-		$hideDepartmentInfo_args	// Arguments array.
+		$hideContactBlock_args	// Arguments array.
 	);
 
 	// DepartmentName.

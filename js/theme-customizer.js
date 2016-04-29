@@ -11,27 +11,27 @@
 
 		wp.customize( 'sdes_rev_2015-hours', function( value ) {
 			value.bind( function( to ) {
-				$( '#departmentInfo td:eq(0)' ).html( to );
+				$( '#contactBlock td:eq(0)' ).html( to );
 			});
 		});
 
 		wp.customize( 'sdes_rev_2015-phone', function( value ) {
 			value.bind( function( to ) {
 				to = ( '' !== to ) ? to : '407-823-4625';
-				$( '#departmentInfo td:eq(1)' ).html( to );
+				$( '#contactBlock td:eq(1)' ).html( to );
 			});
 		});
 
 		wp.customize( 'sdes_rev_2015-fax', function( value ) {
 			value.bind( function( to ) {
 				to = ( '' !== to ) ? to : '407-823-2969';
-				$( '#departmentInfo td:eq(2)' ).html( to );
+				$( '#contactBlock td:eq(2)' ).html( to );
 			});
 		});
 
 		wp.customize( 'sdes_rev_2015-email', function( value ) {
 			value.bind( function( to ) {
-				$( '#departmentInfo td:eq(3)' ).html( to );
+				$( '#contactBlock td:eq(3)' ).html( to );
 			});
 		});
 
