@@ -27,12 +27,17 @@ function javascript_callback() {
 
 function javascript_libraries_callback() {
     $sdes_theme_settings_js_lib = esc_attr( get_option('sdes_theme_settings_js_lib', '') );
-    echo "<input type='text' name='sdes_theme_settings_js_lib' value='$sdes_theme_settings_js_lib' />";
+    echo "<input type='text' name='sdes_theme_settings_js_lib' value='$sdes_theme_settings_js_lib' style='width: 560px;' />";
 }
 
 function css_callback() {
     $sdes_theme_settings_css = esc_attr( get_option('sdes_theme_settings_css', '') );
-    echo "<input type='text' name='sdes_theme_settings_css' value='$sdes_theme_settings_css' />";
+    echo "<textarea style='width: 560px; height: 150px;' name='sdes_theme_settings_css'>$sdes_theme_settings_css'</textarea>";
+}
+
+function css_libraries_callback() {
+    $sdes_theme_settings_css_lib = esc_attr( get_option('sdes_theme_settings_css_lib', '') );
+    echo "<input type='text' name='sdes_theme_settings_css_lib' value='$sdes_theme_settings_css_lib' style='width: 560px;' />";
 }
 
 function directory_cms_acronym_callback() {

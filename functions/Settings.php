@@ -72,6 +72,7 @@ function option_page_settings() {
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_js' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_js_lib' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_css' );
+    register_setting( 'sdes_setting_group', 'sdes_theme_settings_css_lib' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_dir_acronym' );
     register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-left' );
     register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-center' );
@@ -89,10 +90,13 @@ function option_page_settings() {
     add_settings_field( 'sdes_theme_settings_ga_id', 'Google Analytics ID', __NAMESPACE__.'\google_analytics_id_callback',
                         'sdes_settings', 'sdes_section_one' );
     
-    add_settings_field( 'sdes_theme_settings_js', 'javascript', __NAMESPACE__.'\javascript_callback',
+    add_settings_field( 'sdes_theme_settings_js_lib', 'Javascript Libraries<br>(semicolon \';\' delimited)', __NAMESPACE__.'\javascript_libraries_callback',
                         'sdes_settings', 'sdes_section_one' );
     
-    add_settings_field( 'sdes_theme_settings_js_lib', 'Javascript Libraries', __NAMESPACE__.'\javascript_libraries_callback',
+    add_settings_field( 'sdes_theme_settings_js', 'Javascript', __NAMESPACE__.'\javascript_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_css_lib', 'CSS Libraries<br>(semicolon \';\' delimited)', __NAMESPACE__.'\css_libraries_callback',
                         'sdes_settings', 'sdes_section_one' );
 
     add_settings_field( 'sdes_theme_settings_css', 'CSS', __NAMESPACE__.'\css_callback',
