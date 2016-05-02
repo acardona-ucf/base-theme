@@ -121,7 +121,52 @@ class sc_menuPanel extends ShortcodeBase {
     }
 }
 
+/**
+ * [panel] - Wrap HTML in a Boostrap CSS panel.
+ */
+class sc_panel extends ShortcodeBase {
+    public
+        $name        = 'Panel',
+        $command     = 'panel',
+        $description = 'Wraps content in a bootstrap panel.',
+        $render      = False,
+        $params      = array(
+            array(
+                'name'      => 'Header',
+                'id'        => 'header',
+                'help_text' => 'A header for the panel.',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+        ),
+        $callback    = 'callback',
+        $wysiwyg     = True;
 
+        public static function callback( $attr, $content='' ) {
+            $attr = shortcode_atts( array(
+                    'header' => '',
+                    'footer' => '',
+                    'class' => 'panel-warning',
+                    'style' => 'max-width: 697px;'
+                ), $attr
+            );
+            ob_start();
+          ?>
+            <div class="panel <?= $attr['class'] ? $attr['class'] : ''; ?>" <?= $attr['style'] ? ' style="' . $attr['style'] . '"' : '';?> >
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $attr['header'] ?></h3>
+                </div>
+                <div class="panel-body">
+                    <?= apply_filters( 'the_content', $content); ?>
+                </div>
+                <?php if ( '' != $attr['footer'] ) : ?>
+                    <div class="panel-footer"><?= $attr['footer'] ?></div>
+                <?php endif; ?>
+            </div>
+          <?php
+            return ob_get_clean();
+        }
+}
 
 
 /**************** SHORTCODE Boilerplate START **********************
@@ -413,7 +458,7 @@ class sc_events extends ShortcodeBase {
             array(
                 'name'      => 'Header',
                 'id'        => 'header',
-                'help_text' => 'The a header for the events calendar.',
+                'help_text' => 'A header for this events calendar.',
                 'type'      => 'text',
                 'default'   => 'Upcoming Events',
             ),
@@ -586,6 +631,51 @@ class sc_socialButton extends ShortcodeBase {
                 </a>
             </div>
         <?php
+        return ob_get_clean();
+    }
+}
+
+/**
+ * [twitterFeed] - Show a Twitter timeline for a given Twitter username.
+ * @see https://dev.twitter.com/web/javascript/loading https://dev.twitter.com/web/javascript/loading
+ */
+class sc_twitterFeed extends ShortcodeBase {
+    public
+        $name        = 'Twitter Feed',
+        $command     = 'twitterFeed',
+        $description = 'Display a Twitter feed.',
+        $render      = False,
+        $closing_tag = False,
+        $params      = array(
+            array(
+                'name'      => 'Username',
+                'id'        => 'username',
+                'help_text' => 'The username for your Twitter feed.',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+            array(
+                'name'      => 'Widget ID',
+                'id'        => 'widgetId',
+                'help_text' => 'The ID for your Twitter account. After logging in, go to: https://twitter.com/settings/widgets/new',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+        ),
+        $callback    = 'callback',
+        $wysiwyg     = True;
+
+    public static function callback($attr, $content='') {
+        $attr = shortcode_atts( array(
+                'username' => '',
+                'widgetId' => '',
+            ), $attr
+        );
+        ob_start();
+    ?>
+        <a class="twitter-timeline" href="https://twitter.com/<?= $attr['username']; ?>" data-widget-id="<?= $attr['widgetId']; ?>">Tweets by @<?= $attr['username']; ?></a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <?php
         return ob_get_clean();
     }
 }
@@ -884,9 +974,11 @@ function register_shortcodes() {
             __NAMESPACE__.'\sc_row',
             __NAMESPACE__.'\sc_column',
             __NAMESPACE__.'\sc_alert',
+            __NAMESPACE__.'\sc_panel',
             __NAMESPACE__.'\sc_menuPanel',
             __NAMESPACE__.'\sc_events',
             __NAMESPACE__.'\sc_socialButton',
+            __NAMESPACE__.'\sc_twitterFeed',
             __NAMESPACE__.'\sc_contactBlock',
         ));
 }
