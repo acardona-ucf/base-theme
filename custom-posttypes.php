@@ -826,7 +826,7 @@ class News extends CustomPostType {
 				get_post_type_archive_link( $posttype_name ) );
 		$archive_url = SDES_Static::url_ensure_prefix( $archive_url );
 		if( 'http://' !== $archive_url ) {
-			$archive_link = '<div class="datestamp"><a href="' . $archive_url . '>»News Archive</a></div>';
+			$archive_link = '<div class="datestamp"><a href="' . $archive_url . '">»News Archive</a></div>';
 		} else {
 			$format_default_message =
 				( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
