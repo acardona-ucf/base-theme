@@ -834,7 +834,7 @@ class News extends CustomPostType {
 		} else {
 			$format_default_message =
 				( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
-				? '<span style="color: red !important;">Admin Alert:<a class="text-danger adminmsg adminmsg-menu" data-control-name="sdes_rev_2015-newsArchiveUrl"'
+				? '<span class="adminmsg">Admin Alert:<a class="text-danger" data-control-name="sdes_rev_2015-newsArchiveUrl"'
 				  . 'href="' . get_site_url() . '/wp-admin/">%1$s</a><br>'
 				  . "If you have not created <a href='".get_admin_url()."/post-new.php?post_type=page&post_title={$posttype_name}&content=%%5Bnews-list%%20show-archives%%3Dtrue%%5D'>a news archive page with a [news-list] shortcode</a>, please do this first.<br></span>"
 				: '<!-- %1$s -->';

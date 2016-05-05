@@ -12,6 +12,11 @@ a:hover, a:focus{
 	text-decoration: underline;
 }
 
+#ucfhb a,
+#ucfhb label {
+	color: #edba03; /* Pass accessibility contrast test.*/
+}
+
 body{
 	background: #fff url('../images/ucf.png') repeat-x 0 20px;
 	background-size: 100% 139px;
@@ -49,8 +54,8 @@ li:empty{
 	display: none;
 }
 
-/* specific site elements ------------------------------------------------------------------------------------------ */
 
+/* specific site elements ------------------------------------------------------------------------------------------ */
 .container.header{
 	margin: 2.5em auto 1.5em;
 }
@@ -113,7 +118,7 @@ li:empty{
 .site-nav.navbar-default .navbar-nav > li.active > a,
 .site-nav.navbar-default .navbar-nav > li.active > a:hover,
 .site-nav.navbar-default .navbar-nav > li.active > a:focus {
-	background-color: rgba(50,50,50,0.1);
+	background-color: #e8dda9; /* rgba(50,50,50,0.1); */
 	transition: .2s ease;
 }
 
@@ -315,10 +320,9 @@ li:empty{
   font-size: 0;
 }
 
+
 /* components ------------------------------------------------------------------------------------------------------ */
-
 /* staff listing */
-
 .staff:after{
 	content: '';
 	display: block;
@@ -373,8 +377,8 @@ li:empty{
 	font-size: 0.75em;
 }
 
-/* news article listing */
 
+/* news article listing */
 .news:after{
 	content: '';
 	display: block;
@@ -417,6 +421,7 @@ li:empty{
 	padding: 1.25em 0;
 }
 
+
 @media only screen and (max-width: 500px){ /* arbitrary breakpoint */
 	.staff img, .news img{
 		width: auto;
@@ -429,8 +434,8 @@ li:empty{
 	}
 }
 
-/* ucf calendar widget */
 
+/* ucf calendar widget */
 .ucf-events .date {
 	background-color: #fdf0b6;
 	float: left;
@@ -469,8 +474,8 @@ li:empty{
 	clear: both;
 }
 
-/* home buttons */
 
+/* home buttons */
 .home {
 	margin-bottom: 1em;
 }
@@ -487,8 +492,8 @@ li:empty{
 	background:#fff;
 }
 
-/* block and pull quotes */
 
+/* block and pull quotes */
 blockquote.pull {
 	background: url('../images/quotestart.png') left top no-repeat,
 	url('../images/pull.png') right 80% no-repeat;	
@@ -496,8 +501,8 @@ blockquote.pull {
 	border: 0;
 }
 
-/* bullets */
 
+/* bullets */
 .bullets {
 	text-decoration: none;
 	padding-left: 15px;
@@ -537,7 +542,6 @@ ol.bullets > li > a:hover {
 }
 
 /* media */
-
 .media:after {
 	content: '';
 	display: block;
@@ -545,8 +549,9 @@ ol.bullets > li > a:hover {
 	height: 1em;
 }
 
-/* generic classes and fixes --------------------------------------------------------------------------------------- */
 
+
+/* generic classes and fixes --------------------------------------------------------------------------------------- */
 .site-content .row > div > p:first-child,
 .site-content .row > div > h1:first-child,
 .site-content .row > div > h2:first-child,
@@ -689,8 +694,9 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
 	margin-left: 5px;
 }
 
-/* Yamm!3 - Yet another megamenu for Bootstrap 3 / http://geedmo.github.com/yamm3 / Licensed under the MIT license - */
 
+
+/* Yamm!3 - Yet another megamenu for Bootstrap 3 / http://geedmo.github.com/yamm3 / Licensed under the MIT license - */
 .yamm .nav, .yamm .collapse, .yamm .dropup, .yamm .dropdown {
 	position: static;
 }
@@ -741,6 +747,11 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
 	text-decoration: underline;
 }
 
+
+.navbar-default .navbar-nav>li>a {
+	color: #555; /* Accessibility contrast. */
+}
+
 .navbar-default .navbar-nav>.open>a,
 .navbar-default .navbar-nav>.open>a:hover,
 .navbar-default .navbar-nav>.open>a:focus {
@@ -751,12 +762,13 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
 .navbar-default .navbar-nav > .current-menu-item > a,
 .navbar-default .navbar-nav > .current-menu-item > a:focus,
 .navbar-default .navbar-nav > .current-menu-item > a:hover {
-    color: #555;
+    color: #4b4b4b;
     background-color: #e7e7e7;
 }
 
-/* .NET fixers ----------------------------------------------------------------------------------------------------- */
 
+
+/* .NET fixers ----------------------------------------------------------------------------------------------------- */
 .editor-field textarea {
     width: 500px;
     height: 100px;
@@ -788,8 +800,9 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
     display: none;
 }
 
-/* legacy CSS ------------------------------------------------------------------------------------------------------ */
 
+
+/* legacy CSS ------------------------------------------------------------------------------------------------------ */
 div.hr-blank{
 	display: none;
 }
@@ -818,6 +831,7 @@ div.top-b{
 	border-radius: .33em;
 }
 
+
 /* WP new image alignment -------------------------------------------------------------------------------------------
 https://codex.wordpress.org/Wrapping_Text_Around_Images*/
 img.alignright { float: right; margin: 0 0 1em 1em; }
@@ -826,3 +840,8 @@ img.aligncenter { display: block; margin-left: auto; margin-right: auto; }
 .alignright { float: right; }
 .alignleft { float: left; }
 .aligncenter { display: block; margin-left: auto; margin-right: auto; }
+
+
+.adminmsg {
+	color: #e90000;
+}
