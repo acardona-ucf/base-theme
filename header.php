@@ -84,7 +84,11 @@ use SDES\SDES_Static as SDES_Static;
 
 <?php wp_head(); ?>
 </head>
-<body>
+<body class="nojs">
+	<script>
+		var bodyEl = document.getElementsByTagName('body');
+		bodyEl[0].className = bodyEl[0].className.split('nojs').join(' jsEnabled ');
+	</script>
 	<!-- header -->
 	<div class="container header">
 		<div class="site-title">

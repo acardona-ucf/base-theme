@@ -436,6 +436,7 @@ class Billboard extends CustomPostType {
 					directionNav: false,
 					<?php endif; ?>
 				});
+				$('#slider').show();
 
 				// Remove accessibility errors.
 				$('.nivo-main-image').attr('alt', 'Rotating Billboard');
@@ -443,7 +444,7 @@ class Billboard extends CustomPostType {
 			});
 		</script>
 		<div class="container site-billboard theme-default">
-			<div id="slider" class="nivoSlider">
+			<div id="slider" class="nivoSlider" style="display: none;">
 			<?php foreach ( $context['objects'] as $o ):
 				if ( $o->has_post_thumbnail ) :
 					if( $o->billboard_url ) : ?>
@@ -469,6 +470,19 @@ class Billboard extends CustomPostType {
 		  		<?php endif;
 		  		endif;
 			endforeach; ?>
+			<div class="noscript">
+				Billboards:<br><br>
+				<?php echo "\n";
+				foreach ( $context['objects'] as $o ):
+					if( $o->billboard_url ) : ?>
+						<a href="<?= $o->billboard_url ?>">
+					<?php endif;
+					echo "\t\t\t\t{$o->post_title} {$o->post_content} {$o->alt_text}<br><br>\n";
+					if( $o->billboard_url ) : ?>
+						</a>
+					<?php endif;
+				endforeach; ?>
+			</div>
 		</div>
 		<?php
 		return ob_get_clean();

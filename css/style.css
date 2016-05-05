@@ -1,7 +1,6 @@
 @charset "utf-8";
 
 /* generics -------------------------------------------------------------------------------------------------------- */
-
 a{
 	color: #922;
 	text-decoration: none;
@@ -20,6 +19,12 @@ a:hover, a:focus{
 body{
 	background: #fff url('../images/ucf.png') repeat-x 0 20px;
 	background-size: 100% 139px;
+}
+
+/* Hide noscript content without DOM flickering (and avoid WebAIM WAVE alert for <noscript> tags).
+ * http://askthecssguy.com/articles/getting-around-the-flicker-of-javascript-modifying-the-dom-while-the-page-is-loading/ */
+body.jsEnabled .noscript {
+	display: none;
 }
 
 caption{
