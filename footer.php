@@ -24,20 +24,20 @@ namespace SDES\BaseTheme;
 					if( '' !== $url_facebook && 'http://' !== $url_facebook) { 
 					?>
 					<a href="<?= $url_facebook ?>">
-						<img src="<?= get_stylesheet_directory_uri(); ?>/images/facebook.png" class="icon" alt="icon" title="Facebook">
+						<img src="<?= get_stylesheet_directory_uri(); ?>/images/facebook.png" class="icon" alt="facebook icon" title="Facebook">
 					</a>
 				<?php } 
 					if( '' !== $url_twitter && 'http://' !== $url_twitter) { ?>
 					<a href="<?= $url_twitter ?>">
-						<img src="<?= get_stylesheet_directory_uri(); ?>/images/twitter.png" class="icon" alt="icon" title="Twitter">
+						<img src="<?= get_stylesheet_directory_uri(); ?>/images/twitter.png" class="icon" alt="twitter icon" title="Twitter">
 					</a>
 				<?php }
 					if( '' !== $url_youtube && 'http://' !== $url_youtube) {?>
 					<a href="<?= $url_youtube ?>">
-						<img src="<?= get_stylesheet_directory_uri(); ?>/images/youtube.png" class="icon" alt="icon" title="YouTube">
+						<img src="<?= get_stylesheet_directory_uri(); ?>/images/youtube.png" class="icon" alt="youtube icon" title="YouTube">
 					</a>
 				<?php } ?>
-					<a href="http://get.adobe.com/reader/"><img src="<?= get_stylesheet_directory_uri(); ?>/images/content-end-pdf.jpg" alt="icon" title="Get Adobe Reader"></a>
+					<a href="http://get.adobe.com/reader/"><img src="<?= get_stylesheet_directory_uri(); ?>/images/content-end-pdf.jpg" alt="adobe acrobat icon" title="Get Adobe Reader"></a>
 				</p>
 			</div>
 		</nav>

@@ -610,6 +610,7 @@ class sc_socialButton extends ShortcodeBase {
             case 'twitter':
             case 'youtube':
             default:
+                $ctxt['network'] = $attr['network'];
                 $ctxt['url'] = esc_attr(
                     SDES_Static::url_ensure_prefix(
                         SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') ) );
@@ -632,7 +633,7 @@ class sc_socialButton extends ShortcodeBase {
         ?>
             <div class="<?= $ctxt['container_classes'] ?>">
                 <a href="<?= $ctxt['url'] ?>">
-                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="button">
+                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="<?= $ctxt['network'] ?> button">
                 </a>
             </div>
         <?php
