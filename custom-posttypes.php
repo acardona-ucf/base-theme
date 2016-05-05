@@ -888,6 +888,7 @@ class News extends CustomPostType {
 		$context['news_strapline'] =('' !== $news_strapline ) ? '<div class="news-strapline">'.$news_strapline.'</div>' : '';
 		$context['month_year_day'] = get_the_date('F j, Y', $post_object);
 		$context['time'] = get_the_time('g:i a', $post_object);
+		$context['datetime'] = get_the_time( DATE_ISO8601, $post_object );
 
 		$loop = new WP_Query( array('p'=>$post_object->ID, 'post_type'=> $post_object->post_type ) );
 		$loop->the_post();
@@ -909,7 +910,9 @@ class News extends CustomPostType {
 				<div class="datestamp">
 					Posted on 
 					<a href="<?= $context['permalink'] ?>">
-						<?= $context['month_year_day'] ?> at <?= $context['time'] ?>
+						<time datetime="<?= $context['datetime'] ?>" pubdate>
+							<?= $context['month_year_day'] ?> at <?= $context['time'] ?>
+						</time>
 					</a>
 				</div>
 				<div class="news-summary">

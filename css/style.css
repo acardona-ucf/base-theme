@@ -434,7 +434,8 @@ li:empty{
 	font-size: 1.2em;
 }
 
-.ucf-events > li > .date > span {
+.ucf-events > li > .date .month,
+.ucf-events > li > .date .day {
 	display: block;
 	text-align: center;
 	font-size: 1.2em;

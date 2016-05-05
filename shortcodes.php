@@ -479,6 +479,7 @@ class sc_events extends ShortcodeBase {
                 'id' => 41, // SDES Events calendar.
                 'limit' => 6,
                 'header'    => 'Upcoming Events',
+                'timezone' => 'America/New_York'
             ), $attr
         );
         if($attr['id'] == null) return true;
@@ -529,15 +530,19 @@ class sc_events extends ShortcodeBase {
                             $title = (strlen($title) > 50) ? substr($title, 0, 45) : $title;
                             $loc = htmlentities($xml->channel->item[$i]->children('ucfevent', true)->location->children('ucfevent', true)->name);
                             $map = htmlentities($xml->channel->item[$i]->children('ucfevent', true)->location->children('ucfevent', true)->mapurl);
-                            $context['month'] = date('M', strtotime($xml->channel->item[$i]->children('ucfevent', true)->startdate));
-                            $context['day'] = date('j', strtotime($xml->channel->item[$i]->children('ucfevent', true)->startdate));
+                            $startTime = new \DateTime( $xml->channel->item[$i]->children('ucfevent', true)->startdate, new \DateTimeZone($attr['timezone']) );
+                            $context['datetime'] = $startTime->format( DATE_ISO8601 );
+                            $context['month'] = $startTime->format( 'M' );
+                            $context['day'] = $startTime->format( 'j' );
                             $context['link'] = htmlentities($xml->channel->item[$i]->link);
 
                         ?>    
                         <li class="list-group-item">
                                 <div class="date">
-                                    <span class="month"><?= $context['month'] ?></span>
-                                    <span class="day"><?= $context['day'] ?></span>
+                                    <time datetime="<?= $context['datetime'] ?>">
+                                        <span class="month"><?= $context['month'] ?></span>
+                                        <span class="day"><?= $context['day'] ?></span>
+                                    </time>
                                 </div>
                                 <a class="title" href="<?= $context['link'] ?>"><?= $title ?></a>
                                 <a href="<?= $context['link'] ?>"><?= $loc ?></a>
