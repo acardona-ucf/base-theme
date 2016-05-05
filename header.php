@@ -114,7 +114,7 @@ use SDES\SDES_Static as SDES_Static;
 				?> 
 				<p class="navbar-text navbar-right translate-button">
 					<a href="http://it.sdes.ucf.edu/translate/" class="navbar-link">Translate
-						<img alt="translate icon" src="<?= get_stylesheet_directory_uri(); ?>/images/fff_page_world.png" >
+						<img alt="" src="<?= get_stylesheet_directory_uri(); ?>/images/fff_page_world.png" >
 					</a>
 				</p>
 			</div>
