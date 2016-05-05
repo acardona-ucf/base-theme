@@ -301,6 +301,18 @@ li:empty{
 	}
 }
 
+/* Hide search field label. See: https://github.com/UCF/UCF-Header/blob/master/bar/css/bar.css#L248-L258 */
+#footer-search form label {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  text-indent: -9999px;
+  margin: 0;
+  padding: 0;
+  line-height: 0 !important;
+  font-size: 0;
+}
 
 /* components ------------------------------------------------------------------------------------------------------ */
 

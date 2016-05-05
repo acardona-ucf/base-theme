@@ -163,20 +163,21 @@ namespace SDES\BaseTheme;
 								// TODO: move contact info to function in Footer class
 					 ?>
 						<h2>Search</h2>
-						<form action="http://google.cc.ucf.edu/search">
-							<fieldset>
+						<span id="footer-search">
+							<form action="http://google.cc.ucf.edu/search">
+								<label for="footer-search-field">Search UCF</label>
 								<input type="hidden" name="output" value="xml_no_dtd">
 								<input type="hidden" name="proxystylesheet" value="UCF_Main">
 								<input type="hidden" name="client" value="UCF_Main">
 								<input type="hidden" name="site" value="UCF_Main">
 								<div class="input-group">
-									<input type="text" class="form-control">
+									<input type="text" id="footer-search-field" class="form-control">
 									<span class="input-group-btn">
 										<input type="submit" class="btn" value="Search">
 									</span>
 								</div>
-							</fieldset>
-						</form>
+							</form>
+						</span>
 						<?php
 							// TODO: should directory CMS feed be more granular?
 							require_once( 'functions/class-sdes-helper.php' );
