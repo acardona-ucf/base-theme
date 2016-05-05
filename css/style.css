@@ -12,6 +12,11 @@ a:hover, a:focus{
 	text-decoration: underline;
 }
 
+#ucfhb a,
+#ucfhb label {
+	color: #edba03; /* Pass accessibility contrast test.*/
+}
+
 body{
 	background: #fff url('../images/ucf.png') repeat-x 0 20px;
 	background-size: 100% 139px;
@@ -49,15 +54,20 @@ li:empty{
 	display: none;
 }
 
-/* specific site elements ------------------------------------------------------------------------------------------ */
 
+/* specific site elements ------------------------------------------------------------------------------------------ */
 .container.header{
 	margin: 2.5em auto 1.5em;
 }
+
 .site-title{
 	font-size: 3.5em;
 	letter-spacing: -2px;
 	line-height: 1em;
+}
+
+.site-title img{
+	vertical-align: inherit;
 }
 
 /* TODO: Should .site-subtitle be renamed to .site-tagline or .site-description to match the built-in Theme Customizer field? */
@@ -102,10 +112,14 @@ li:empty{
 }
 
 .site-nav.navbar-default .navbar-nav > li:hover,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a:hover,
+.site-nav.navbar-default .navbar-nav > li.current-menu-item > a:focus 
 .site-nav.navbar-default .navbar-nav > li.active > a,
 .site-nav.navbar-default .navbar-nav > li.active > a:hover,
 .site-nav.navbar-default .navbar-nav > li.active > a:focus {
-	background-color: #fff;
+	background-color: #e8dda9; /* rgba(50,50,50,0.1); */
+	transition: .2s ease;
 }
 
 .site-nav .translate-button{
@@ -192,6 +206,12 @@ li:empty{
 	padding: 15px 0 0!important;
 }
 
+/* Fix nivo slider scaling: http://stackoverflow.com/questions/14872634/nivo-slider-first-image-is-scaled-unproportional-when-displayed-the-first-time#15073788*/
+.nivo-main-image {
+	height: auto !important;
+}
+
+
 .site-content{
 	min-height: 475px;
 }
@@ -226,6 +246,10 @@ li:empty{
 	margin-right: 0.5em;
 }
 
+.site-nav-repeated .icons a{
+	text-decoration: none;
+}
+
 .site-nav-repeated .icons img{
 	margin-left: 4px;
 	border: 1px solid #ccc;
@@ -234,6 +258,7 @@ li:empty{
 .site-footer{
 	background: #222 url('../images/footer-bg.png') repeat-x;
 	padding: 1em 0;
+	color: #ccc;  /* All text should be visible in footer, not just text in <P> tags.*/
 }
 
 .site-footer h2{
@@ -244,13 +269,19 @@ li:empty{
 	color: #ccc;
 }
 
-.site-footer ul{
+.site-footer ul,
+.site-footer ol {
 	list-style: none;
 	padding: 0;
 }
 
 .site-footer a{
 	color: #ccc;
+}
+
+.site-footer a.external, .site-footer a[href$='.pdf']{
+	background: none;
+	padding: 0;
 }
 
 .site-footer a:hover{
@@ -276,11 +307,22 @@ li:empty{
 	}
 }
 
+/* Hide search field label. See: https://github.com/UCF/UCF-Header/blob/master/bar/css/bar.css#L248-L258 */
+#footer-search form label {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  text-indent: -9999px;
+  margin: 0;
+  padding: 0;
+  line-height: 0 !important;
+  font-size: 0;
+}
+
 
 /* components ------------------------------------------------------------------------------------------------------ */
-
 /* staff listing */
-
 .staff:after{
 	content: '';
 	display: block;
@@ -335,8 +377,8 @@ li:empty{
 	font-size: 0.75em;
 }
 
-/* news article listing */
 
+/* news article listing */
 .news:after{
 	content: '';
 	display: block;
@@ -379,6 +421,7 @@ li:empty{
 	padding: 1.25em 0;
 }
 
+
 @media only screen and (max-width: 500px){ /* arbitrary breakpoint */
 	.staff img, .news img{
 		width: auto;
@@ -391,8 +434,8 @@ li:empty{
 	}
 }
 
-/* ucf calendar widget */
 
+/* ucf calendar widget */
 .ucf-events .date {
 	background-color: #fdf0b6;
 	float: left;
@@ -405,18 +448,23 @@ li:empty{
 	background: #fcfcfc;
 }
 
-.ucf-events > li > .title{
+.ucf-events > li .date,
+.ucf-events > li .title {
 	font-size: 1.2em;
 }
 
-.ucf-events > li > .date > span {
+.ucf-events > li > .date .month,
+.ucf-events > li > .date .day {
 	display: block;
 	text-align: center;
-	font-size: 1.2em;
 }
 
-.ucf-events > li > a{
+.ucf-events > li .location{
 	font-size: .8em;
+}
+
+.ucf-events > li .title,
+.ucf-events > li .location {
 	display: block;
 	margin-left: 65px;
 	margin-top: 3px;
@@ -426,8 +474,8 @@ li:empty{
 	clear: both;
 }
 
-/* home buttons */
 
+/* home buttons */
 .home {
 	margin-bottom: 1em;
 }
@@ -444,8 +492,8 @@ li:empty{
 	background:#fff;
 }
 
-/* block and pull quotes */
 
+/* block and pull quotes */
 blockquote.pull {
 	background: url('../images/quotestart.png') left top no-repeat,
 	url('../images/pull.png') right 80% no-repeat;	
@@ -453,37 +501,47 @@ blockquote.pull {
 	border: 0;
 }
 
-/* bullets */
 
+/* bullets */
 .bullets {
 	text-decoration: none;
 	padding-left: 15px;
 	background: url('../images/3bul.png') no-repeat center left;
 }
 
-ul.bullets {
+ul.bullets,
+ol.bullets {
 	padding-left: 25px;
 	background: none;
 	margin-top: 15px;
 }
 
-ul.bullets > li {
+ul.bullets > li,
+ol.bullets > li {
 	list-style-type: none;
 	padding-left: 15px;
 	background: url('../images/3bul.png') no-repeat center left;
 	font-size: 1.5em;
 }
 
-ul.bullets > li > a {
+@media (max-width: 768px){ /* tiny breakpoint and smaller */
+	ul.bullets > li,
+	ol.bullets > li {
+		font-size: 1.2em;
+	}
+}
+
+ul.bullets > li > a,
+ol.bullets > li > a {
 	color: #666;
 }
 
-ul.bullets > li > a:hover {
+ul.bullets > li > a:hover,
+ol.bullets > li > a:hover {
 	color: #333;
 }
 
 /* media */
-
 .media:after {
 	content: '';
 	display: block;
@@ -491,8 +549,9 @@ ul.bullets > li > a:hover {
 	height: 1em;
 }
 
-/* generic classes and fixes --------------------------------------------------------------------------------------- */
 
+
+/* generic classes and fixes --------------------------------------------------------------------------------------- */
 .site-content .row > div > p:first-child,
 .site-content .row > div > h1:first-child,
 .site-content .row > div > h2:first-child,
@@ -519,7 +578,8 @@ label.error{
 	color: #333;
 }
 
-.validation-summary-errors ul{
+.validation-summary-errors ul,
+.validation-summary-errors ol {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
@@ -634,8 +694,9 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
 	margin-left: 5px;
 }
 
-/* Yamm!3 - Yet another megamenu for Bootstrap 3 / http://geedmo.github.com/yamm3 / Licensed under the MIT license - */
 
+
+/* Yamm!3 - Yet another megamenu for Bootstrap 3 / http://geedmo.github.com/yamm3 / Licensed under the MIT license - */
 .yamm .nav, .yamm .collapse, .yamm .dropup, .yamm .dropdown {
 	position: static;
 }
@@ -686,14 +747,28 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
 	text-decoration: underline;
 }
 
+
+.navbar-default .navbar-nav>li>a {
+	color: #555; /* Accessibility contrast. */
+}
+
 .navbar-default .navbar-nav>.open>a,
 .navbar-default .navbar-nav>.open>a:hover,
 .navbar-default .navbar-nav>.open>a:focus {
 	background-color: #fdfbf5;
 }
 
-/* .NET fixers ----------------------------------------------------------------------------------------------------- */
+/* Highlight current page in bottom nav (from bootstrap styles on ".navbar-default .navbar-nav>.active>a"). */
+.navbar-default .navbar-nav > .current-menu-item > a,
+.navbar-default .navbar-nav > .current-menu-item > a:focus,
+.navbar-default .navbar-nav > .current-menu-item > a:hover {
+    color: #4b4b4b;
+    background-color: #e7e7e7;
+}
 
+
+
+/* .NET fixers ----------------------------------------------------------------------------------------------------- */
 .editor-field textarea {
     width: 500px;
     height: 100px;
@@ -725,8 +800,9 @@ h1 a[href$='.pptx'], h2 a[href$='.pptx'], h3 a[href$='.pptx']{
     display: none;
 }
 
-/* legacy CSS ------------------------------------------------------------------------------------------------------ */
 
+
+/* legacy CSS ------------------------------------------------------------------------------------------------------ */
 div.hr-blank{
 	display: none;
 }
@@ -755,12 +831,17 @@ div.top-b{
 	border-radius: .33em;
 }
 
+
 /* WP new image alignment -------------------------------------------------------------------------------------------
 https://codex.wordpress.org/Wrapping_Text_Around_Images*/
-
 img.alignright { float: right; margin: 0 0 1em 1em; }
 img.alignleft { float: left; margin: 0 1em 1em 0; }
 img.aligncenter { display: block; margin-left: auto; margin-right: auto; }
 .alignright { float: right; }
 .alignleft { float: left; }
 .aligncenter { display: block; margin-left: auto; margin-right: auto; }
+
+
+.adminmsg {
+	color: #e90000;
+}

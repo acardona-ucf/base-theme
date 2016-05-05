@@ -341,6 +341,7 @@ class Billboard extends CustomPostType {
 				'id' => $prefix.'start_date',
 				'type' => 'date',
 				'custom_column_order' => 200,
+				'default' => date( 'Y-m-d', time() ),
 			),
 			array(
 				'name' => 'End Date',
@@ -415,10 +416,10 @@ class Billboard extends CustomPostType {
 			$o->has_post_thumbnail = has_post_thumbnail( $o );
 			if ( $o->has_post_thumbnail ) {
 				$billboard_count++;
-				$o->alt_text = get_post_meta( get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true );
+				$o->alt_text = SDES_Static::get_post_thumbnail_alttext( $o->ID, 'Billboard '. $billboard_count );
 				$o->billboard_url = get_post_meta( $o, 'billboard_url', true );
 				$o->billboard_url = ( $o->billboard_url ) ? SDES_Static::url_ensure_prefix( $o->billboard_url ) : false;
-				$o->is_title_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title ) );
+				$o->is_caption_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title )  || ! SDES_Static::is_null_or_whitespace( $o->post_content ));
 			}
 		}
 		ob_start();
@@ -435,6 +436,10 @@ class Billboard extends CustomPostType {
 					directionNav: false,
 					<?php endif; ?>
 				});
+
+				// Remove accessibility errors.
+				$('.nivo-main-image').attr('alt', 'Rotating Billboard');
+				$('.nivo-slice img').attr('alt', '');
 			});
 		</script>
 		<div class="container site-billboard theme-default">
@@ -444,7 +449,7 @@ class Billboard extends CustomPostType {
 					if( $o->billboard_url ) : ?>
 						<a href="<?= $o->billboard_url ?>" class="nivo-imageLink">
 					<?php endif;
-							$title = ( $o->is_title_valid ) ? '#nivo-caption-'.$o->ID : '' ;
+							$title = ( $o->is_caption_valid ) ? '#nivo-caption-'.$o->ID : null ;
 							echo get_the_post_thumbnail( $o, $BILLBOARD_SIZE, 
 									array('title'=> $title, 'alt' => $o->alt_text ) );
 					if( $o->billboard_url ) : ?>
@@ -455,7 +460,7 @@ class Billboard extends CustomPostType {
 			</div>
 			<?php foreach ( $context['objects'] as $o ):
 				if ( $o->has_post_thumbnail ):
-					if ( $o->is_title_valid ) : ?>
+					if ( $o->is_caption_valid ) : ?>
 					<div id="nivo-caption-<?= $o->ID ?>" class="nivo-html-caption">
 						<div class="nivo-padding"></div>
 						<div class="nivo-title"><?= $o->post_title ?></div>
@@ -630,7 +635,7 @@ class Staff extends CustomPostType {
 			</script>
 			<?php endif;
 			if ( $context['header'] ) : ?>
-				<h2><?= $context['header'] ?></h2>
+				<div class="staff-role"><?= $context['header'] ?></div>
 			<?php endif; ?>
 			<span class="<?= $context['css_classes'] ?>">
 				<?php foreach ( $context['objects'] as $o ):?>
@@ -645,7 +650,7 @@ class Staff extends CustomPostType {
 
 	public static function toHTML ( $post_object ){
 		$context['Post_ID'] = $post_object->ID;
-		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+		$thumbnailUrl = get_stylesheet_directory_uri() . '/images/blank.png';
 		$context['thumbnail']
 			= has_post_thumbnail($post_object) 
 				? get_the_post_thumbnail($post_object, 'post-thumbnail', array('class' => 'img-responsive'))
@@ -809,30 +814,40 @@ class News extends CustomPostType {
 		unset( $attr['css_classes'] );
 		$args = array( 'classname' => __CLASS__, 'objects_only'=>true, );
 		$context['objects'] = SDES_Static::sc_object_list( $attr, $args );
-		$context['archiveUrl'] = static::get_archive_url();
+		$context['archiveLink'] = static::get_archive_link();
 		return static::render_objects_to_html( $context );
 	}
 
 	/**
-	 * Get the archive URL option stored in ThemeCustomizer (defaults to '/news/').
+	 * Get the a link for the archive URL option stored in ThemeCustomizer or show an adminmsg.
 	 * @param $option_id   The name of the option stored in Theme Customizer
 	 * @param $posttype_name The name of this posttype, 'news'.
 	 */
-	private static function get_archive_url( $option_id = 'sdes_rev_2015-newsArchiveUrl', $posttype_name = 'news' ) {
+	private static function get_archive_link( $option_id = 'sdes_rev_2015-newsArchiveUrl', $posttype_name = 'News' ) {
 		$archive_url = 
 			SDES_Static::get_theme_mod_defaultIfEmpty(
 				$option_id,
 				get_post_type_archive_link( $posttype_name ) );
 		$archive_url = SDES_Static::url_ensure_prefix( $archive_url );
-		$archive_url = ( 'http://' === $archive_url ) ? get_site_url() . "/{$posttype_name}/" : $archive_url;
-		return $archive_url;
+		if( 'http://' !== $archive_url ) {
+			$archive_link = '<div class="datestamp"><a href="' . $archive_url . '">»News Archive</a></div>';
+		} else {
+			$format_default_message =
+				( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
+				? '<span class="adminmsg">Admin Alert:<a class="text-danger" data-control-name="sdes_rev_2015-newsArchiveUrl"'
+				  . 'href="' . get_site_url() . '/wp-admin/">%1$s</a><br>'
+				  . "If you have not created <a href='".get_admin_url()."/post-new.php?post_type=page&post_title={$posttype_name}&content=%%5Bnews-list%%20show-archives%%3Dtrue%%5D'>a news archive page with a [news-list] shortcode</a>, please do this first.<br></span>"
+				: '<!-- %1$s -->';
+			$archive_link = sprintf( $format_default_message, 'No news archive page was set.');
+		}
+		return $archive_link;
 	}
 
 	public function objectsToHTML( $objects, $css_classes ) {
 		if ( count( $objects ) < 1 ) { return (WP_DEBUG) ? '<!-- No objects were provided to objectsToHTML. -->' : '';}
 		$context['objects'] = $objects;
 		$context['css_classes'] = ( $css_classes ) ? $css_classes : $this->options('name').'-list';
-		$context['archiveUrl'] = static::get_archive_url();
+		$context['archiveLink'] = static::get_archive_link();
 		return static::render_objects_to_html( $context );
 	}
 
@@ -840,15 +855,22 @@ class News extends CustomPostType {
 		ob_start();
 		?>
 		<?php if ( $context['header'] ) : ?>
-			<h2><?= $context['header'] ?></h2>
+			<div class="page-header">
+				<h1><?= $context['header'] ?></h1>
+			</div>
 		<?php endif; ?>
 		<span class="<?= $context['css_classes'] ?>">
 			<?php foreach ( $context['objects'] as $o ):?>
 				<?= static::toHTML( $o ) ?>
 				<div class="hr-blank"></div>
 			<?php endforeach;?>
+			<?php if ( 0 == count( $context['objects'] ) ) : ?>
+				No archived news articles were found.
+			<?php endif; ?>
 			<div class="top-b"></div>
-			<div class="datestamp"><a href="<?= $context['archiveUrl'] ?>">»News Archive</a></div>
+			<?php if ( ! SDES_Static::is_null_or_whitespace( $context['archiveLink'] ) ) :?>
+				<?= $context['archiveLink'] ?>
+			<?php endif; ?>
 		</span>
 		<?php
 		$html = ob_get_clean();
@@ -857,11 +879,12 @@ class News extends CustomPostType {
 
 	public static function toHTML ( $post_object ){
 		$context['Post_ID'] = $post_object->ID;
-		$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+		$thumbnailUrl = get_stylesheet_directory_uri() . '/images/blank.png';
 		$context['thumbnail']
-			= has_post_thumbnail($post_object) 
-				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
-				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
+			= has_post_thumbnail($post_object)
+				? get_the_post_thumbnail($post_object, '',
+					array('class' => 'img-responsive', 'alt' => SDES_Static::get_post_thumbnail_alttext( $post_object->ID, 'Thumbnail' ) ) )
+				: "<img src='".$thumbnailUrl."' alt='Thumbnail' class='img-responsive'>";
 		$news_url = get_post_meta( $post_object->ID, 'news_url', true );
 		$context['permalink'] = get_permalink( $post_object );
 		$context['title_link'] = ( '' !== $news_url ) ? $news_url : $context['permalink'];
@@ -870,6 +893,7 @@ class News extends CustomPostType {
 		$context['news_strapline'] =('' !== $news_strapline ) ? '<div class="news-strapline">'.$news_strapline.'</div>' : '';
 		$context['month_year_day'] = get_the_date('F j, Y', $post_object);
 		$context['time'] = get_the_time('g:i a', $post_object);
+		$context['datetime'] = get_the_time( DATE_ISO8601, $post_object );
 
 		$loop = new WP_Query( array('p'=>$post_object->ID, 'post_type'=> $post_object->post_type ) );
 		$loop->the_post();
@@ -891,7 +915,9 @@ class News extends CustomPostType {
 				<div class="datestamp">
 					Posted on 
 					<a href="<?= $context['permalink'] ?>">
-						<?= $context['month_year_day'] ?> at <?= $context['time'] ?>
+						<time datetime="<?= $context['datetime'] ?>" pubdate>
+							<?= $context['month_year_day'] ?> at <?= $context['time'] ?>
+						</time>
 					</a>
 				</div>
 				<div class="news-summary">

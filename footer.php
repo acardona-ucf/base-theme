@@ -4,13 +4,15 @@
  */
 namespace SDES\BaseTheme;
 ?>
+	<div class="blank"></div>
 </div>
-<!-- repeated navigation, social media -->
+
+	<!-- repeated navigation, social media -->
 	<div class="container site-content-end">
 		<nav class="navbar navbar-default site-nav-repeated">
 			<div class="container-fluid">
 				<?php
-				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ul class="nav navbar-nav">%3$s</ul>', 'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages'));
+				wp_nav_menu(array('theme_location' => 'main-menu', 'depth' => 1, 'container' => '', 'items_wrap' => '<ol class="nav navbar-nav">%3$s</ol>', 'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages'));
 				?> 
 				
 				<p class="nav navbar-text navbar-right icons">
@@ -22,20 +24,20 @@ namespace SDES\BaseTheme;
 					if( '' !== $url_facebook && 'http://' !== $url_facebook) { 
 					?>
 					<a href="<?= $url_facebook ?>">
-						<img src="<?php bloginfo('template_url'); ?>/images/facebook.png" alt="icon" title="Facebook">
+						<img src="<?= get_stylesheet_directory_uri(); ?>/images/facebook.png" class="icon" alt="facebook icon" title="Facebook">
 					</a>
 				<?php } 
 					if( '' !== $url_twitter && 'http://' !== $url_twitter) { ?>
 					<a href="<?= $url_twitter ?>">
-						<img src="<?php bloginfo('template_url'); ?>/images/twitter.png" alt="icon" title="Twitter">
+						<img src="<?= get_stylesheet_directory_uri(); ?>/images/twitter.png" class="icon" alt="twitter icon" title="Twitter">
 					</a>
 				<?php }
 					if( '' !== $url_youtube && 'http://' !== $url_youtube) {?>
 					<a href="<?= $url_youtube ?>">
-						<img src="<?php bloginfo('template_url'); ?>/images/youtube.png" alt="icon" title="YouTube">
+						<img src="<?= get_stylesheet_directory_uri(); ?>/images/youtube.png" class="icon" alt="youtube icon" title="YouTube">
 					</a>
 				<?php } ?>
-					<a href="http://get.adobe.com/reader/"><img src="<?php bloginfo('template_url'); ?>/images/content-end-pdf.jpg" alt="icon" title="Get Adobe Reader"></a>
+					<a href="http://get.adobe.com/reader/"><img src="<?= get_stylesheet_directory_uri(); ?>/images/content-end-pdf.jpg" alt="adobe acrobat icon" title="Get Adobe Reader"></a>
 				</p>
 			</div>
 		</nav>
@@ -69,7 +71,7 @@ namespace SDES\BaseTheme;
 		public static function get_nav_menu( $position = 'left' ) {
 			return
 				wp_nav_menu( array( 'theme_location' => "footer-{$position}-menu",
-				  'container' => '', 'depth' => 1, 'items_wrap' => '<ul>%3$s</ul>',
+				  'container' => '', 'depth' => 1, 'items_wrap' => '<ol>%3$s</ol>',
 					'fallback_cb' => 'SDES\\SDES_Static::fallback_navbar_list_pages',
 					'links_cb' => array(
 							'Footer::get_feed_links', 
@@ -123,7 +125,7 @@ namespace SDES\BaseTheme;
 									Footer::get_feed_links( 'left' );
 								} else {
 									?>
-									<ul>
+									<ol>
 									<li><a href="http://www.sdes.ucf.edu/">SDES Home</a></li>
 									<li><a href="http://www.sdes.ucf.edu/about">What is SDES? / About</a></li>
 									<li><a href="http://www.sdes.ucf.edu/departments">SDES Departments</a></li>
@@ -132,7 +134,7 @@ namespace SDES\BaseTheme;
 									<li><a href="http://www.sdes.ucf.edu/staff">SDES Leadership Team</a></li>
 									<li><a href="http://creed.sdes.ucf.edu/">The UCF Creed</a></li>
 									<li><a href="http://it.sdes.ucf.edu/">SDES Information Technology</a></li>
-									</ul>
+									</ol>
 									<?php
 								}
 							}
@@ -161,20 +163,21 @@ namespace SDES\BaseTheme;
 								// TODO: move contact info to function in Footer class
 					 ?>
 						<h2>Search</h2>
-						<form action="http://google.cc.ucf.edu/search">
-							<fieldset>
+						<span id="footer-search">
+							<form action="http://google.cc.ucf.edu/search">
+								<label for="footer-search-field">Search UCF</label>
 								<input type="hidden" name="output" value="xml_no_dtd">
 								<input type="hidden" name="proxystylesheet" value="UCF_Main">
 								<input type="hidden" name="client" value="UCF_Main">
 								<input type="hidden" name="site" value="UCF_Main">
 								<div class="input-group">
-									<input type="text" class="form-control">
+									<input type="text" id="footer-search-field" class="form-control">
 									<span class="input-group-btn">
 										<input type="submit" class="btn" value="Search">
 									</span>
 								</div>
-							</fieldset>
-						</form>
+							</form>
+						</span>
 						<?php
 							// TODO: should directory CMS feed be more granular?
 							require_once( 'functions/class-sdes-helper.php' );

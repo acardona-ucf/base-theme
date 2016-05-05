@@ -194,6 +194,32 @@ class SDES_Static
 		return $post_type;
 	}
 
+	/**
+	 * Retrieve the alttext for a post id's thumbnail, or default values.
+	 */
+	public static function get_post_thumbnail_alttext( $post_id, $default_text = 'Thumbnail' ) {
+		return self::get_thumbnail_alttext(  get_post_thumbnail_id( $post_id ) , $default_text );
+	}
+
+	/**
+	 * Retrieve the alttext for a thumbnail, or default values.
+	 */
+	public static function get_thumbnail_alttext( $thumbnail_id, $default_text = 'Thumbnail' ) {
+		$alt_text = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
+		if( ! self::is_null_or_whitespace( $alt_text ) ) return $alt_text;
+
+		$alt_text = get_post_meta( $thumbnail_id, '_wp_attachment_image_title', true );
+		if( ! self::is_null_or_whitespace( $alt_text ) ) return $alt_text;
+
+		// $alt_text = get_post_meta( $thumbnail_id, '_wp_attachment_image_caption', true );
+		// if( ! self::is_null_or_whitespace( $alt_text ) ) return $alt_text;
+
+		// $alt_text = get_post_meta( $thumbnail_id, '_wp_attachment_image_description', true );
+		// if( ! self::is_null_or_whitespace( $alt_text ) ) return $alt_text;
+
+		return $default_text;
+	}
+
 
 	// TODO: move the_locationKey_navpills and the_locationValue_navpills to class-sdes-helper.php
 	/**
@@ -293,7 +319,7 @@ class SDES_Static
 		SDES_Static::set_default_keyValue( $args, 'warn', true );
 		SDES_Static::set_default_keyValue( $args, 'warn_message',
 			'<li><a class="text-danger adminmsg adminmsg-menu" style="color: red !important;" data-control-name="nav_menu_locations[%1$s]" '
-			. 'href="/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Alert: Missing "%1$s" menu location.</a></li>'
+			. 'href="' . get_site_url() . '/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Alert: Missing "%1$s" menu location.</a></li>'
 		);
 		SDES_Static::set_default_keyValue( $args, 'links_cb', null );
 

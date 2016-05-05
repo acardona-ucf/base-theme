@@ -18,7 +18,7 @@ get_header();
 		//Copied from News::toHTML.
 		// TODO: extract a get_render_context and get_render_metadata, reuse News::render_to_html();
 			$context['Post_ID'] = $post_object->ID;
-			$thumbnailUrl = 'https://assets.sdes.ucf.edu/images/blank.png';
+			$thumbnailUrl = get_stylesheet_directory_uri() . '/images/blank.png';
 			$context['thumbnail']
 				= has_post_thumbnail($post_object) 
 					? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))

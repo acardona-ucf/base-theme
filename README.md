@@ -24,7 +24,7 @@ Quick Install notes (see [VCCW homepage](http://vccw.cc/) for more details):
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads). The installer may temporarily disable the network and/or require a restart.
 2. Install [Vagrant](https://www.vagrantup.com/downloads.html). This may require a restart (adds to $env:PATH).
 3. Download the vccw harddrive image with vagrant: `vagrant box add miya0001/vccw --box-version ">=2.19.0"` (this may take a long time -- 1.55GB+ download)
-4. Create a folder for the Vagrant virtual machine (based on, for example: https://github.com/vccw-team/vccw/archive/2.19.0.zip)
+4. Create a folder for the Vagrant virtual machine (based on, for example: https://github.com/vccw-team/vccw/archive/2.20.0.zip)
 5. From cmd.exe or powershell, `cd` into the directory.
 6. Make a site.yml file in the Vagrant directory via: `cp provision\default.yml site.yml` and edit the following values:
    ```

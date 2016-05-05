@@ -13,6 +13,13 @@ require_once( get_stylesheet_directory().'/functions/SettingsCallbacks.php' );
  *
  * Settings/Options correspond to the "Settings" in Theme Customizer.
  */
+/**
+ * https://make.wordpress.org/themes/2014/11/26/customizer-theme-mods-api-or-settings-api/
+ * Theme Settings API - theme-specific values, ARE inherited by child themes. (used by: Settings.php and SettingsCallbacks.php)
+ * Theme Modification API - theme-specific values, not inherited by child themes ( used by: SDES_Static::get_theme_mod_defaultIfEmpty() )
+ * Options API - storing data in the database (not directly used, but indirectly by both Settings API and Modification API)
+ * Theme Customization (Customizer) API - more user-friendly settings, javascript-based, well-suited for adjusting appearance (used by ThemeCustomizer.php).
+ */
 //new options for admins//////////////////////////////////////////////
 
 // Section - group of related fields/settings
@@ -65,6 +72,7 @@ function option_page_settings() {
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_js' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_js_lib' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_css' );
+    register_setting( 'sdes_setting_group', 'sdes_theme_settings_css_lib' );
     register_setting( 'sdes_setting_group', 'sdes_theme_settings_dir_acronym' );
     register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-left' );
     register_setting( 'sdes_setting_group', 'sdes_rev_2015-footer_content-center' );
@@ -82,10 +90,13 @@ function option_page_settings() {
     add_settings_field( 'sdes_theme_settings_ga_id', 'Google Analytics ID', __NAMESPACE__.'\google_analytics_id_callback',
                         'sdes_settings', 'sdes_section_one' );
     
-    add_settings_field( 'sdes_theme_settings_js', 'javascript', __NAMESPACE__.'\javascript_callback',
+    add_settings_field( 'sdes_theme_settings_js_lib', 'Javascript Libraries<br>(semicolon \';\' delimited)', __NAMESPACE__.'\javascript_libraries_callback',
                         'sdes_settings', 'sdes_section_one' );
     
-    add_settings_field( 'sdes_theme_settings_js_lib', 'Javascript Libraries', __NAMESPACE__.'\javascript_libraries_callback',
+    add_settings_field( 'sdes_theme_settings_js', 'Javascript', __NAMESPACE__.'\javascript_callback',
+                        'sdes_settings', 'sdes_section_one' );
+
+    add_settings_field( 'sdes_theme_settings_css_lib', 'CSS Libraries<br>(semicolon \';\' delimited)', __NAMESPACE__.'\css_libraries_callback',
                         'sdes_settings', 'sdes_section_one' );
 
     add_settings_field( 'sdes_theme_settings_css', 'CSS', __NAMESPACE__.'\css_callback',
@@ -116,7 +127,7 @@ function menu_with_submenus() {
         'manage_options',       // The required capability of users to access this menu
         'sdes_options',         // The slug by which this menu item is accessible
         __NAMESPACE__.'\render_sdes_menu',    // The name of the function used to display the page content
-        '//assets.sdes.ucf.edu/images/favicon_black.png' //  An icon to display besied the menu text
+        get_stylesheet_directory_uri() . '/images/favicon_black.png' //  An icon to display besied the menu text
         // 78       // The position to innsert this menu item. Be careful not to hide another item!
     );
 
@@ -152,11 +163,11 @@ function render_developer_settings() {
 
 /** Render HTML for the submenu page 'sdes_customize'. */
 function redirect_to_customize() {
-    $url = '/wp-admin/customize.php'; //TODO: make sure this works in subdirectory sites.
+    $url = get_site_url() . '/wp-admin/customize.php';
+    $url = ( $_SERVER['HTTP_REFERER'] != $url ) ? $url : get_dashboard_url();
     ?>
     <script type="text/javascript">
-        // TODO: Guard against redirect loop if previous location was $url.
-        window.location = "<?=$url?>"
+        window.location = "<?= $url ?>"
     </script>
     <a href="<?=$url?>"><?=$url?></a>
     <?php
@@ -211,7 +222,7 @@ function render_tabbed_settings() {
     });
     $option_group = $active_tab_info['option_group'];
     ?>
-    Hello from render_tabbed_settings().
+    <!-- Hello from render_tabbed_settings(). -->
     <div class="wrap">
         <h2>Tabbed Settings/Options</h2>
 
@@ -239,6 +250,6 @@ function render_tabbed_settings() {
             ?>
         </form>
     </div>
-    Bye from render_tabbed_settings().
+    <!-- Bye from render_tabbed_settings(). -->
     <?php   
 }

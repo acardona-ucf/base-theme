@@ -121,7 +121,52 @@ class sc_menuPanel extends ShortcodeBase {
     }
 }
 
+/**
+ * [panel] - Wrap HTML in a Boostrap CSS panel.
+ */
+class sc_panel extends ShortcodeBase {
+    public
+        $name        = 'Panel',
+        $command     = 'panel',
+        $description = 'Wraps content in a bootstrap panel.',
+        $render      = False,
+        $params      = array(
+            array(
+                'name'      => 'Header',
+                'id'        => 'header',
+                'help_text' => 'A header for the panel.',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+        ),
+        $callback    = 'callback',
+        $wysiwyg     = True;
 
+        public static function callback( $attr, $content='' ) {
+            $attr = shortcode_atts( array(
+                    'header' => '',
+                    'footer' => '',
+                    'class' => 'panel-warning',
+                    'style' => 'max-width: 697px;'
+                ), $attr
+            );
+            ob_start();
+          ?>
+            <div class="panel <?= $attr['class'] ? $attr['class'] : ''; ?>" <?= $attr['style'] ? ' style="' . $attr['style'] . '"' : '';?> >
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $attr['header'] ?></h3>
+                </div>
+                <div class="panel-body">
+                    <?= apply_filters( 'the_content', $content); ?>
+                </div>
+                <?php if ( '' != $attr['footer'] ) : ?>
+                    <div class="panel-footer"><?= $attr['footer'] ?></div>
+                <?php endif; ?>
+            </div>
+          <?php
+            return ob_get_clean();
+        }
+}
 
 
 /**************** SHORTCODE Boilerplate START **********************
@@ -350,7 +395,15 @@ class sc_column extends ShortcodeBase {
         $callback    = 'callback',
         $wysiwig     = True;
 
+    /**
+     * @see http://codex.wordpress.org/Function_Reference/shortcode_atts  WP-Codex: shortcode_atts()
+     */
     public static function callback( $attr, $content='' ) {
+        $attr = shortcode_atts( array(
+                'class' => '',
+                'style' => '',
+            ), $attr
+        );
         // Size classes
         $classes = array( $attr['class'] ? $attr['class'] : '' );
 
@@ -359,8 +412,8 @@ class sc_column extends ShortcodeBase {
 
         foreach( $prefixes as $prefix ) {
             foreach( $suffixes as $suffix ) {
-                if ( $attr[$prefix.$suffix] ) {
-                    $suf = str_replace('_', '-', $suffix);
+                if ( array_key_exists( $prefix.$suffix, $attr ) ) {
+                    $suf = str_replace( '_', '-', $suffix );
                     $classes[] = 'col-'.$prefix.$suf.'-'.$attr[$prefix.$suffix];
                 }
             }
@@ -405,7 +458,7 @@ class sc_events extends ShortcodeBase {
             array(
                 'name'      => 'Header',
                 'id'        => 'header',
-                'help_text' => 'The a header for the events calendar.',
+                'help_text' => 'A header for this events calendar.',
                 'type'      => 'text',
                 'default'   => 'Upcoming Events',
             ),
@@ -426,6 +479,7 @@ class sc_events extends ShortcodeBase {
                 'id' => 41, // SDES Events calendar.
                 'limit' => 6,
                 'header'    => 'Upcoming Events',
+                'timezone' => 'America/New_York'
             ), $attr
         );
         if($attr['id'] == null) return true;
@@ -476,18 +530,24 @@ class sc_events extends ShortcodeBase {
                             $title = (strlen($title) > 50) ? substr($title, 0, 45) : $title;
                             $loc = htmlentities($xml->channel->item[$i]->children('ucfevent', true)->location->children('ucfevent', true)->name);
                             $map = htmlentities($xml->channel->item[$i]->children('ucfevent', true)->location->children('ucfevent', true)->mapurl);
-                            $context['month'] = date('M', strtotime($xml->channel->item[$i]->children('ucfevent', true)->startdate));
-                            $context['day'] = date('j', strtotime($xml->channel->item[$i]->children('ucfevent', true)->startdate));
+                            $startTime = new \DateTime( $xml->channel->item[$i]->children('ucfevent', true)->startdate, new \DateTimeZone($attr['timezone']) );
+                            $context['datetime'] = $startTime->format( DATE_ISO8601 );
+                            $context['month'] = $startTime->format( 'M' );
+                            $context['day'] = $startTime->format( 'j' );
                             $context['link'] = htmlentities($xml->channel->item[$i]->link);
 
                         ?>    
                         <li class="list-group-item">
                                 <div class="date">
-                                    <span class="month"><?= $context['month'] ?></span>
-                                    <span class="day"><?= $context['day'] ?></span>
+                                    <time datetime="<?= $context['datetime'] ?>">
+                                        <span class="month"><?= $context['month'] ?></span>
+                                        <span class="day"><?= $context['day'] ?></span>
+                                    </time>
                                 </div>
-                                <a class="title" href="<?= $context['link'] ?>"><?= $title ?></a>
-                                <a href="<?= $context['link'] ?>"><?= $loc ?></a>
+                                <a href="<?= $context['link'] ?>">
+                                    <span class="title"><?= $title ?></span><br/>
+                                    <span class="location"><?= $loc ?></span>
+                                </a>
                                 <div class="end"></div>
                             </li>
                         <?php } 
@@ -552,10 +612,11 @@ class sc_socialButton extends ShortcodeBase {
             case 'twitter':
             case 'youtube':
             default:
+                $ctxt['network'] = $attr['network'];
                 $ctxt['url'] = esc_attr(
                     SDES_Static::url_ensure_prefix(
                         SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') ) );
-                $ctxt['image'] = esc_attr( "https://assets.sdes.ucf.edu/images/{$attr['network']}.gif" );
+                $ctxt['image'] = esc_attr( get_stylesheet_directory_uri() ."/images/{$attr['network']}.gif" );
                 break;
         }
         if ( '' == $ctxt['url'] ) return '';
@@ -574,10 +635,55 @@ class sc_socialButton extends ShortcodeBase {
         ?>
             <div class="<?= $ctxt['container_classes'] ?>">
                 <a href="<?= $ctxt['url'] ?>">
-                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="button">
+                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="<?= $ctxt['network'] ?> button">
                 </a>
             </div>
         <?php
+        return ob_get_clean();
+    }
+}
+
+/**
+ * [twitterFeed] - Show a Twitter timeline for a given Twitter username.
+ * @see https://dev.twitter.com/web/javascript/loading https://dev.twitter.com/web/javascript/loading
+ */
+class sc_twitterFeed extends ShortcodeBase {
+    public
+        $name        = 'Twitter Feed',
+        $command     = 'twitterFeed',
+        $description = 'Display a Twitter feed.',
+        $render      = False,
+        $closing_tag = False,
+        $params      = array(
+            array(
+                'name'      => 'Username',
+                'id'        => 'username',
+                'help_text' => 'The username for your Twitter feed.',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+            array(
+                'name'      => 'Widget ID',
+                'id'        => 'widgetId',
+                'help_text' => 'The ID for your Twitter account. After logging in, go to: https://twitter.com/settings/widgets/new',
+                'type'      => 'text',
+                'default'   => '',
+            ),
+        ),
+        $callback    = 'callback',
+        $wysiwyg     = True;
+
+    public static function callback($attr, $content='') {
+        $attr = shortcode_atts( array(
+                'username' => '',
+                'widgetId' => '',
+            ), $attr
+        );
+        ob_start();
+    ?>
+        <a class="twitter-timeline" href="https://twitter.com/<?= $attr['username']; ?>" data-widget-id="<?= $attr['widgetId']; ?>">Tweets by @<?= $attr['username']; ?></a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <?php
         return ob_get_clean();
     }
 }
@@ -661,11 +767,11 @@ class sc_alert extends ShortcodeBase {
     }
 }
 
-class sc_departmentInfo extends ShortcodeBase {
+class sc_contactBlock extends ShortcodeBase {
     public
-        $name = 'Department Information', // The name of the shortcode.
-        $command = 'departmentInfo', // The command used to call the shortcode.
-        $description = 'Show the department contact information box.', // The description of the shortcode.
+        $name = 'Contact Information', // The name of the shortcode.
+        $command = 'contactBlock', // The command used to call the shortcode.
+        $description = 'Show the contact information box.', // The description of the shortcode.
         $callback    = 'callback',
         $render      = 'render',
         $closing_tag = False,
@@ -674,31 +780,84 @@ class sc_departmentInfo extends ShortcodeBase {
 
     public static function callback( $attr, $content='' ) {
         $directory_cms_acronym = esc_attr(get_option('sdes_theme_settings_dir_acronym'));
-        $departmentInfo = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
+        $contactBlock = "<!-- Configure a department to show hours, phone, fax, email, and location. -->";
         if( null != $directory_cms_acronym && !ctype_space($directory_cms_acronym) ) {
-            $departmentInfo = static::get_department_info( $directory_cms_acronym );
+            // TODO: add a get_render_context() function that takes a department acronym and returns a context object to pass into to sc_contactBlock::render(). (See: Alert::get_render_context() to model after.)
+            $contactBlock = static::get_department_info( $directory_cms_acronym );
         }
-        $ctxt['departmentInfo'] = $departmentInfo;
+        $is_Acronym_a_Department = ( 89 !== strlen($contactBlock) ); // TODO: refactor a better way to identify departments.
+        if( $is_Acronym_a_Department ) {
+            $ctxt['departmentInfo'] = $contactBlock;
+            return static::render_DepartmentInfo( $ctxt );
+        }
+
+        $ctxt['phone'] = SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-phone', '' );
+        $ctxt['fax'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-fax', '' );
+        $ctxt['hours'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-hours', '' );
+        $ctxt['email'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-email', '' );
+        $ctxt['buildingNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-buildingNumber', '' );
+        $ctxt['buildingName'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-buildingName', '' );
+        $ctxt['roomNumber'] = SDES_Static::get_theme_mod_defaultIfEmpty( 'sdes_rev_2015-roomNumber', '' );
         return static::render( $ctxt );
     }
 
     /**
-     * Render HTML for a "departmentInfo" shortcode with a given context.
+     * Render HTML for a "contactBlock" shortcode with a given context.
      * Context variables:
-     * container_classes    => List of css classes for the cotainer div..
+     * container_classes    => List of css classes for the container div.
+     * @deprecated Use sc_contactBlock::render() instead.
      */
-    public static function render ( $ctxt ) {
+    public static function render_DepartmentInfo ( $ctxt ) {
         ob_start();
         ?>
-            <span id="departmentInfo"><?= $ctxt['departmentInfo'] ?></span>
+            <span id="contactBlock"><?= $ctxt['departmentInfo'] ?></span>
         <?php
         return ob_get_clean();
     }
 
-    /* Reads in and displays department information */
+    /**
+     * Render HTML for a "contactBlock" shortcode with a given context.
+     * Context variables:
+     * container_classes    => List of css classes for the container div..
+     */
+    public static function render ( $ctxt ) {
+        ob_start();
+        ?>
+            <span id="contactBlock">
+                <table class="table table-condensed table-striped table-bordered">
+                <tbody>
+                    <?php if( '' !== $ctxt['hours'] ) : ?>
+                        <tr><th scope="row">Hours</th><td><?= $ctxt['hours'] ?></td></tr>
+                    <?php endif;
+                    if( '' !== $ctxt['phone'] ) : ?>
+                        <tr><th scope="row">Phone</th><td><?= $ctxt['phone'] ?></td> </tr>
+                    <?php endif;
+                    if( '' !== $ctxt['fax'] ) : ?>
+                        <tr><th scope="row">Fax</th><td><?= $ctxt['fax'] ?></td> </tr>
+                    <?php endif;
+                    if( '' !== $ctxt['email'] ) : ?>
+                        <tr><th scope="row">Email</th><td><a href="mailto:<?= $ctxt['email'] ?>"><?= $ctxt['email'] ?></a></td></tr>
+                    <?php endif;
+                    if( '' !== $ctxt['buildingNumber'] && '' !== $ctxt['buildingName'] ) : ?>
+                        <tr><th scope="row">Location</th>
+                            <td><a href="http://map.ucf.edu/?show=<?= $ctxt['buildingName'] ?>">
+                                <?= $ctxt['buildingName'] ?>, Building <?= $ctxt['buildingNumber'] ?> Room <?= $ctxt['roomNumber'] ?>
+                            </a></td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody></table>
+            </span>
+        <?php
+        return ob_get_clean();
+    }
+
     // TODO: Set the department feed URL with a Theme Option, default to the feed's current URL.
     // TODO: refactor out `get_department_info('menu')` and `get_department_info("{$ACRONYMN}")` functionality.
     // TODO: refactor HTML to use "View-and-Context" pattern instead of stringbuilding pattern.
+    /**
+     * Reads in and displays department information.
+     * @deprecated Create a function get_render_context() to return input for sc_contactBlock::render().
+     */
     public static function get_department_info($action = NULL) {
         $json = file_get_contents('http://directory.sdes.ucf.edu/feed'); 
         $decodejson = json_decode($json);        
@@ -795,7 +954,7 @@ class sc_departmentInfo extends ShortcodeBase {
                     asort($department->socialNetworks);
                     foreach ($department->socialNetworks as $network) {
                         $yield .= "<a href='{$network->uri}'>";
-                        $yield .= '<img src="//assets.sdes.ucf.edu/images/icons/'.strtolower($network->name).'.png" class="social" alt="icon">';
+                        $yield .= '<img src="'.get_stylesheet_directory_uri().'/images/icons/'.strtolower($network->name).'.png" class="social" alt="icon">';
                         $yield .= '</a>';
                     }
                     $yield .= '</td>';
@@ -823,10 +982,12 @@ function register_shortcodes() {
             __NAMESPACE__.'\sc_row',
             __NAMESPACE__.'\sc_column',
             __NAMESPACE__.'\sc_alert',
+            __NAMESPACE__.'\sc_panel',
             __NAMESPACE__.'\sc_menuPanel',
             __NAMESPACE__.'\sc_events',
             __NAMESPACE__.'\sc_socialButton',
-            __NAMESPACE__.'\sc_departmentInfo',
+            __NAMESPACE__.'\sc_twitterFeed',
+            __NAMESPACE__.'\sc_contactBlock',
         ));
 }
 add_action( 'init', __NAMESPACE__.'\register_shortcodes' );
