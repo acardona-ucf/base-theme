@@ -443,7 +443,8 @@ li:empty{
 	background: #fcfcfc;
 }
 
-.ucf-events > li > .title{
+.ucf-events > li .date,
+.ucf-events > li .title {
 	font-size: 1.2em;
 }
 
@@ -451,11 +452,14 @@ li:empty{
 .ucf-events > li > .date .day {
 	display: block;
 	text-align: center;
-	font-size: 1.2em;
 }
 
-.ucf-events > li > a{
+.ucf-events > li .location{
 	font-size: .8em;
+}
+
+.ucf-events > li .title,
+.ucf-events > li .location {
 	display: block;
 	margin-left: 65px;
 	margin-top: 3px;
