@@ -264,7 +264,8 @@ li:empty{
 	color: #ccc;
 }
 
-.site-footer ul{
+.site-footer ul,
+.site-footer ol {
 	list-style: none;
 	padding: 0;
 }
@@ -499,13 +500,15 @@ blockquote.pull {
 	background: url('../images/3bul.png') no-repeat center left;
 }
 
-ul.bullets {
+ul.bullets,
+ol.bullets {
 	padding-left: 25px;
 	background: none;
 	margin-top: 15px;
 }
 
-ul.bullets > li {
+ul.bullets > li,
+ol.bullets > li {
 	list-style-type: none;
 	padding-left: 15px;
 	background: url('../images/3bul.png') no-repeat center left;
@@ -513,16 +516,19 @@ ul.bullets > li {
 }
 
 @media (max-width: 768px){ /* tiny breakpoint and smaller */
-	ul.bullets > li{
+	ul.bullets > li,
+	ol.bullets > li {
 		font-size: 1.2em;
 	}
 }
 
-ul.bullets > li > a {
+ul.bullets > li > a,
+ol.bullets > li > a {
 	color: #666;
 }
 
-ul.bullets > li > a:hover {
+ul.bullets > li > a:hover,
+ol.bullets > li > a:hover {
 	color: #333;
 }
 
@@ -563,7 +569,8 @@ label.error{
 	color: #333;
 }
 
-.validation-summary-errors ul{
+.validation-summary-errors ul,
+.validation-summary-errors ol {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
