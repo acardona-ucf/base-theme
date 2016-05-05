@@ -416,7 +416,7 @@ class Billboard extends CustomPostType {
 			$o->has_post_thumbnail = has_post_thumbnail( $o );
 			if ( $o->has_post_thumbnail ) {
 				$billboard_count++;
-				$o->alt_text = get_post_meta( get_post_thumbnail_id( $o->ID ), '_wp_attachment_image_alt', true );
+				$o->alt_text = SDES_Static::get_post_thumbnail_alttext( $o->ID, 'Billboard '. $billboard_count );
 				$o->billboard_url = get_post_meta( $o, 'billboard_url', true );
 				$o->billboard_url = ( $o->billboard_url ) ? SDES_Static::url_ensure_prefix( $o->billboard_url ) : false;
 				$o->is_caption_valid = (! SDES_Static::is_null_or_whitespace( $o->post_title )  || ! SDES_Static::is_null_or_whitespace( $o->post_content ));
@@ -436,6 +436,10 @@ class Billboard extends CustomPostType {
 					directionNav: false,
 					<?php endif; ?>
 				});
+
+				// Remove accessibility errors.
+				$('.nivo-main-image').attr('alt', 'Rotating Billboard');
+				$('.nivo-slice img').attr('alt', '');
 			});
 		</script>
 		<div class="container site-billboard theme-default">
@@ -445,7 +449,7 @@ class Billboard extends CustomPostType {
 					if( $o->billboard_url ) : ?>
 						<a href="<?= $o->billboard_url ?>" class="nivo-imageLink">
 					<?php endif;
-							$title = ( $o->is_caption_valid ) ? '#nivo-caption-'.$o->ID : '' ;
+							$title = ( $o->is_caption_valid ) ? '#nivo-caption-'.$o->ID : null ;
 							echo get_the_post_thumbnail( $o, $BILLBOARD_SIZE, 
 									array('title'=> $title, 'alt' => $o->alt_text ) );
 					if( $o->billboard_url ) : ?>
@@ -830,7 +834,7 @@ class News extends CustomPostType {
 		} else {
 			$format_default_message =
 				( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
-				? '<span style="color: red !important;">Admin Alert:<a class="text-danger adminmsg adminmsg-menu" data-control-name="sdes_rev_2015-newsArchiveUrl"'
+				? '<span class="adminmsg">Admin Alert:<a class="text-danger" data-control-name="sdes_rev_2015-newsArchiveUrl"'
 				  . 'href="' . get_site_url() . '/wp-admin/">%1$s</a><br>'
 				  . "If you have not created <a href='".get_admin_url()."/post-new.php?post_type=page&post_title={$posttype_name}&content=%%5Bnews-list%%20show-archives%%3Dtrue%%5D'>a news archive page with a [news-list] shortcode</a>, please do this first.<br></span>"
 				: '<!-- %1$s -->';
@@ -852,7 +856,7 @@ class News extends CustomPostType {
 		?>
 		<?php if ( $context['header'] ) : ?>
 			<div class="page-header">
-				<h2><?= $context['header'] ?></h2>
+				<h1><?= $context['header'] ?></h1>
 			</div>
 		<?php endif; ?>
 		<span class="<?= $context['css_classes'] ?>">
@@ -877,9 +881,10 @@ class News extends CustomPostType {
 		$context['Post_ID'] = $post_object->ID;
 		$thumbnailUrl = get_stylesheet_directory_uri() . '/images/blank.png';
 		$context['thumbnail']
-			= has_post_thumbnail($post_object) 
-				? get_the_post_thumbnail($post_object, '', array('class' => 'img-responsive'))
-				: "<img src='".$thumbnailUrl."' alt='thumb' class='img-responsive'>";
+			= has_post_thumbnail($post_object)
+				? get_the_post_thumbnail($post_object, '',
+					array('class' => 'img-responsive', 'alt' => SDES_Static::get_post_thumbnail_alttext( $post_object->ID, 'Thumbnail' ) ) )
+				: "<img src='".$thumbnailUrl."' alt='Thumbnail' class='img-responsive'>";
 		$news_url = get_post_meta( $post_object->ID, 'news_url', true );
 		$context['permalink'] = get_permalink( $post_object );
 		$context['title_link'] = ( '' !== $news_url ) ? $news_url : $context['permalink'];

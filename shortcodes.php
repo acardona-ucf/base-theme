@@ -544,8 +544,10 @@ class sc_events extends ShortcodeBase {
                                         <span class="day"><?= $context['day'] ?></span>
                                     </time>
                                 </div>
-                                <a class="title" href="<?= $context['link'] ?>"><?= $title ?></a>
-                                <a href="<?= $context['link'] ?>"><?= $loc ?></a>
+                                <a href="<?= $context['link'] ?>">
+                                    <span class="title"><?= $title ?></span><br/>
+                                    <span class="location"><?= $loc ?></span>
+                                </a>
                                 <div class="end"></div>
                             </li>
                         <?php } 
@@ -610,6 +612,7 @@ class sc_socialButton extends ShortcodeBase {
             case 'twitter':
             case 'youtube':
             default:
+                $ctxt['network'] = $attr['network'];
                 $ctxt['url'] = esc_attr(
                     SDES_Static::url_ensure_prefix(
                         SDES_Static::get_theme_mod_defaultIfEmpty('sdes_rev_2015-'.$attr['network'], '') ) );
@@ -632,7 +635,7 @@ class sc_socialButton extends ShortcodeBase {
         ?>
             <div class="<?= $ctxt['container_classes'] ?>">
                 <a href="<?= $ctxt['url'] ?>">
-                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="button">
+                    <img src="<?= $ctxt['image'] ?>" class="clean" alt="<?= $ctxt['network'] ?> button">
                 </a>
             </div>
         <?php
