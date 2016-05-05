@@ -852,7 +852,7 @@ class News extends CustomPostType {
 		?>
 		<?php if ( $context['header'] ) : ?>
 			<div class="page-header">
-				<h2><?= $context['header'] ?></h2>
+				<h1><?= $context['header'] ?></h1>
 			</div>
 		<?php endif; ?>
 		<span class="<?= $context['css_classes'] ?>">
