@@ -879,7 +879,7 @@ class News extends CustomPostType {
 				<div class="hr-blank"></div>
 			<?php endforeach;?>
 			<?php if ( 0 == count( $context['objects'] ) ) : ?>
-				No archived news articles were found.
+				<p>No news articles at this time.</p>
 			<?php endif; ?>
 			<div class="top-b"></div>
 			<?php if ( ! SDES_Static::is_null_or_whitespace( $context['archiveLink'] ) ) :?>
