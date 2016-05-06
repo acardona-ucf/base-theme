@@ -5,6 +5,7 @@
 namespace SDES\BaseTheme\Admin;
 use \WP_Query;
 use SDES\SDES_Static as SDES_Static;
+require_once( get_stylesheet_directory().'/functions/admin-mce-editor.php' );
 
 // @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/functions/admin.php#L41-L71
 add_action( 'admin_menu', __NAMESPACE__.'\create_help_page' );
