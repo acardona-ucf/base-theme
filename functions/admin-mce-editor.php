@@ -5,7 +5,7 @@
  */
 /**
  * Modifies the default stylesheets associated with the TinyMCE editor.
- *
+ * @see https://codex.wordpress.org/Plugin_API/Filter_Reference/mce_css WP-Codex: mce_css
  * @return string
  * @author Jared Lang
  * */
@@ -16,8 +16,8 @@ function editor_styles( $css ) {
 }
 add_filter( 'mce_css', 'editor_styles' );
 /**
- * Edits second row of buttons in tinyMCE editor. Removing/adding actions
- *
+ * Edits second row of buttons in tinyMCE editor. Removing/adding actions.
+ * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/mce_buttons,_mce_buttons_2,_mce_buttons_3,_mce_buttons_4 WP-Codex: mce_buttons_2
  * @return array
  * @author Jared Lang
  * */
@@ -34,7 +34,9 @@ add_filter( 'mce_buttons_2', 'editor_format_options' );
 
 
 /**
+ * Add styleselect button to the TinyMCE advanced toolbar.
  * @see https://github.com/UCF/Students-Theme/blob/87dca3074cb48bef5d811789cf9a07c9eac55cd1/functions/admin.php#L130-L268
+ * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/mce_buttons,_mce_buttons_2,_mce_buttons_3,_mce_buttons_4 WP-Codex: mce_buttons_2
  */
 function add_advanced_styles_button( $buttons ) {
 	array_unshift( $buttons, 'styleselect' );
@@ -42,6 +44,11 @@ function add_advanced_styles_button( $buttons ) {
 }
 add_filter( 'mce_buttons_2', 'add_advanced_styles_button' );
 
+/**
+ * Define styles for the styleselect ("Formats") dropdown.
+ * @see http://codex.wordpress.org/TinyMCE_Custom_Styles WP-Codex: TinyMCE_Custom_Styles
+ * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/tiny_mce_before_init WP-Codex: tiny_mce_before_init
+ */
 function add_editor_styles( $init_array ) {
 	$style_formats = array(
 		array(
@@ -159,12 +166,31 @@ function add_editor_styles( $init_array ) {
 			'selector' => 'p',
 			'classes'  => 'lead'
 		),
+		array(
+			'title'    => 'Bullets',
+			'selector' => 'h1,h2,h3,ul,ol',
+			'classes'  => 'bullets'
+		),
+		array(
+			'title'    => 'Page Header',
+			'selector' => 'h1,h2,h3',
+			'classes'  => 'page-header'
+		),
+		array(
+			'title'    => 'Nonresponsive Image',
+			'selector' => 'img',
+			'classes'  => 'img-nonresponsive'
+		),
 	);
 	$init_array['style_formats'] = json_encode( $style_formats );
 	return $init_array;
 }
 add_filter( 'tiny_mce_before_init', 'add_editor_styles' );
 
+// /**
+//  * Add a stylesheet to apply to the editor itself.
+//  * @see https://codex.wordpress.org/Plugin_API/Filter_Reference/mce_css WP-Codex: mce_css
+//  */
 // function add_mce_stylesheet( $url ) {
 // 	if ( ! empty( $url ) ) {
 // 		$url .= ',';
