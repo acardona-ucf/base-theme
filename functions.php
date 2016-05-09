@@ -263,7 +263,8 @@ require_once('functions/Settings.php');
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 require_once('functions/ThemeCustomizer.php'); // Admin > Appearance > Customize
-require_once('functions/admin.php'); // Admin/login functions
+require_once('functions/admin.php'); // Admin/login functions.
+require_once('functions/admin-theme.php'); // Theme-specific admin/login functions.
 require_once('shortcodes.php');
 
 
