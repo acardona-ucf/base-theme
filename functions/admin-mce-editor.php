@@ -1,4 +1,8 @@
 <?php 
+/**
+ * Extend the TinyMCE editor in Admin Dashboard (/wp-admin/).
+ */
+namespace SDES\Admin;
 
 /**
  * @see https://github.com/UCF/Students-Theme/blob/87dca3074cb48bef5d811789cf9a07c9eac55cd1/functions/admin.php#L74-L101
@@ -14,7 +18,7 @@ function editor_styles( $css ) {
 	$css   = implode( ',', $css );
 	return $css;
 }
-add_filter( 'mce_css', 'editor_styles' );
+add_filter( 'mce_css', __NAMESPACE__.'\editor_styles' );
 /**
  * Edits second row of buttons in tinyMCE editor. Removing/adding actions.
  * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/mce_buttons,_mce_buttons_2,_mce_buttons_3,_mce_buttons_4 WP-Codex: mce_buttons_2
@@ -28,7 +32,7 @@ function editor_format_options( $row ) {
 	}
 	return $row;
 }
-add_filter( 'mce_buttons_2', 'editor_format_options' );
+add_filter( 'mce_buttons_2', __NAMESPACE__.'\editor_format_options' );
 
 
 
@@ -42,7 +46,7 @@ function add_advanced_styles_button( $buttons ) {
 	array_unshift( $buttons, 'styleselect' );
 	return $buttons;
 }
-add_filter( 'mce_buttons_2', 'add_advanced_styles_button' );
+add_filter( 'mce_buttons_2', __NAMESPACE__.'\add_advanced_styles_button' );
 
 /**
  * Define styles for the styleselect ("Formats") dropdown.
@@ -185,7 +189,7 @@ function add_editor_styles( $init_array ) {
 	$init_array['style_formats'] = json_encode( $style_formats );
 	return $init_array;
 }
-add_filter( 'tiny_mce_before_init', 'add_editor_styles' );
+add_filter( 'tiny_mce_before_init', __NAMESPACE__.'\add_editor_styles' );
 
 // /**
 //  * Add a stylesheet to apply to the editor itself.
@@ -198,6 +202,6 @@ add_filter( 'tiny_mce_before_init', 'add_editor_styles' );
 // 	$url .= THEME_CSS_URL . '/style.min.css';
 // 	return $url;
 // }
-// add_filter( 'mce_css', 'add_mce_stylesheet' );
+// add_filter( 'mce_css', __NAMESPACE__.'\add_mce_stylesheet' );
 
 ?>
