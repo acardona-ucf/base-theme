@@ -224,18 +224,18 @@ class SDES_Static
 	/**
 	 * Use to display a message in locations where have_posts() returns false.
 	 * @param Array $args  Any additional arguments for this function.
-	 *  Bool   echo   Flag to whether to echo or return text (defaults to true).
+	 *  Bool   echo    Flag to whether to echo or return text (defaults to true).
+	 *  String message The text of the message (defaults to 'No posts were found.').
 	 */
-	public static function Get_No_Posts_Message( $args = array() )
-	{
-		$defaults = array( 'echo' => true, );
+	public static function Get_No_Posts_Message( $args = array() ) {
+		$defaults = array( 'echo' => true, 'message' => 'No posts were found.' );
 		$args = array_merge( $defaults, $args );
-		$no_posts = 
+		$no_posts =
 			( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
 			? '<a class="text-danger adminmsg" style="color: red !important;"'
 			. 'href="' . get_site_url() . '/wp-admin/">Admin Alert: %1$s</a>'
 			: '<!-- %1$s -->';
-		$output = sprintf( $no_posts, 'No posts were found.');
+		$output = sprintf( $no_posts, $args['message'] );
 		if ( $args['echo'] ) {
 			echo $output;
 		}
