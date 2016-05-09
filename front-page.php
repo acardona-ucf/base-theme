@@ -3,7 +3,6 @@
  * Display the Front Page of the site, per the WordPress Template Hierarchy.
  */
 use SDES\SDES_Static as SDES_Static;
-use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 
@@ -35,8 +34,7 @@ if ( $hideBillboard ) {
 				<h2 class="page-header">News and Announcements</h2>
 				<?php echo do_shortcode("[news-list]"); 
 			else:
-				require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
-				SDES_Helper::Get_No_Posts_Message();
+				SDES_Static::Get_No_Posts_Message();
 			endif;
 			wp_reset_query();
 		endif; ?>
