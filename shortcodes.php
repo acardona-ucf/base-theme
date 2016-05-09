@@ -3,13 +3,18 @@
  * Add and configure Shortcodes for this theme.
  * Relies on the implementation in ShortcodeBase.
  */
+
 namespace SDES\BaseTheme\Shortcodes;
+
 use \StdClass;
 use \Exception;
 use \SimpleXMLElement;
-use SDES\SDES_Static as SDES_Static;
-use SDES\Shortcodes\ShortcodeBase;
+
+require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
+    use SDES\Shortcodes\ShortcodeBase;
+
 require_once('functions/class-sdes-static.php');
+    use SDES\SDES_Static as SDES_Static;
 
 require_once( get_stylesheet_directory().'/vendor/autoload.php' );
 use Underscore\Types\Arrays;

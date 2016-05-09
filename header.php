@@ -2,7 +2,8 @@
 /**
  * Header area for the theme, as called by get_header().
  */
-use SDES\SDES_Static as SDES_Static; 
+
+use SDES\SDES_Static as SDES_Static;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,7 @@ use SDES\SDES_Static as SDES_Static;
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title><?= wp_title('&raquo;', true, 'right'); bloginfo('name');?> &raquo; UCF</title>
+	<title><?= wp_title( '&raquo;', true, 'right' ); bloginfo( 'name' ); ?> &raquo; UCF</title>
 
 	<link rel="shortcut icon" href="<?= get_stylesheet_directory_uri(); ?>/images/favicon_black.png" >
 	<link rel="apple-touch-icon" href="<?= get_stylesheet_directory_uri(); ?>/images/apple-touch-icon.png" >

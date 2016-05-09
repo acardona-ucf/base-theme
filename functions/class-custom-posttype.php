@@ -33,7 +33,7 @@ use Underscore\Types\Arrays;
  * Based on: http://github.com/UCF/Students-Theme/blob/6ca1d02b062b2ee8df62c0602adb60c2c5036867/custom-post-types.php#L1-L242
  **/
 abstract class CustomPostType {
-  	public
+	public
 	$name           = 'custom_post_type',
 	$plural_name    = 'Custom Posts',
 	$singular_name  = 'Custom Post',
@@ -48,7 +48,7 @@ abstract class CustomPostType {
 	$use_order      = false, // Wordpress built-in order meta data
 	$use_metabox    = false, // Enable if you have custom fields to display in admin
 	$use_shortcode  = false, // Auto generate a shortcode for the post type
-							 // (see also objectsToHTML and toHTML methods)
+							 // (see also objectsToHTML and toHTML methods).
 	$taxonomies     = array( 'post_tag' ),
 	$menu_icon      = null,
 	$built_in       = false,

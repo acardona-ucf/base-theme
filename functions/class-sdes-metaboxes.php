@@ -3,6 +3,7 @@
  * Add metabox functionality to a custom posttype.
  * Relies on implementations in SDES\Metafields.
  */
+
 namespace SDES;
 
 require_once( 'classes-metabox-metafields.php' );
@@ -29,6 +30,7 @@ use Underscore\Types\Arrays;
 use \Exception as Exception;
 
 // TODO: add and check for a metaboxes interface with: register_metaboxes(), metabox(), option(), etc.
+
 /**
  * POST DATA HANDLERS and META BOX FUNCTIONS
  *
@@ -44,14 +46,14 @@ use \Exception as Exception;
 class SDES_Metaboxes {
 	/**
 	 * Array containing instances of the custom post types classes.
-	 * @see custom-post-types.php\register_custom_posttypes()
+	 * @see custom-post-types.php\register_custom_posttypes() register_custom_posttypes().
 	 */
 	public static $installed_custom_post_types = null;
 
 	private static function check_installed_custom_post_types() {
-		if ( null == static::$installed_custom_post_types ) {
+		if ( null === static::$installed_custom_post_types ) {
 			throw new Exception('Instances of metaboxes were not set in ' .
-			  'SDES_Metaboxes::$installed_custom_post_types. Cannot retrieve metaboxes.', 1);
+			'SDES_Metaboxes::$installed_custom_post_types. Cannot retrieve metaboxes.', 1);
 		}
 	}
 
@@ -63,7 +65,7 @@ class SDES_Metaboxes {
 	 * */
 	public static function register_meta_boxes() {
 		static::check_installed_custom_post_types();
-		//Register custom post types metaboxes
+		// Register custom post types metaboxes.
 		foreach ( static::$installed_custom_post_types as $custom_post_type ) {
 			$custom_post_type->register_metaboxes();
 		}
@@ -76,7 +78,7 @@ class SDES_Metaboxes {
 		static::check_installed_custom_post_types();
 		$meta_box = null;
 		foreach ( static::$installed_custom_post_types as $custom_post_type ) {
-			if ( SDES_Static::get_post_type( $post_id ) == $custom_post_type->options( 'name' ) ) {
+			if ( SDES_Static::get_post_type( $post_id ) === $custom_post_type->options( 'name' ) ) {
 				$meta_box = $custom_post_type->metabox();
 				break;
 			}
@@ -87,26 +89,25 @@ class SDES_Metaboxes {
 	/**
 	 * Saves the data for a given post type
 	 *
-	 * @return void
 	 * @author Jared Lang
 	 * */
 	public static function save_meta_data( $post_id ) {
 		$meta_box = static::get_post_meta_box( $post_id );
-		// verify nonce
+		// Verify nonce.
 		$nonce = isset( $_POST['meta_box_nonce'] ) ? $_POST['meta_box_nonce'] : null;
-		if ( !wp_verify_nonce( $nonce, basename( __FILE__ ) ) ) {
+		if ( ! wp_verify_nonce( $nonce, basename( __FILE__ ) ) ) {
 			return $post_id;
 		}
-		// check autosave
+		// Check autosave.
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
 			return $post_id;
 		}
-		// check permissions
-		if ( 'page' == $_POST['post_type'] ) {
-			if ( !current_user_can( 'edit_page', $post_id ) ) {
+		// Check permissions.
+		if ( 'page' === $_POST['post_type'] ) {
+			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
-		} elseif ( !current_user_can( 'edit_post', $post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return $post_id;
 		}
 		if ( $meta_box ) {
@@ -118,16 +119,15 @@ class SDES_Metaboxes {
 
 	public static function save_default( $post_id, $field ) {
 		$old = get_post_meta( $post_id, $field['id'], true );
-		$new = isset( $_POST[$field['id']]) ? $_POST[$field['id']] : null;
-		// Update if new is not empty and is not the same value as old
-		if ( $new !== "" and $new !== null and $new != $old ) {
+		$new = isset( $_POST[ $field['id'] ]) ? $_POST[ $field['id'] ] : null;
+		if ( $new !== '' and $new !== null and $new != $old ) {
+			// Update if new is not empty and is not the same value as old.
 			update_post_meta( $post_id, $field['id'], $new );
-		}
-		// Delete if we're sending a new null value and there was an old value
-		elseif ( ( $new === "" or is_null( $new ) ) and $old ) {
+		} elseif ( ( $new === '' or is_null( $new ) ) and $old ) {
+			// Delete if we're sending a new null value and there was an old value.
 			delete_post_meta( $post_id, $field['id'], $old );
 		}
-		// Otherwise we do nothing, field stays the same
+		// Otherwise we do nothing, field stays the same.
 		return;
 	}
 
@@ -143,15 +143,15 @@ class SDES_Metaboxes {
 	?>
 		<input type="hidden" name="meta_box_nonce" value="<?php echo wp_create_nonce( basename( __FILE__ ) ); ?>">
 		<table class="form-table">
-		  <?php
-			foreach ( $meta_box['fields'] as $field ) {
+		<?php foreach ( $meta_box['fields'] as $field ) {
 				static::display_metafield( $post->ID, $field );
-			}
-		  ?>
+			} ?>
 		</table>
-		  <?php
-			$hasDateField = Arrays::matchesAny( $meta_box['fields'],
-				function($x) { return ('date' === $x['type']); } );
+		<?php
+			$hasDateField = Arrays::matchesAny(
+				$meta_box['fields'],
+				function( $x ) { return ('date' === $x['type']); }
+			);
 			if ( $hasDateField ) : ?>
 				<script>
 					jQuery(document).ready(function(){
@@ -172,41 +172,41 @@ class SDES_Metaboxes {
 		$field_obj = null;
 		$field['value'] = get_post_meta( $post_id, $field['id'], true );
 		switch ( $field['type'] ) {
-		case 'text':
-			$field_obj = new TextMetaField( $field );
-			break;
-		case 'date':
-			$field_obj = new DatePickerMetaField( $field );
-			break;
-		case 'textarea':
-			$field_obj = new TextareaMetaField( $field );
-			break;
-		case 'select':
-			$field_obj = new SelectMetaField( $field );
-			break;
-		case 'multiselect':
-			$field_obj = new MultiselectMetaField( $field );
-			break;
-		case 'radio':
-			$field_obj = new RadioMetaField( $field );
-			break;
-		// TODO: add CheckboxMetaField for single checkboxes.
-		case 'checkbox':
-		case 'checkbox_list':
-			$field_obj = new CheckboxListMetaField( $field );
-			break;
-		case 'file':
-			$field['post_id'] = $post_id;
-			$field_obj = new FileMetaField( $field );
-			break;
-		case 'editor':
-			$field_obj = new EditorMetaField( $field );
-			break;
-		default:
-			break;
+			case 'text':
+				$field_obj = new TextMetaField( $field );
+				break;
+			case 'date':
+				$field_obj = new DatePickerMetaField( $field );
+				break;
+			case 'textarea':
+				$field_obj = new TextareaMetaField( $field );
+				break;
+			case 'select':
+				$field_obj = new SelectMetaField( $field );
+				break;
+			case 'multiselect':
+				$field_obj = new MultiselectMetaField( $field );
+				break;
+			case 'radio':
+				$field_obj = new RadioMetaField( $field );
+				break;
+			// TODO: add CheckboxMetaField for single checkboxes.
+			case 'checkbox':
+			case 'checkbox_list':
+				$field_obj = new CheckboxListMetaField( $field );
+				break;
+			case 'file':
+				$field['post_id'] = $post_id;
+				$field_obj = new FileMetaField( $field );
+				break;
+			case 'editor':
+				$field_obj = new EditorMetaField( $field );
+				break;
+			default:
+				break;
 		}
 		$markup = '';
-		if ( null !== $field_obj && $field_obj instanceof IMetafield) {
+		if ( null !== $field_obj && $field_obj instanceof IMetafield ) {
 			ob_start();
 	?>
 			<tr>
@@ -218,8 +218,7 @@ class SDES_Metaboxes {
 			</tr>
 		<?php
 			$markup = ob_get_clean();
-		}
-		else {
+		} else {
 			$markup = '<tr><th></th><td>Don\'t know how to handle field of type '. $field['type'] .'</td></tr>';
 		}
 		echo $markup;

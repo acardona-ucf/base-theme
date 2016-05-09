@@ -1,7 +1,8 @@
-<?php 
+<?php
 /**
  * Extend the TinyMCE editor in Admin Dashboard (/wp-admin/).
  */
+
 namespace SDES\Admin;
 
 /**
@@ -27,8 +28,8 @@ add_filter( 'mce_css', __NAMESPACE__.'\editor_styles' );
  * */
 function editor_format_options( $row ) {
 	$found = array_search( 'underline', $row );
-	if ( False !== $found ) {
-		unset( $row[$found] );
+	if ( false !== $found ) {
+		unset( $row[ $found ] );
 	}
 	return $row;
 }
@@ -52,6 +53,7 @@ add_filter( 'mce_buttons_2', __NAMESPACE__.'\add_advanced_styles_button' );
  * Define styles for the styleselect ("Formats") dropdown.
  * @see http://codex.wordpress.org/TinyMCE_Custom_Styles WP-Codex: TinyMCE_Custom_Styles
  * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/tiny_mce_before_init WP-Codex: tiny_mce_before_init
+ * @see https://developer.wordpress.org/reference/functions/wp_json_encode/ WP-Codex: wp_json_encode
  */
 function add_editor_styles( $init_array ) {
 	$style_formats = array(
@@ -66,14 +68,14 @@ function add_editor_styles( $init_array ) {
 				array(
 					'title'    => 'Lowercase Text',
 					'selector' => 'h1,h2,h3,h4,h5,p',
-					'classes'  => 'text-lowercase'
+					'classes'  => 'text-lowercase',
 				),
 				array(
 					'title'    => 'Capitalize Text',
 					'selector' => 'h1,h2,h3,h4,h5,p',
-					'classes'  => 'text-capitalize'
+					'classes'  => 'text-capitalize',
 				),
-			)
+			),
 		),
 		array(
 			'title' => 'List Styles',
@@ -81,17 +83,17 @@ function add_editor_styles( $init_array ) {
 				array(
 					'title'    => 'Unstyled List',
 					'selector' => 'ul,ol',
-					'classes'  => 'list-unstyled'
+					'classes'  => 'list-unstyled',
 				),
 				array(
 					'title'    => 'Horizontal List',
 					'selector' => 'ul,ol',
-					'classes'  => 'list-inline'
+					'classes'  => 'list-inline',
 				),
 				array(
 					'title'    => 'Bullets',
 					'selector' => 'ul,ol',
-					'classes'  => 'bullets'
+					'classes'  => 'bullets',
 				),
 			),
 		),
@@ -102,24 +104,24 @@ function add_editor_styles( $init_array ) {
 					'title' => 'Button Sizes',
 					'items' => array(
 						array(
-							'title'    => "Large Button",
+							'title'    => 'Large Button',
 							'selector' => 'a,button',
-							'classes'  => 'btn btn-lg'
+							'classes'  => 'btn btn-lg',
 						),
 						array(
 							'title'    => 'Default Button',
 							'selector' => 'a,button',
-							'classes'  => 'btn'
+							'classes'  => 'btn',
 						),
 						array(
 							'title'    => 'Small Button',
 							'selector' => 'a,button',
-							'classes'  => 'btn btn-sm'
+							'classes'  => 'btn btn-sm',
 						),
 						array(
 							'title'    => 'Extra Small Button',
 							'selector' => 'a,button',
-							'classes'  => 'btn btn-xs'
+							'classes'  => 'btn btn-xs',
 						),
 					),
 				),
@@ -129,79 +131,78 @@ function add_editor_styles( $init_array ) {
 						array(
 							'title'    => 'Default',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-default'
+							'classes'  => 'btn-default',
 						),
 						array(
 							'title'    => 'UCF Gold',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-ucf'
+							'classes'  => 'btn-ucf',
 						),
 						array(
 							'title'    => 'Primary',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-primary'
+							'classes'  => 'btn-primary',
 						),
 						array(
 							'title'    => 'Success',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-success'
+							'classes'  => 'btn-success',
 						),
 						array(
 							'title'    => 'Info',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-info'
+							'classes'  => 'btn-info',
 						),
 						array(
 							'title'    => 'Warning',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-warning'
+							'classes'  => 'btn-warning',
 						),
 						array(
 							'title'    => 'Danger',
 							'selector' => 'a.btn,button.btn',
-							'classes'  => 'btn-danger'
+							'classes'  => 'btn-danger',
 						),
 					),
-				)
+				),
 			),
 		),
 		array(
 			'title'    => 'Lead',
 			'selector' => 'p',
-			'classes'  => 'lead'
+			'classes'  => 'lead',
 		),
 		array(
 			'title'    => 'Bullets',
 			'selector' => 'h1,h2,h3,ul,ol',
-			'classes'  => 'bullets'
+			'classes'  => 'bullets',
 		),
 		array(
 			'title'    => 'Page Header',
 			'selector' => 'h1,h2,h3',
-			'classes'  => 'page-header'
+			'classes'  => 'page-header',
 		),
 		array(
 			'title'    => 'Nonresponsive Image',
 			'selector' => 'img',
-			'classes'  => 'img-nonresponsive'
+			'classes'  => 'img-nonresponsive',
 		),
 	);
-	$init_array['style_formats'] = json_encode( $style_formats );
+	$init_array['style_formats'] = wp_json_encode( $style_formats );
 	return $init_array;
 }
 add_filter( 'tiny_mce_before_init', __NAMESPACE__.'\add_editor_styles' );
 
 // /**
-//  * Add a stylesheet to apply to the editor itself.
-//  * @see https://codex.wordpress.org/Plugin_API/Filter_Reference/mce_css WP-Codex: mce_css
-//  */
+// * Add a stylesheet to apply to the editor itself.
+// * @see https://codex.wordpress.org/Plugin_API/Filter_Reference/mce_css WP-Codex: mce_css
+// */
 // function add_mce_stylesheet( $url ) {
-// 	if ( ! empty( $url ) ) {
-// 		$url .= ',';
-// 	}
-// 	$url .= THEME_CSS_URL . '/style.min.css';
-// 	return $url;
+// if ( ! empty( $url ) ) {
+// $url .= ',';
+// }
+// $url .= THEME_CSS_URL . '/style.min.css';
+// return $url;
 // }
 // add_filter( 'mce_css', __NAMESPACE__.'\add_mce_stylesheet' );
-
 ?>

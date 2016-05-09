@@ -205,7 +205,9 @@ function add_section_ContactOptions( $wp_customizer, $args = null ) {
 
 
 // TODO: should tagline be called description to match the built-in Theme Customizer name? And/or should CSS .site-subtitle be updated?
-/** Register taglineURL option with the built-in `title_tagline` section, add settings and controls. */
+/**
+ * Register taglineURL option with the built-in `title_tagline` section, add settings and controls. 
+ */
 function add_to_section_TitleAndTagline( $wp_customizer, $args = null ) {
 	$section = 'title_tagline';
 

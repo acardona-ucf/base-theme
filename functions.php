@@ -3,7 +3,8 @@
  * Entry point for a WordPress theme, along with the style.css file.
  * Includes or references all functionality for this theme.
  */
-// require_once('functions/class-sdes-static.php');
+
+require_once('functions/class-sdes-static.php');
 use SDES\SDES_Static as SDES_Static;
 // TODO: remove all custom functions, constants (and possibly classes) from global namespace.
 
