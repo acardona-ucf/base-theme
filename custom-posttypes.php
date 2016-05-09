@@ -206,7 +206,7 @@ class Alert extends CustomPostType {
 			// Unset custom attributes.
 			unset( $attr['show_all'] );
 			$args = array( 'classname' => __CLASS__ );
-			return SDES_Static::sc_object_list( $attr, $args );
+			return parent::sc_object_list( $attr, $args );
 		}
 
 		/**
@@ -397,7 +397,7 @@ class Billboard extends CustomPostType {
 				$attr = $default_attrs;
 			}
 			$args = array( 'classname' => __CLASS__ );
-			return SDES_Static::sc_object_list( $attr, $args );
+			return parent::sc_object_list( $attr, $args );
 		}
 
 		public function objectsToHTML( $objects, $css_classes ) {
@@ -605,7 +605,7 @@ class Staff extends CustomPostType {
 			unset( $attr['css_classes'] );
 			unset( $attr['collapse'] );
 			$args = array( 'classname' => __CLASS__, 'objects_only' => true );
-			$objects = SDES_Static::sc_object_list( $attr, $args );
+			$objects = parent::sc_object_list( $attr, $args );
 
 			$context['objects'] = $objects;
 			return static::render_objects_to_html( $context );
@@ -828,7 +828,7 @@ class News extends CustomPostType {
 			unset( $attr['header'] );
 			unset( $attr['css_classes'] );
 			$args = array( 'classname' => __CLASS__, 'objects_only' => true );
-			$context['objects'] = SDES_Static::sc_object_list( $attr, $args );
+			$context['objects'] = parent::sc_object_list( $attr, $args );
 			$context['archiveLink'] = static::get_archive_link();
 			return static::render_objects_to_html( $context );
 		}
