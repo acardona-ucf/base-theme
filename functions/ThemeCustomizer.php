@@ -7,9 +7,9 @@
 namespace SDES\BaseTheme\ThemeCustomizer;
 use \WP_Customize_Control;
 use \WP_Customize_Color_Control;
-require_once( 'Class_SDES_Customizer_Helper.php' );
+require_once( 'class-sdes-customizer-helper.php' );
 	use SDES\CustomizerControls\SDES_Customizer_Helper;
-require_once( 'Classes_WP_Customize_Control.php' );
+require_once( 'classes-wp-customize-control.php' );
 	use SDES\CustomizerControls\Textarea_CustomControl;
 	use SDES\CustomizerControls\Phone_CustomControl;
 require_once( 'class-sdes-static.php' );
