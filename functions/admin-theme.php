@@ -4,7 +4,10 @@
  */
 namespace SDES\BaseTheme\Admin;
 use \WP_Query;
-use SDES\SDES_Static as SDES_Static;
+require_once(  get_stylesheet_directory() . '/functions/class-sdes-static.php' );
+    use SDES\SDES_Static as SDES_Static;
+require_once(  get_stylesheet_directory() . '/functions/class-sdes-helper.php' );
+    use SDES\BaseTheme\SDES_Helper as SDES_Helper;
 
 add_action( 'init', __NAMESPACE__.'\register_navpill_dynamic_menus' );
 function register_navpill_dynamic_menus() {
@@ -19,8 +22,8 @@ function register_navpill_dynamic_menus() {
     $nav_locations = array();
     while ( $query_navpill_locations->have_posts() ) {
         $query_navpill_locations->the_post();
-        $key = SDES_Static::the_locationKey_navpills();
-        $nav_locations[$key] = SDES_Static::the_locationValue_navpills();
+        $key = SDES_Helper::the_locationKey_navpills();
+        $nav_locations[$key] = SDES_Helper::the_locationValue_navpills();
     }
     wp_reset_postdata(); // Restore original Post Data
 
