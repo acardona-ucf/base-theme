@@ -8,6 +8,22 @@ require_once('functions/class-sdes-static.php');
 use SDES\SDES_Static as SDES_Static;
 // TODO: remove all custom functions, constants (and possibly classes) from global namespace.
 
+/**
+ * Contributors for this theme should be able to edit, but not publish pages and posts.
+ * Add capabilities for the Contributor role to: edit pages, delete unpublished pages, and upload files.
+ * @see http://codex.wordpress.org/Roles_and_Capabilities#Contributor WP-Codex: Roles_and_Capabilities
+ * @see http://codex.wordpress.org/Plugin_API/Action_Reference/admin_init WP-Codex: admin_init
+ */
+function extend_contributor_caps() {
+    $role = get_role( 'contributor' );
+    $role->add_cap( 'edit_others_posts' );
+    $role->add_cap( 'edit_others_pages' );
+    $role->add_cap( 'edit_pages' );
+    $role->add_cap( 'delete_pages' ); // Still cannot delete_published_pages.
+    $role->add_cap( 'upload_files' );
+}
+add_action( 'admin_init', 'extend_contributor_caps');
+
 /*-------------------------------------------------------------------------------------------*/
 //Home title fix
 /*-------------------------------------------------------------------------------------------
