@@ -1,8 +1,15 @@
 <?php
 
 // require_once 'vendor/autoload.php';
-require_once '\..\functions\class-sdes-static.php';
+require_once '/../../functions/class-sdes-static.php';
     use SDES\SDES_Static as SDES_Static;
+
+/** Monkey Patches for WordPress functions. */
+function get_stylesheet_directory() { return '/../..'; }
+function get_site_url() { return ''; }
+
+require_once '/../../functions/class-sdes-helper.php';
+    use SDES\BaseTheme\SDES_Helper as SDES_Helper;
 
 class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 {
@@ -224,7 +231,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
         'echo' => true, 'fallback_cb' => 'wp_page_menu', 'before' => '', 'after' => '', 'link_before' => '', 'link_after' => '', 'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
         'depth' => 0, 'walker' => '', 'theme_location' => '' );
 
-    ///////////  SDES_Static::fallback_navpills_warning()  ////////////////////
+    ///////////  SDES_Helper::fallback_navpills_warning()  ////////////////////
     public function test_fallback_navpills_warning__AdminNoWarn__ReturnsEmptyUl()
     {
         // Arrange
@@ -236,7 +243,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navpills_warning($args, $shouldWarn, 
+        $result = SDES_Helper::fallback_navpills_warning($args, $shouldWarn, 
             $get_query_var_preview, $esc_attr);
 
         // Assert
@@ -255,7 +262,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navpills_warning($args, $shouldWarn,
+        $result = SDES_Helper::fallback_navpills_warning($args, $shouldWarn,
             $get_query_var_preview, $esc_attr);
 
         // Assert
@@ -273,7 +280,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        SDES_Static::fallback_navpills_warning($args, $shouldWarn, 
+        SDES_Helper::fallback_navpills_warning($args, $shouldWarn, 
             $get_query_var_preview, $esc_attr);
 
         // Assert
@@ -295,13 +302,13 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        SDES_Static::fallback_navpills_warning($args, $shouldWarn, 
+        SDES_Helper::fallback_navpills_warning($args, $shouldWarn, 
             $get_query_var_preview, $esc_attr);
     }
     public function provide_test_fallback_navpills_warning__DepthNot1__ThrowsNotice(){ return [ [-1], [0], [2], [3], [4] ];}
 
 
-    ///////////  SDES_Static::fallback_navbar_list_pages()  ////////////////////
+    ///////////  SDES_Helper::fallback_navbar_list_pages()  ////////////////////
     public function test_fallback_navbar_list_pages__NoWarn1Page__ReturnsUlWithLi()
     {
         // Arrange
@@ -314,7 +321,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navbar_list_pages($args, $shouldWarn, 
+        $result = SDES_Helper::fallback_navbar_list_pages($args, $shouldWarn, 
             $get_query_var_preview, $wp_list_pages, $esc_attr);
 
         // Assert
@@ -333,7 +340,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navbar_list_pages($args, $shouldWarn,
+        $result = SDES_Helper::fallback_navbar_list_pages($args, $shouldWarn,
             $get_query_var_preview, $wp_list_pages, $esc_attr);
 
         // Assert
@@ -353,7 +360,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navbar_list_pages($args, $shouldWarn,
+        $result = SDES_Helper::fallback_navbar_list_pages($args, $shouldWarn,
             $get_query_var_preview, $wp_list_pages, $esc_attr);
 
         // Assert
@@ -372,7 +379,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navbar_list_pages($args, $shouldWarn, 
+        $result = SDES_Helper::fallback_navbar_list_pages($args, $shouldWarn, 
             $get_query_var_preview, $wp_list_pages, $esc_attr);
 
         // Assert
@@ -395,7 +402,7 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Act
         $args = array_merge(self::$WP_NAV_MENU_DEFAULTS, $args); // This is performed by wp_nav_menu.
-        $result = SDES_Static::fallback_navbar_list_pages($args, $shouldWarn, 
+        $result = SDES_Helper::fallback_navbar_list_pages($args, $shouldWarn, 
             $get_query_var_preview, $wp_list_pages, $esc_attr);
     }
     public function provide_test_fallback_navbar_list_pages__DepthNot1__ThrowsNotice(){ return [ [-1], [0], [2], [3], [4] ];}

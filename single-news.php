@@ -2,7 +2,6 @@
 /** Display a single News post, per the WordPress template hierarchy. */
 namespace SDES\BaseTheme\PostTypes;
 use SDES\SDES_Static as SDES_Static;
-use SDES\BaseTheme\SDES_Helper;
 
 get_header();
 ?>
@@ -49,7 +48,7 @@ get_header();
 	<?php
 	endwhile;
 else:
-	SDES_Helper::Get_No_Posts_Message();
+	SDES_Static::Get_No_Posts_Message();
 endif; ?>
 
 

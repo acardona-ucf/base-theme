@@ -7,9 +7,9 @@
 namespace SDES\BaseTheme\ThemeCustomizer;
 use \WP_Customize_Control;
 use \WP_Customize_Color_Control;
-require_once( 'Class_SDES_Customizer_Helper.php' );
+require_once( 'class-sdes-customizer-helper.php' );
 	use SDES\CustomizerControls\SDES_Customizer_Helper;
-require_once( 'Classes_WP_Customize_Control.php' );
+require_once( 'classes-wp-customize-control.php' );
 	use SDES\CustomizerControls\Textarea_CustomControl;
 	use SDES\CustomizerControls\Phone_CustomControl;
 require_once( 'class-sdes-static.php' );
@@ -205,7 +205,9 @@ function add_section_ContactOptions( $wp_customizer, $args = null ) {
 
 
 // TODO: should tagline be called description to match the built-in Theme Customizer name? And/or should CSS .site-subtitle be updated?
-/** Register taglineURL option with the built-in `title_tagline` section, add settings and controls. */
+/**
+ * Register taglineURL option with the built-in `title_tagline` section, add settings and controls. 
+ */
 function add_to_section_TitleAndTagline( $wp_customizer, $args = null ) {
 	$section = 'title_tagline';
 

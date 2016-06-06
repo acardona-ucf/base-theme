@@ -3,7 +3,9 @@
  * Default layout, per the WordPress Template Hierarchy.
  * This is a page of last resort, and should be overriden in most cases.
  */
-use SDES\BaseTheme\SDES_Helper;
+
+require_once( 'functions/class-sdes-static.php' );
+use SDES\SDES_Static;
 
 get_header();
 ?>
@@ -17,8 +19,7 @@ get_header();
 		the_content();
 	endwhile;
 else:
-	require_once( get_stylesheet_directory().'/functions/class-sdes-helper.php' );
-	SDES_Helper::Get_No_Posts_Message();
+	SDES_Static::Get_No_Posts_Message();
 endif; ?>
 
 

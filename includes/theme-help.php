@@ -1,5 +1,8 @@
 <?php
-// @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/includes/theme-help.php
+/**
+ * @see https://github.com/UCF/Students-Theme/blob/d56183079c70836adfcfaa2ac7b02cb4c935237d/includes/theme-help.php
+ */
+
 require_once( get_stylesheet_directory().'/functions/class-shortcodebase.php' );
 	use \SDES\Shortcodes\ShortcodeBase;
 global $shortcode_tags;
@@ -25,7 +28,7 @@ global $shortcode_tags;
 				<li class="section" id="shortcodes">
 					<h3>Shortcodes</h3>
 					
-					<?php if (isset($shortcode_tags['slideshow'])) { ?>
+					<?php if ( isset( $shortcode_tags['slideshow'] ) ) { ?>
 						
 					<h4>slideshow</h4>
 					<p>Create a javascript slideshow of each top level element in the shortcode.  All attributes are optional, but may default to less than ideal values.  Available attributes:</p>
@@ -85,28 +88,28 @@ global $shortcode_tags;
 						<th scope="col">Additional Filters</th>
 					</tr>
 					
-						<?php 
+						<?php
 							$custom_post_types = ShortcodeBase::$installed_custom_post_types;
-							
-							foreach ($custom_post_types as $custom_post_type) {
-								if (isset($shortcode_tags[$custom_post_type->name.'-list'])) { 
+
+						foreach ( $custom_post_types as $custom_post_type ) {
+							if ( isset( $shortcode_tags[ $custom_post_type->name.'-list' ] ) ) {
 						?>
 					<tr>
-						<td><?=$custom_post_type->singular_name?></td>
-						<td><?=$custom_post_type->name?>-list</td>
+						<td><?= $custom_post_type->singular_name ?></td>
+						<td><?= $custom_post_type->name ?>-list</td>
 								
 						<td>
-							<ul>
-							<?php foreach ($custom_post_type->taxonomies as $tax) { 
-								switch ($tax) {
-									case 'post_tag':
-										$tax = 'tags';
-										break;
-									case 'category':
-										$tax = 'categories';
-										break;
-								}
-								
+						<ul>
+						<?php foreach ( $custom_post_type->taxonomies as $tax ) {
+							switch ( $tax ) {
+								case 'post_tag':
+									$tax = 'tags';
+									break;
+								case 'category':
+									$tax = 'categories';
+									break;
+							}
+
 							?>
 								<li style="list-style: disc; margin-left: 15px;"><?=$tax?></li>
 							</ul>
@@ -115,15 +118,14 @@ global $shortcode_tags;
 						<td>
 							<ul>
 							<?php
-								// if more than 1 taxonomy is assigned to the post type, show 'join'
-								// as being an available filter:
-								if (count($custom_post_type->taxonomies) > 1) { 
+							// If more than 1 taxonomy is assigned to the post type, show 'join' as being an available filter.
+							if ( count( $custom_post_type->taxonomies ) > 1 ) {
 								?>
-									<li style="list-style: disc; margin-left: 15px;">join ('and', 'or')</li>
+								<li style="list-style: disc; margin-left: 15px;">join ('and', 'or')</li>
 								<?php
-								}
-								?>
-									<li style="list-style: disc; margin-left: 15px;">limit (number)</li>
+							}
+							?>
+								<li style="list-style: disc; margin-left: 15px;">limit (number)</li>
 							</ul>
 						</td>
 					</tr>
@@ -147,8 +149,8 @@ global $shortcode_tags;
 [person-list limit=5 join="and" categories="staff" org_groups="small"]</code></pre>
 				
 				
-				<?php 
-				if (isset($shortcode_tags['person-picture-list'])) { ?>
+				<?php
+				if ( isset( $shortcode_tags['person-picture-list'] ) ) { ?>
 				
 				<h4>person-picture-list</h4>
 				<p>Outputs a list of People with thumbnails, person names, and job titles.  If a person's description is available, a link to the person's profile will be outputted.  If a thumbnail for the person does not exist, a default 'No Photo Available' thumbnail will display.  An optional <strong>row_size</strong> parameter is available to customize the number of rows that will display, in addition to the other filter parameters available to the <strong>person-list</strong> shortcode.</p>
@@ -167,7 +169,7 @@ global $shortcode_tags;
 				<?php } ?>
 				
 				
-				<?php if (isset($shortcode_tags['post-type-search'])) { ?>
+				<?php if ( isset( $shortcode_tags['post-type-search'] ) ) { ?>
 				<h4>post-type-search</h4>
 				<p>Returns a list of posts of a given post type that are searchable through a generated search field.  Posts are searchable by post title and any associated tags.  Available attributes:</p>
 					
@@ -184,10 +186,10 @@ global $shortcode_tags;
 							<td>post</td>
 							<td>
 								<ul>
-								<?php 
-									foreach ($custom_post_types as $custom_post_type) {
-										print '<li style="list-style: disc; margin-left: 15px;">'.$custom_post_type->name.'</li>';
-									}
+								<?php
+								foreach ( $custom_post_types as $custom_post_type ) {
+									print '<li style="list-style: disc; margin-left: 15px;">'.$custom_post_type->name.'</li>';
+								}
 								?>
 								</ul>
 							</td>

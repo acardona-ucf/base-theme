@@ -12,6 +12,148 @@ require_once( get_stylesheet_directory().'/functions/class-sdes-static.php' );
  */
 class SDES_Helper
 {
+
+	// TODO: move the_locationKey_navpills and the_locationValue_navpills to class-sdes-helper.php
+	/**
+	 * Generate a key for a post's navpill menu location.
+	 * Used as the 'theme_location' by wp_nav_menu()'s $args parameter and by the "Currently set to:" in Customizer.
+	 */
+	public static function the_locationKey_navpills() {
+		// Assume called within TheLoop.
+		return 'pg-' . the_title_attribute( array( 'echo' => false ) );
+	}
+	/**
+	 * Generate a value for a post's navpill menu location.
+	 * This is the display text shown in "Menu Locations" and "Manage Locations".
+	 */
+	public static function the_locationValue_navpills() {
+		// Assume called within TheLoop.
+		return 'Page ' . the_title_attribute( array( 'echo' => false ) );
+	}
+
+
+
+	/**
+	 * Fallback_navpills_warning - Call from wp_nav_menu as the 'fallback_cb' for navpills locations.
+	 *    Optionally show a warning for logged in users (if the navpills are missing).
+	 *
+	 * @param array  $args  Accepts $args array used by wp_nav_menu (merged with any default values), plus the standard following params:
+	 *  $args['echo'] - Standard echo param, output to stdout if true.
+	 *  $args['warn'] - Boolean flag to display admin message (default to true).
+	 *  $args['warn_message'] - Format string for warning message (where %1$s is expended to the 'theme_location').
+	 *
+	 * Testing Overrides.
+	 * @param bool   $shouldWarn		Override login and capabilities check.
+	 * @param string $get_query_var		Call to get_query_var.
+	 * @param string $esc_attr			Override the sanitize function provided by WordPress (used in testing).
+	 */
+	public static function fallback_navpills_warning( $args,
+		$shouldWarn = null, $get_query_var = 'get_query_var', $esc_attr = 'esc_attr' ) {
+		SDES_Static::set_default_keyValue( $args, 'echo', false );
+		SDES_Static::set_default_keyValue( $args, 'warn', true );
+		SDES_Static::set_default_keyValue( $args, 'warn_message',
+			'<li><a class="text-warning adminmsg" style="color: #8a6d3b !important;" href="/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Warning: No menu set for "%1$s" menu location.</a></li>'
+		);
+
+		if ( 1 !== $args['depth'] ) {
+			trigger_error( "Calling 'fallback_navpills_warning' with a depth that is not 1. The SDES base-theme CSS does not currently support multi-level menus." ); }
+
+		$shouldWarn = (isset( $shouldWarn )) ? $shouldWarn
+			: SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' );
+
+		// Note: caching implications for conditional output on '?preview=true'.
+		$pages = '';
+		if ( $args['warn'] && ! $get_query_var('preview') && $shouldWarn ) {
+			$pages .= sprintf( $args['warn_message'], $args['theme_location'] );
+		}
+
+		$menu_id = $esc_attr($args['menu_id']);
+		$menu_class = $esc_attr($args['menu_class']);
+		$nav_menu = sprintf( $args['items_wrap'], $menu_id, $menu_class, $pages );
+		if ( $args['echo'] ) {
+			echo $nav_menu;
+		}
+		return $nav_menu;
+	}
+
+	// TODO: Rename "Admin Alert"s to "Admin Msg" (or something similar) to avoid confusion with Alert CPT.
+	/**
+	 * Fallback_navbar_list_pages - Call from wp_nav_menu as the 'fallback_cb'.
+	 *   Allow graceful failure when menu is not set by showing a formatted listing of links
+	 *   instead of the default wp_page_menu output.
+	 *
+	 *  @see http://codex.wordpress.org/Navigation_Menus
+	 *  @see developer.wordpress.org/reference/functions/wp_nav_menu/
+	 *  @see developer.wordpress.org/reference/functions/wp_list_pages/
+	 *  @see SDES_Static::set_default_keyValue()
+	 *
+	 *  @param array  $args	 Accepts $args array used by wp_nav_menu (merged with any default values), plus the standard following params:
+	 *  $args['links_cb'] Array - Override the ['links'] to display (preferred over directly providing links).
+	 *    ['callback'] callable - The callable provided to call_user_func_array.
+	 *    ['param_arr'] array   - The param_arr provided to call_user_func_array.
+	 *  $args['links'] string - Provide the links to display (defaults to results from wp_list_pages).
+	 *  $args['number'] int - Number of pages to pull from wp_list_pages if it is called..
+	 *  $args['echo'] bool - Standard echo param, output to stdout if true.
+	 *  $args['warn'] bool - Flag to display admin message (default to true).
+	 *  $args['warn_message'] string - Format string for warning message (where %1$s is expended to the 'theme_location').
+	 *
+	 *  Testing Overrides.
+	 *  @param bool   $shouldWarn - Override login and capabilities check.
+	 *  @param string $get_query_var	Override call to get_query_var.
+	 *  @param string $wp_list_pages	Override the call to wp_list_pages (Returns a string containing li>a elements).
+	 *  @param string $esc_attr			Override the sanitize function provided by WordPress (used in testing).
+	 *  @return string  An HTML string to display when the associated wp_nav_menu fails.
+	 */
+	public static function fallback_navbar_list_pages( $args,
+		$shouldWarn = null, $get_query_var = 'get_query_var', $wp_list_pages = 'wp_list_pages', $esc_attr = 'esc_attr' ) {
+		SDES_Static::set_default_keyValue( $args, 'number', 6 );
+		SDES_Static::set_default_keyValue( $args, 'echo', false );
+		SDES_Static::set_default_keyValue( $args, 'warn', true );
+		SDES_Static::set_default_keyValue( $args, 'warn_message',
+			'<li><a class="text-danger adminmsg adminmsg-menu" style="color: red !important;" data-control-name="nav_menu_locations[%1$s]" '
+			. 'href="' . get_site_url() . '/wp-admin/nav-menus.php?action=locations#locations-%1$s">Admin Alert: Missing "%1$s" menu location.</a></li>'
+		);
+		SDES_Static::set_default_keyValue( $args, 'links_cb', null );
+
+		if ( 1 !== $args['depth'] ) {
+			trigger_error( "Calling 'fallback_navbar_list_pages' with a depth that is not 1. The SDES base-theme CSS does not currently support multi-level menus." ); }
+
+		// Priority: links_cb > links > wp_list_pages.
+		if ( null !== $args['links_cb'] ) {
+				$args['links'] = call_user_func_array(
+					$args['links_cb'][0],
+					$args['links_cb'][1]
+				);
+		} else {
+			SDES_Static::set_default_keyValue( $args, 'links',
+				$wp_list_pages(array(
+					'echo' => false,
+					'title_li' => '',
+					'depth' => ( $args['depth'] ),
+					'number' => ( $args['number'] ),
+				))
+			);
+		}
+
+		$shouldWarn = (isset( $shouldWarn )) ? $shouldWarn
+			: SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' );
+
+		// Note: caching implications for conditional output on '?preview=true'.
+		if ( $args['warn'] && ! $get_query_var('preview') && $shouldWarn ) {
+			$args['links'] .= sprintf( $args['warn_message'], $args['theme_location'] );
+		}
+
+		$menu_id = $esc_attr($args['menu_id']);
+		$menu_class = $esc_attr($args['menu_class']);
+		$nav_menu = sprintf( $args['items_wrap'], $menu_id, $menu_class, $args['links'] ); // Match formatting of items_wrap in wp_nav_menu.
+		if ( $args['echo'] ) {
+			echo $nav_menu;
+		}
+		return $nav_menu;
+	}
+
+
+
 	/**
 	 * Retrieve data about an SDES department from the SDES Directory CMS.
 	 * @param string $directory_cms_acronym  The department 'acronym' to match against.
@@ -47,19 +189,4 @@ class SDES_Helper
 		return $department;
 	}
 
-	public static function Get_No_Posts_Message( $args = array() )
-	{
-		$defaults = array( 'echo' => true, );
-		$args = array_merge( $defaults, $args );
-		$no_posts = 
-			( SDES_Static::Is_UserLoggedIn_Can( 'edit_posts' ) )
-			? '<a class="text-danger adminmsg" style="color: red !important;"'
-			. 'href="' . get_site_url() . '/wp-admin/">Admin Alert: %1$s</a>'
-			: '<!-- %1$s -->';
-		$output = sprintf( $no_posts, 'No posts were found.');
-		if ( $args['echo'] ) {
-			echo $output;
-		}
-		return $output;
-	}
 }

@@ -2,6 +2,7 @@
 /**
  * Add display metafields within a metabox of a custom posttype.
  */
+
 namespace SDES\Metafields;
 
 /**
@@ -13,6 +14,7 @@ interface IMetafield {
 	function description_html();
 	function html();
 }
+
 /**
  * Abstracted Metafield class, all form Metafields should inherit from this.
  *
@@ -45,16 +47,15 @@ abstract class MetaField implements IMetafield {
 	}
 
 	function input_html() {
-		return "Abstract Input MetaField, Override in Descendants";
+		return 'Abstract Input MetaField, Override in Descendants';
 	}
 
 	function description_html() {
 		ob_start();
 		?>
-		<?php if ( $this->description ):?>
-		<p class="description"><?php echo __( $this->description )?></p>
-		<?php endif;?>
-		<?php
+		<?php if ( $this->description ) : ?>
+		<p class="description"><?php echo __( $this->description ) ?></p>
+		<?php endif;
 		return ob_get_clean();
 	}
 
@@ -74,17 +75,19 @@ abstract class MetaField implements IMetafield {
  * @author Jared Lang
  * */
 abstract class ChoicesMetaField extends MetaField{
-	// Ensure 'default' value is added to choices if it isn't already
+	/**
+	 * Ensure 'default' value is added to choices if it isn't already.
+	 */
 	protected function add_default_to_choices() {
 		if ( isset( $this->default ) ) {
-			if( !is_array( $this->default ) && !array_key_exists( $this->default, $this->choices ) ) {
+			if ( ! is_array( $this->default ) && ! array_key_exists( $this->default, $this->choices ) ) {
 				// Exclude arrays of defaults used by CheckboxListMetaField.
 				$this->choices = array( $this->default => '' ) + $this->choices;
 			} else {
 				// Add an array of defaults if they aren't present.
-				foreach ($this->default as $key => $value) {
-					if( !array_key_exists( $key, $this->choices ) ) {
-						$this->choices = array($key => $value) + $this->choices;
+				foreach ( $this->default as $key => $value ) {
+					if ( ! array_key_exists( $key, $this->choices ) ) {
+						$this->choices = array( $key => $value ) + $this->choices;
 					}
 				}
 			}
@@ -168,8 +171,8 @@ class SelectMetaField extends ChoicesMetaField{
 		ob_start();
 		?>
 		<select name="<?php echo htmlentities( $this->id )?>" id="<?php echo htmlentities( $this->id )?>">
-			<?php foreach ( $this->choices as $key=>$value ):?>
-			<option<?php if ( $this->value == $value ):?> selected="selected"<?php endif;?> value="<?php echo htmlentities( $value )?>"><?php echo htmlentities( $key )?></option>
+			<?php foreach ( $this->choices as $key => $value ) : ?>
+			<option<?php if ( $this->value === $value ) : ?> selected="selected"<?php endif;?> value="<?php echo htmlentities( $value )?>"><?php echo htmlentities( $key )?></option>
 			<?php endforeach;?>
 		</select>
 		<?php
@@ -188,8 +191,8 @@ class MultiselectMetaField extends ChoicesMetaField{
 		ob_start();
 		?>
 		<select multiple name="<?php echo htmlentities( $this->id ); ?>[]" id="<?php echo htmlentities( $this->id ); ?>">
-			<?php foreach ( $this->choices as $key=>$value ): ?>
-			<option<?php if ( is_array( $this->value ) && in_array( $value, $this->value ) || $value == $this->value ) : ?> selected="selected"<?php endif; ?> value="<?php echo htmlentities( $value ); ?>"><?php echo htmlentities( $key ); ?></option>
+			<?php foreach ( $this->choices as $key => $value ) :  ?>
+			<option<?php if ( is_array( $this->value ) && in_array( $value, $this->value ) || $value === $this->value ) : ?> selected="selected"<?php endif; ?> value="<?php echo htmlentities( $value ); ?>"><?php echo htmlentities( $key ); ?></option>
 			<?php endforeach;?>
 		</select>
 		<?php
@@ -208,12 +211,13 @@ class RadioMetaField extends ChoicesMetaField{
 		ob_start();
 		?>
 		<ul class="radio-list">
-			<?php $i = 0; foreach ( $this->choices as $key=>$value ): $id = htmlentities( $this->id ).'_'.$i++;?>
-			<li>
-				<input<?php if ( $this->value == $value ):?> checked="checked"<?php endif;?> type="radio" name="<?php echo htmlentities( $this->id )?>" id="<?php echo $id?>" value="<?php echo htmlentities( $value )?>">
-				<label for="<?php echo $id?>"><?php echo htmlentities( $key )?></label>
-			</li>
-			<?php endforeach;?>
+			<?php $i = 0;
+			foreach ( $this->choices as $key => $value ) :  $id = htmlentities( $this->id ).'_'.$i++;?>
+						<li>
+							<input<?php if ( $this->value === $value ) : ?> checked="checked"<?php endif;?> type="radio" name="<?php echo htmlentities( $this->id )?>" id="<?php echo $id?>" value="<?php echo htmlentities( $value )?>">
+							<label for="<?php echo $id?>"><?php echo htmlentities( $key )?></label>
+						</li>
+						<?php endforeach;?>
 		</ul>
 		<?php
 		return ob_get_clean();
@@ -231,12 +235,13 @@ class CheckboxListMetaField extends ChoicesMetaField {
 		ob_start();
 		?>
 		<ul class="checkbox-list">
-			<?php $i = 0; foreach ( $this->choices as $key=>$value ): $id = htmlentities( $this->id ).'_'.$i++;?>
-			<li>
-				<input<?php if ( is_array( $this->value ) and in_array( $value, $this->value ) ):?> checked="checked"<?php endif;?> type="checkbox" name="<?php echo htmlentities( $this->id )?>[]" id="<?php echo $id?>" value="<?php echo htmlentities( $value )?>">
-				<label for="<?php echo $id?>"><?php echo htmlentities( $key )?></label>
-			</li>
-			<?php endforeach;?>
+			<?php $i = 0;
+			foreach ( $this->choices as $key => $value ) :  $id = htmlentities( $this->id ).'_'.$i++;?>
+						<li>
+							<input<?php if ( is_array( $this->value ) and in_array( $value, $this->value ) ) : ?> checked="checked"<?php endif;?> type="checkbox" name="<?php echo htmlentities( $this->id )?>[]" id="<?php echo $id?>" value="<?php echo htmlentities( $value )?>">
+							<label for="<?php echo $id?>"><?php echo htmlentities( $key )?></label>
+						</li>
+						<?php endforeach;?>
 		</ul>
 		<?php
 		return ob_get_clean();
@@ -251,15 +256,14 @@ class FileMetaField extends MetaField {
 	}
 
 	function get_attachment_thumbnail_src() {
-		if ( !empty( $this->value ) ) {
+		if ( ! empty( $this->value ) ) {
 			$attachment = get_post( $this->value );
 			$use_thumb = wp_attachment_is_image( $this->value ) ? false : true;
 			if ( $attachment ) {
 				$src = wp_get_attachment_image_src( $this->value, 'thumbnail', $use_thumb );
 				return $src[0];
 			}
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -270,16 +274,16 @@ class FileMetaField extends MetaField {
 		?>
 		<div class="meta-file-wrap">
 			<div class="meta-file-preview">
-				<?php if ( $this->thumbnail ): ?>
+				<?php if ( $this->thumbnail ) :  ?>
 					<img src="<?php echo $this->thumbnail; ?>" alt="File thumbnail"><br>
 					<?php echo basename( wp_get_attachment_url( $this->value ) ); ?>
-				<?php else: ?>
+				<?php else : ?>
 					No file selected.
 				<?php endif; ?>
 			</div>
 
 			<p class="hide-if-no-js">
-				<a class="meta-file-upload <?php if ( !empty( $this->value ) ) { echo 'hidden'; } ?>" href="<?php echo $upload_link; ?>">
+				<a class="meta-file-upload <?php if ( ! empty( $this->value ) ) { echo 'hidden'; } ?>" href="<?php echo $upload_link; ?>">
 					Add File
 				</a>
 				<a class="meta-file-delete <?php if ( empty( $this->value ) ) { echo 'hidden'; } ?>" href="#">
