@@ -470,7 +470,6 @@ class Billboard extends CustomPostType {
 					<?php endif;
 		  		endif;
 				endforeach; ?>
-				<style> body.jsEnabled .noscript { display: none; }</style>
 				<div class="noscript">
 					Billboards:<br><br>
 					<?php echo "\n";
