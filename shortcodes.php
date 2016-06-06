@@ -402,17 +402,16 @@ class sc_column extends ShortcodeBase {
 	$callback    = 'callback',
 	$wysiwig     = true;
 
-	/**
-	 * @see http://codex.wordpress.org/Function_Reference/shortcode_atts  WP-Codex: shortcode_atts()
-	 */
 	public static function callback( $attr, $content = '' ) {
-		$attr = shortcode_atts(
+		$attr = array_merge(
+			$attr,
 			array(
 				'class' => '',
 				'style' => '',
-			), $attr
+			),
 		);
-			// Size classes.
+
+		// Size classes.
 		$classes = array( $attr['class'] ? $attr['class'] : '' );
 
 		$prefixes = array( 'xs', 'sm', 'md', 'lg' );
