@@ -408,7 +408,7 @@ class sc_column extends ShortcodeBase {
 			array(
 				'class' => '',
 				'style' => '',
-			),
+			)
 		);
 
 		// Size classes.
