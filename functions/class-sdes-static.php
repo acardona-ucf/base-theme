@@ -302,15 +302,14 @@ class DOMDocument_Smart extends \DOMDocument {
 	/** Load contents after wrapping it in a span tag. */
 	public function loadHTML( $contents, $options = null ) {
 		if ( static::$IsLibxmlModern ) {
-			throw new \Exception("A canary in a modern coal mine.");
 			// use http://stackoverflow.com/a/31426408
 			// Tell libxml not to load html, body, or doctype definition, then load contents into a span tag.
 			if ( null === $options ) { $options = \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD; }
 			parent::loadHTML( "<span>{$contents}</span>", $options );
 		} else {
-			throw new \Exception("A canary in a legacy coal mine.");
 			// Load contents into a span tag, remove the doctype, then replace the html tag with the span tag.
 			parent::loadHTML( "<span>{$contents}</span>", $options );
+			throw new \Exception("A canary in a legacy coal mine.");
 			// http://stackoverflow.com/a/6953808
 			$this->removeChild( $this->doctype ); // Remove <!DOCTYPE.
 			$newnode = $this->firstChild->firstChild->firstChild; // html>body>span.
