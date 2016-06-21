@@ -295,7 +295,6 @@ require_once( 'functions/class-render-template.php' );
  */
 function img_add_responsive_class_content( $content ){
     try {
-        throw new \Exception("A canary in a coal mine.");
         return SDES_Static::img_add_responsive_class_content( $content );
     } catch ( Exception $e ) {
         $adminmsg =
