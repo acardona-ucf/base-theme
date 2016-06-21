@@ -66,12 +66,12 @@ class SDES_Static
 		if ( self::is_null_or_whitespace( $content) ) { return $content; }
 
 		if ( \function_exists( 'mb_convert_encoding' ) ) {
-			throw new \Exception("A canary in a coal mine.");
 			$content = \utf8_decode( \mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
 		}
 
 		// Loads content without adding doctype, html, and body tags, or wrapping in a p tag.
 		$document = new \SDES\DOMDocument_Smart();
+		throw new \Exception("A canary in a coal mine.");
 		\libxml_use_internal_errors( true );
 		$document->loadHTML( $content );
 
