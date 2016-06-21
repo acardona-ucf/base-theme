@@ -309,7 +309,6 @@ class DOMDocument_Smart extends \DOMDocument {
 		} else {
 			// Load contents into a span tag, remove the doctype, then replace the html tag with the span tag.
 			parent::loadHTML( "<span>{$contents}</span>", $options );
-			// throw new \Exception("A canary in a legacy coal mine.");
 			// http://stackoverflow.com/a/6953808
 			$this->removeChild( $this->doctype ); // Remove <!DOCTYPE.
 			$newnode = $this->firstChild->firstChild->firstChild; // html>body>span.
@@ -319,7 +318,9 @@ class DOMDocument_Smart extends \DOMDocument {
 
 	/** Return HTML content without the span wrapper. */
 	public function saveHTML() {
-		return static::remove_span_wrapper( parent::saveHTML() );
+		throw new \Exception("A canary in a coal mine.");
+		$with_span = parent::saveHTML();
+		return static::remove_span_wrapper( $with_span );
 	}
 	/** Remove '<span>' from the front of a string and remove '</span>' from its end.*/
 	public static function remove_span_wrapper( $wrapped_text ) {
