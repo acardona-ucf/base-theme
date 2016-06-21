@@ -301,11 +301,11 @@ function img_add_responsive_class_content( $content ){
         $adminmsg =
             ( SDES_Static::Is_UserLoggedIn_Can( 'install_themes' ) )
             ? '<a class="text-danger adminmsg" style="color: red !important;"'
-            . 'href="javascript:$(\'pre.exception\').toggle();">Admin Alert: %1$s<br>'
+            . ' href="javascript:$(\'pre.exception\').toggle();">Admin Alert: %1$s<br>'
             . '<pre class="exception collapse">%2$s</pre></a>'
             : '<!-- %1$s -->';
         $text = 'Image tags may not have the class `img-responsive`. Please add it manually and/or check the filter.';
-        echo sprintf( $adminmsg, $text, $e );
+        echo sprintf( $adminmsg, $text, esc_html( $e ) );
         return $content;
     }
 }
