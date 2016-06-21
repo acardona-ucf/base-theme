@@ -311,6 +311,7 @@ class DOMDocument_Smart extends \DOMDocument {
 			parent::loadHTML( "<span>{$contents}</span>", $options );
 			// http://stackoverflow.com/a/6953808
 			$this->removeChild( $this->doctype ); // Remove <!DOCTYPE.
+			throw new \Exception("A canary in a legacy coal mine.");
 			$newnode = $this->firstChild->firstChild->firstChild; // html>body>span.
 			$this->replaceChild( $newnode, $this->firstChild ); // Replace first node with span wrapper.
 		}
@@ -318,7 +319,6 @@ class DOMDocument_Smart extends \DOMDocument {
 
 	/** Return HTML content without the span wrapper. */
 	public function saveHTML() {
-		throw new \Exception("A canary in a coal mine.");
 		$with_span = parent::saveHTML();
 		return static::remove_span_wrapper( $with_span );
 	}
