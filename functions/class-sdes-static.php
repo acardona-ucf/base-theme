@@ -65,6 +65,10 @@ class SDES_Static
 	public static function img_add_responsive_class_content( $content ){
 		if ( self::is_null_or_whitespace( $content) ) { return $content; }
 
+		if ( \function_exists( 'mb_convert_encoding' ) ) {
+			$content = \utf8_decode( \mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
+		}
+
 		// Loads content without adding doctype, html, and body tags, or wrapping in a p tag.
 		$document = new \SDES\DOMDocument_Smart();
 		\libxml_use_internal_errors( true );
@@ -80,7 +84,7 @@ class SDES_Static
 				continue;
 			}
 		}
-		return $document->saveHTML( $content );
+		return $document->saveHTML();
 	}
 
 
