@@ -71,8 +71,8 @@ class SDES_Static
 
 		// Loads content without adding doctype, html, and body tags, or wrapping in a p tag.
 		$document = new \SDES\DOMDocument_Smart();
-		throw new \Exception("A canary in a coal mine.");
 		\libxml_use_internal_errors( true );
+		throw new \Exception("A canary in a coal mine.");
 		$document->loadHTML( $content );
 
 		// Loop through img tags to add .img-responsive (unless IMG.img-nonresponsive).
