@@ -3,6 +3,7 @@
 // require_once 'vendor/autoload.php';
 require_once '/../../functions/class-sdes-static.php';
     use SDES\SDES_Static as SDES_Static;
+    use SDES\DOMDocument_Smart as DOMDocument_Smart;
 
 /** Monkey Patches for WordPress functions. */
 function get_stylesheet_directory() { return '/../..'; }
@@ -50,6 +51,114 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
         // Assert
         $this->assertEquals($setValue, $args[$key]);
+    }
+
+
+
+    ///////////  SDES\DOMDocument_Smart  ////////////////////
+    public function test_DOMDocument_Smart__LegacyText__ReturnsDocWithText()
+    {
+        // Arrange
+        $doc = new DOMDocument_Smart();
+        DOMDocument_Smart::$IsLibxmlModern = false;
+        $expected = "Test Text";
+        // Act
+        $doc->loadHTML( $expected );
+        // Assert
+        $this->assertEquals( $expected, $doc->saveHTML() );
+    }
+
+    public function test_DOMDocument_Smart__LegacySpanText__ReturnsDocWithSpanText()
+    {
+        // Arrange
+        $doc = new DOMDocument_Smart();
+        DOMDocument_Smart::$IsLibxmlModern = false;
+        $expected = "<span>Test Text</span>";
+        // Act
+        $doc->loadHTML( $expected );
+        // Assert
+        $this->assertEquals( $expected, $doc->saveHTML() );
+    }
+
+    public function test_DOMDocument_Smart__ModernText__ReturnsDocWithText()
+    {
+        // Arrange
+        $doc = new DOMDocument_Smart();
+        DOMDocument_Smart::$IsLibxmlModern = true;
+        $expected = "Test Text";
+        // Act
+        $doc->loadHTML( $expected );
+        // Assert
+        $this->assertEquals( $expected, $doc->saveHTML() );
+    }
+
+    public function test_DOMDocument_Smart__ModernSpanText__ReturnsDocWithSpanText()
+    {
+        // Arrange
+        $doc = new DOMDocument_Smart();
+        DOMDocument_Smart::$IsLibxmlModern = true;
+        $expected = "<span>Test Text</span>";
+        // Act
+        $doc->loadHTML( $expected );
+        // Assert
+        $this->assertEquals( $expected, $doc->saveHTML() );
+    }
+
+    public function test_DOMDocument_Smart__toString__ReturnsContents()
+    {
+        // Arrange
+        $doc = new DOMDocument_Smart();
+        DOMDocument_Smart::$IsLibxmlModern = true;
+        $expected = "Test Text";
+        // Act
+        $doc->loadHTML( $expected );
+        // Assert
+        $this->assertEquals( $expected, "{$doc}" );
+    }
+
+
+
+    ///////////  SDES_Static::img_add_responsive_class_content()   ////////////////////////
+    public function test_img_add_responsive_class_content__String__ReturnsSameString()
+    {
+        // Arrange
+        $expected = "Just a string.";
+        // Act
+        $result = SDES_Static::img_add_responsive_class_content( $expected );
+        // Assert
+        $this->assertEquals( $expected, $result );
+    }
+
+    public function test_img_add_responsive_class_content__ImgNoClasses__ReturnsImgWithResponsive()
+    {
+        // Arrange
+        $contents = '<div><img src="example.com"></div>';
+        $expected = '<div><img src="example.com" class="img-responsive "></div>';
+        // Act
+        $result = SDES_Static::img_add_responsive_class_content( $contents );
+        // Assert
+        $this->assertEquals( $expected, $result );
+    }
+
+    public function test_img_add_responsive_class_content__ImgWithClasses__ReturnsImgWithClassesAndResponsive()
+    {
+        // Arrange
+        $contents = '<div><img src="example.com" class="thumbnail"></div>';
+        $expected = '<div><img src="example.com" class="img-responsive thumbnail"></div>';
+        // Act
+        $result = SDES_Static::img_add_responsive_class_content( $contents );
+        // Assert
+        $this->assertEquals( $expected, $result );
+    }
+
+    public function test_img_add_responsive_class_content__ImgNonResponsive__ReturnsSameString()
+    {
+        // Arrange
+        $expected = '<div><img class="img-nonresponsive thumbnail" src="example.com"></div>';
+        // Act
+        $result = SDES_Static::img_add_responsive_class_content( $expected );
+        // Assert
+        $this->assertEquals( $expected, $result );
     }
 
 

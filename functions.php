@@ -289,33 +289,15 @@ require_once( 'functions/class-render-template.php' );
 
 
 /**
- * Add .img-responsive to img tags in sidecolumn metadata fields.
+ * Add .img-responsive to img tags.
  * @see https://developer.wordpress.org/reference/functions/the_content/ WP-Ref: the_content()
  * @see http://stackoverflow.com/a/20499803 Stack-Overflow: /a/20499803
  */
 function img_add_responsive_class_content( $content ){
-    if ( SDES_Static::is_null_or_whitespace( $content) ) { return $content; }
-    
-    if ( function_exists( 'mb_convert_encoding' ) ) {
-        $content = utf8_decode( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
-    }
-    $document = new DOMDocument();
-    libxml_use_internal_errors( true );
-    $document->loadHTML( $content );
-
-    $imgs = $document->getElementsByTagName( 'img' );
-    foreach ( $imgs as $img ) {
-        $existing_class = $img->getAttribute( 'class' );
-        if( false === strpos( $existing_class, 'img-nonresponsive' ) ) {
-            $img->setAttribute( 'class', "img-responsive $existing_class" );
-        } else {
-            continue;
-        }
-    }
-
-    return $document->textContent;
+    return SDES_Static::img_add_responsive_class_content( $content );
 }
 add_filter('the_content', 'img_add_responsive_class_content');
+
 
 /**
  * Add .img-responsive to img tags in sidecolumn metadata fields.
