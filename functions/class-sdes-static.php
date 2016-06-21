@@ -72,6 +72,7 @@ class SDES_Static
 		// Loads content without adding doctype, html, and body tags, or wrapping in a p tag.
 		$document = new \SDES\DOMDocument_Smart();
 		\libxml_use_internal_errors( true );
+		// Presumably fatal exception in QA after the next line executes. Above code is fine.
 		$document->loadHTML( $content );
 
 		// Loop through img tags to add .img-responsive (unless IMG.img-nonresponsive).
@@ -308,10 +309,10 @@ class DOMDocument_Smart extends \DOMDocument {
 			parent::loadHTML( "<span>{$contents}</span>", $options );
 		} else {
 			// Load contents into a span tag, remove the doctype, then replace the html tag with the span tag.
+			throw new \Exception("Something doesn't work after this point. Detouring at last stable point.");
 			parent::loadHTML( "<span>{$contents}</span>", $options );
 			// http://stackoverflow.com/a/6953808
 			$this->removeChild( $this->doctype ); // Remove <!DOCTYPE.
-			throw new \Exception("A canary in a legacy coal mine.");
 			$newnode = $this->firstChild->firstChild->firstChild; // html>body>span.
 			$this->replaceChild( $newnode, $this->firstChild ); // Replace first node with span wrapper.
 		}
