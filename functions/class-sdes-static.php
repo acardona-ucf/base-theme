@@ -63,8 +63,8 @@ class SDES_Static
 	 * @return string A string of the filtered HTML content.
 	 */
 	public static function img_add_responsive_class_content( $content ){
-		throw new \Exception("A canary in a coal mine.");
 		if ( self::is_null_or_whitespace( $content) ) { return $content; }
+		throw new \Exception("A canary in a coal mine.");
 
 		if ( \function_exists( 'mb_convert_encoding' ) ) {
 			$content = \utf8_decode( \mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
