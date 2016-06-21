@@ -294,7 +294,19 @@ require_once( 'functions/class-render-template.php' );
  * @see http://stackoverflow.com/a/20499803 Stack-Overflow: /a/20499803
  */
 function img_add_responsive_class_content( $content ){
-    return SDES_Static::img_add_responsive_class_content( $content );
+    try {
+        return SDES_Static::img_add_responsive_class_content( $content );
+    } catch ( Exception $e ) {
+        $adminmsg =
+            ( SDES_Static::Is_UserLoggedIn_Can( 'install_themes' ) )
+            ? '<a class="text-danger adminmsg" style="color: red !important;"'
+            . 'href="javascript:$(\'pre.exception\').toggle();">Admin Alert: %1$s<br>'
+            . '<pre class="exception collapse">%2$s</pre></a>'
+            : '<!-- %1$s -->';
+        $text = 'Image tags may not have the class `img-responsive`. Please add it manually and/or check the filter.';
+        echo sprintf( $adminmsg, $text, $e );
+        return $content;
+    }
 }
 add_filter('the_content', 'img_add_responsive_class_content');
 
