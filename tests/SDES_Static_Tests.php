@@ -1,15 +1,15 @@
 <?php
 
 // require_once 'vendor/autoload.php';
-require_once '/../../functions/class-sdes-static.php';
+require_once __DIR__ . '/../functions/class-sdes-static.php';
     use SDES\SDES_Static as SDES_Static;
     use SDES\DOMDocument_Smart as DOMDocument_Smart;
 
 /** Monkey Patches for WordPress functions. */
-function get_stylesheet_directory() { return '/../..'; }
+function get_stylesheet_directory() { return __DIR__ . '/..'; }
 function get_site_url() { return ''; }
 
-require_once '/../../functions/class-sdes-helper.php';
+require_once __DIR__ . '/../functions/class-sdes-helper.php';
     use SDES\BaseTheme\SDES_Helper as SDES_Helper;
 
 class SDES_Static_Tests extends PHPUnit_Framework_TestCase
@@ -82,6 +82,12 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
     public function test_DOMDocument_Smart__ModernText__ReturnsDocWithText()
     {
+        if( ! ( defined('\LIBXML_HTML_NOIMPLIED') && defined('\LIBXML_HTML_NODEFDTD') ) ) {
+            $this->markTestSkipped(
+                'Install libxml 2.7.8 to test this functionality.'
+                . ' The required libxml constants are not available on this machine.'
+            );
+        }
         // Arrange
         $doc = new DOMDocument_Smart();
         DOMDocument_Smart::$IsLibxmlModern = true;
@@ -94,6 +100,12 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
     public function test_DOMDocument_Smart__ModernSpanText__ReturnsDocWithSpanText()
     {
+        if( ! ( defined('\LIBXML_HTML_NOIMPLIED') && defined('\LIBXML_HTML_NODEFDTD') ) ) {
+            $this->markTestSkipped(
+                'Install libxml 2.7.8 to test this functionality.'
+                . ' The required libxml constants are not available on this machine.'
+            );
+        }
         // Arrange
         $doc = new DOMDocument_Smart();
         DOMDocument_Smart::$IsLibxmlModern = true;
@@ -106,6 +118,12 @@ class SDES_Static_Tests extends PHPUnit_Framework_TestCase
 
     public function test_DOMDocument_Smart__toString__ReturnsContents()
     {
+        if( ! ( defined('\LIBXML_HTML_NOIMPLIED') && defined('\LIBXML_HTML_NODEFDTD') ) ) {
+            $this->markTestSkipped(
+                'Install libxml 2.7.8 to test this functionality.'
+                . ' The required libxml constants are not available on this machine.'
+            );
+        }
         // Arrange
         $doc = new DOMDocument_Smart();
         DOMDocument_Smart::$IsLibxmlModern = true;

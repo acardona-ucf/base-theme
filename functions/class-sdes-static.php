@@ -298,7 +298,7 @@ class DOMDocument_Smart extends \DOMDocument {
 	public static $IsLibxmlModern = false;
 
 	public function __construct() {
-		static::$IsLibxmlModern = version_compare( \LIBXML_DOTTED_VERSION , '2.7.8', '>=' );
+		static::$IsLibxmlModern = defined('\LIBXML_HTML_NOIMPLIED') && defined('\LIBXML_HTML_NODEFDTD');
 	}
 	/** Load contents after wrapping it in a span tag. */
 	public function loadHTML( $contents, $options = 0 ) {
@@ -309,7 +309,6 @@ class DOMDocument_Smart extends \DOMDocument {
 			parent::loadHTML( "<span>{$contents}</span>", $options );
 		} else {
 			// Load contents into a span tag, remove the doctype, then replace the html tag with the span tag.
-			throw new \Exception("Something doesn't work after this point. Detouring at last stable point.");
 			parent::loadHTML( "<span>{$contents}</span>", $options );
 			// http://stackoverflow.com/a/6953808
 			$this->removeChild( $this->doctype ); // Remove <!DOCTYPE.
