@@ -851,7 +851,7 @@ class sc_contactBlock extends ShortcodeBase {
 					<?php endif;
 					if ( '' !== $ctxt['buildingNumber'] && '' !== $ctxt['buildingName'] ) : ?>
 						<tr><th scope="row">Location</th>
-							<td><a href="http://map.ucf.edu/?show=<?= $ctxt['buildingName'] ?>">
+							<td><a href="http://map.ucf.edu/?show=<?= $ctxt['buildingNumber'] ?>">
 								<?= $ctxt['buildingName'] ?>, Building <?= $ctxt['buildingNumber'] ?> Room <?= $ctxt['roomNumber'] ?>
 							</a></td>
 						</tr>
