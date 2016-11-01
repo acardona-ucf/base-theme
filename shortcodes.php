@@ -851,7 +851,7 @@ class sc_contactBlock extends ShortcodeBase {
 					<?php endif;
 					if ( '' !== $ctxt['buildingNumber'] && '' !== $ctxt['buildingName'] ) : ?>
 						<tr><th scope="row">Location</th>
-							<td><a href="http://map.ucf.edu/?show=<?= $ctxt['buildingName'] ?>">
+							<td><a href="http://map.ucf.edu/?show=<?= $ctxt['buildingNumber'] ?>">
 								<?= $ctxt['buildingName'] ?>, Building <?= $ctxt['buildingNumber'] ?> Room <?= $ctxt['roomNumber'] ?>
 							</a></td>
 						</tr>
@@ -914,7 +914,7 @@ class sc_contactBlock extends ShortcodeBase {
 						$yield .= "<td><a href='mailto:{$email}'>{$email}</a></td>";
 						$yield .= '</tr><tr>';
 						$yield .= '<th scope="row">Location</th>';
-						$yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->building}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
+						$yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->buildingNumber}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
 						$yield .= '</tr>';
 					}
 				}
@@ -953,7 +953,7 @@ class sc_contactBlock extends ShortcodeBase {
 				$yield .= "<td><a href='mailto:{$email}'>{$email}</a></td>";
 				$yield .= '</tr><tr>';
 				$yield .= '<th scope="row">Location</th>';
-				$yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->building}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
+				$yield .= "<td><a href='http://map.ucf.edu/?show={$department->location->buildingNumber}' >{$department->location->building}, Building {$department->location->buildingNumber} Room {$department->location->roomNumber}</a>";
 				$yield .= '</tr><tr>';
 				$yield .= '<th scope="row">Website</th>';
 				$yield .= "<td><a href='{$department->websites[0]->uri}' class='external'>{$department->websites[0]->uri}</a></td>";
