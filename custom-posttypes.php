@@ -217,7 +217,7 @@ class Alert extends CustomPostType {
 		private static function get_render_metadata( $alert ) {
 			$metadata_fields = array();
 			$metadata_fields['alert_is_unplanned'] = get_post_meta( $alert->ID, 'alert_is_unplanned', true );
-			$metadata_fields['alert_url'] = esc_attr( get_post_meta( $alert, 'alert_url', true ) );
+			$metadata_fields['alert_url'] = esc_attr( get_post_meta( $alert->ID, 'alert_url', true ) );
 			return $metadata_fields;
 		}
 
