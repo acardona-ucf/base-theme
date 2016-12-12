@@ -104,7 +104,7 @@ class SDES_Static
 		$xml = null ) {
 		if ( null === $xml ) { $xml = wp_remote_get( esc_url_raw( $uri )); }
 		
-+		$api_response = json_decode( wp_remote_retrieve_body( $xml ), true );
+		$api_response = json_decode( wp_remote_retrieve_body( $xml ), true );
 
 		$output = array();
 		$i = 0;  // TODO: refactor with generator pattern when VCCW upgrades to PHP 5.5+.
