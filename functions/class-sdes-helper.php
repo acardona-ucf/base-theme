@@ -152,6 +152,24 @@ class SDES_Helper
 		return $nav_menu;
 	}
 
+	// TODO: Do this in a way that doesn't stink.  =]
+	/**
+	 * So, fOpen isn't allowed by InfoSec... so we have to work around.  This is an ugly little hack to deal with it right now
+	 * http://stackoverflow.com/questions/695296/loading-a-remote-xml-page-with-file-get-contents
+	 * @param string $URL the URL to have cUrl fetch for us.	 
+	 * @return SOMETHING   The results from the get request....
+	 */
+	public static function curl_get_file_contents($URL)
+    {
+        $c = curl_init();
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_URL, $URL);
+        $contents = curl_exec($c);
+        curl_close($c);
+
+        if ($contents) return $contents;
+            else return FALSE;
+    }
 
 
 	/**
@@ -165,7 +183,7 @@ class SDES_Helper
 		$default_department = null, $uri = 'http://directory.sdes.ucf.edu/feed/' ) {
 		$department = array();
 		if ( '' !== $directory_cms_acronym && !ctype_space( $directory_cms_acronym ) ) {
-			$json = json_decode( file_get_contents( $uri ), $assoc = true );
+			$json = json_decode( static::curl_get_file_contents( $uri ), $assoc = true );
 			foreach ( $json['departments'] as $idx => $dept ) {
 				if ( $directory_cms_acronym === $dept['acronym'] ) {
 					$department = array_merge($default_department, $dept);
