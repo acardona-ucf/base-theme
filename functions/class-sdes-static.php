@@ -102,18 +102,20 @@ class SDES_Static
 	public static function get_rss_links_and_titles( $uri,
 		$max_count = 8, $char_limit = 45,
 		$xml = null ) {
-		if ( null === $xml ) { $xml = simplexml_load_file( $uri ); }
+		if ( null === $xml ) { $xml = wp_remote_get( esc_url_raw( $uri )); }
+		
+		$api_response = json_decode( wp_remote_retrieve_body( $xml ), true );
 
 		$output = array();
 		$i = 0;  // TODO: refactor with generator pattern when VCCW upgrades to PHP 5.5+.
-		foreach ( $xml->channel->item  as $idx => $item ) {
+		foreach ( $api_response  as $item ) {	
 			if ( $i++ < $max_count ) {
 				$title_truncated
-					= ( strlen( $item->title ) > $char_limit )
-						? substr( $item->title, 0, $char_limit ) . '&hellip;'
-						: (string) $item->title;
+					= ( strlen( $item['title'] ) > $char_limit )
+						? substr( $item['title'], 0, $char_limit ) . '&hellip;'
+						: (string) $item['title'];
 				$output[] = array(
-					'link' => (string) $item->link,
+					'link' => (string) $item['permalink'],
 					'title' => $title_truncated,
 					);
 			}

@@ -151,9 +151,6 @@ class SDES_Helper
 		}
 		return $nav_menu;
 	}
-
-
-
 	/**
 	 * Retrieve data about an SDES department from the SDES Directory CMS.
 	 * @param string $directory_cms_acronym  The department 'acronym' to match against.
@@ -165,7 +162,7 @@ class SDES_Helper
 		$default_department = null, $uri = 'http://directory.sdes.ucf.edu/feed/' ) {
 		$department = array();
 		if ( '' !== $directory_cms_acronym && !ctype_space( $directory_cms_acronym ) ) {
-			$json = json_decode( file_get_contents( $uri ), $assoc = true );
+			$json = json_decode( wp_remote_retrieve_body( wp_remote_get( $uri )), $assoc = true );
 			foreach ( $json['departments'] as $idx => $dept ) {
 				if ( $directory_cms_acronym === $dept['acronym'] ) {
 					$department = array_merge($default_department, $dept);

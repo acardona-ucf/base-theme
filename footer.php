@@ -67,7 +67,7 @@ class Footer {
 		 * (libraries like C#'s memorycache, not servers like memcached, redis).
 		 * Maybe desarrolla2/cache, doctrine/cache, or something under cache/cache on Packagist.org
 		 */
-		$rss_url = SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_feed-{$position}", 'http://today.ucf.edu/feed/' );
+		$rss_url = SDES_Static::get_theme_mod_defaultIfEmpty( "sdes_rev_2015-footer_feed-{$position}", 'http://today.ucf.edu/feed/json' );
 		$rss_url = SDES_Static::url_ensure_prefix( $rss_url );
 		$default_anchors = SDES_Static::get_rss_links_and_titles( $rss_url );
 		SDES_Static::set_default_keyValue( $ctx_links, 'anchors', $default_anchors );

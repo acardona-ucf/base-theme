@@ -861,6 +861,7 @@ class sc_contactBlock extends ShortcodeBase {
 		<?php
 		return ob_get_clean();
 	}
+	
 
 	// TODO: Set the department feed URL with a Theme Option, default to the feed's current URL.
 	// TODO: refactor out `get_department_info('menu')` and `get_department_info("{$ACRONYMN}")` functionality.
@@ -869,8 +870,10 @@ class sc_contactBlock extends ShortcodeBase {
 	 * Reads in and displays department information.
 	 * @deprecated Create a function get_render_context() to return input for sc_contactBlock::render().
 	 */
+	 
+
 	public static function get_department_info( $action = null ) {
-		$json = file_get_contents( 'http://directory.sdes.ucf.edu/feed' );
+		$json = wp_remote_retrieve_body( wp_remote_get('http://directory.sdes.ucf.edu/feed') );//$json = \SDES\BaseTheme\SDES_Helper::curl_get_file_contents( 'http://directory.sdes.ucf.edu/feed' ); //$json = file_get_contents( 'http://directory.sdes.ucf.edu/feed' );
 		$decodejson = json_decode( $json );
 
 		$yield = '';
