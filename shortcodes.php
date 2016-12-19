@@ -873,7 +873,7 @@ class sc_contactBlock extends ShortcodeBase {
 	 
 
 	public static function get_department_info( $action = null ) {
-		$json = \SDES\BaseTheme\SDES_Helper::curl_get_file_contents( 'http://directory.sdes.ucf.edu/feed' ); //$json = file_get_contents( 'http://directory.sdes.ucf.edu/feed' );
+		$json = wp_remote_retrieve_body( wp_remote_get('http://directory.sdes.ucf.edu/feed') );//$json = \SDES\BaseTheme\SDES_Helper::curl_get_file_contents( 'http://directory.sdes.ucf.edu/feed' ); //$json = file_get_contents( 'http://directory.sdes.ucf.edu/feed' );
 		$decodejson = json_decode( $json );
 
 		$yield = '';
